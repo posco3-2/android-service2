@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    // user List View 
     private fun setupUI() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = MainAdapter()
@@ -46,6 +47,8 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
     }
 
+
+    // User Data overserver
     private fun setupAPICall() {
         mainViewModel.fetchUsers().observe(this, Observer {
             when (it.status) {
@@ -67,6 +70,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    // adapter에 user data list data 추가
     private fun renderList(users: List<User>) {
         adapter.apply {
             addData(users)

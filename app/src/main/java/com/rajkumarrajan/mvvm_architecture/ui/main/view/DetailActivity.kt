@@ -18,14 +18,18 @@ import kotlinx.android.synthetic.main.activity_detail.*
 class DetailActivity : AppCompatActivity() {
     private val detailViewModel: DetailViewModel by viewModels()
 
+
+
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
+        // 넘겨준 Id값 받아서 detail data call
         val getid = getIntent().getIntExtra("id", 1)
         setupAPIcall(getid)
     }
 
+    //DetailView Model observe
     private fun setupAPIcall(testInt: Int){
         detailViewModel.fetchUserId(testInt).observe(this, Observer {
             when (it.status) {

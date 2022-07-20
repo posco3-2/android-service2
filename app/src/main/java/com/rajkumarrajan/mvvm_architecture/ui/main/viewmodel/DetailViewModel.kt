@@ -15,6 +15,7 @@ class DetailViewModel @Inject constructor(
 ) : ViewModel()
 {
 
+    // detail data by Id
     fun fetchUserId(testInt: Int) = liveData(Dispatchers.IO){
         emit(Resource.loading(null))
         try{

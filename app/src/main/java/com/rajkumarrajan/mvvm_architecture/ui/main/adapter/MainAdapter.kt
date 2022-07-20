@@ -19,7 +19,6 @@ class MainAdapter @Inject constructor(
 
     private var users: ArrayList<User> = ArrayList()
 
-
     class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(user: User) {
             itemView.textViewUserName.text = user.name
@@ -38,11 +37,14 @@ class MainAdapter @Inject constructor(
 
     override fun getItemCount(): Int = users.size
 
+    //user data List binding
     override fun onBindViewHolder(holder: DataViewHolder, position: Int) {
-        Log.i("MainActivity", position.toString())
         holder.bind(users[position])
+
+        //클릭시 user detail page로 이동
         holder.itemView.setOnClickListener{
             val intent = Intent(holder.itemView?.context, DetailActivity::class.java)
+            // intent로 id값 전달
             intent.putExtra("id", position+1)
             ContextCompat.startActivity(holder.itemView.context, intent, null )
         }

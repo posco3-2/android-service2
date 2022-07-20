@@ -13,6 +13,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val mainRepository: MainRepository
 ) : ViewModel() {
+
+    //user data input
     fun fetchUsers() = liveData(Dispatchers.IO) {
         emit(Resource.loading(null))
         try {
