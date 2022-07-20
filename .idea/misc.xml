@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="JDK" project-jdk-type="JavaSDK" />
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/BIT/Desktop/android-sample2/MVVM-Coroutines-Retrofit-Hilt/app/src/main/res/layout/activity_detail.xml" value="0.25" />
+        <entry key="..\:/Users/BIT/Desktop/android-sample2/MVVM-Coroutines-Retrofit-Hilt/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/BIT/Desktop/android-sample2/MVVM-Coroutines-Retrofit-Hilt/app/src/main/res/layout/item_layout.xml" value="0.33605072463768115" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
 </project>

@@ -4,7 +4,8 @@ import com.rajkumarrajan.mvvm_architecture.data.api.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
+
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
@@ -13,12 +14,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 object NetworkingModule {
 
     @Provides
     fun providesBaseUrl(): String {
-        return "https://5e510330f2c0d300147c034c.mockapi.io/"
+        return "http://43.200.14.78:8000/user-service/"
     }
 
     @Provides
@@ -57,4 +58,5 @@ object NetworkingModule {
     fun provideRestApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
     }
+
 }

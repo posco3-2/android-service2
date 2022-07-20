@@ -8,4 +8,8 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
     suspend fun getUsers(): List<User> {
         return apiService.getUsers()
     }
+
+    suspend fun getUserById(testInt:Int): List<User>{
+        return apiService.getUserById(testInt)
+    }
 }

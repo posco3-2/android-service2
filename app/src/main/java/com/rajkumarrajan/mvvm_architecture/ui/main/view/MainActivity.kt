@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
 
         setupUI()
         setupAPICall()
+
     }
 
     private fun setupUI() {
