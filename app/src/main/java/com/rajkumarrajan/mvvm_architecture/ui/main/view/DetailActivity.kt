@@ -27,6 +27,7 @@ class DetailActivity : AppCompatActivity() {
         // 넘겨준 Id값 받아서 detail data call
         val getid = getIntent().getIntExtra("id", 1)
         setupAPIcall(getid)
+
     }
 
     //DetailView Model observe

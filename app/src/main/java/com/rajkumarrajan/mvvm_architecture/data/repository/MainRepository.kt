@@ -1,6 +1,7 @@
 package com.rajkumarrajan.mvvm_architecture.data.repository
 
 import com.rajkumarrajan.mvvm_architecture.data.api.ApiService
+import com.rajkumarrajan.mvvm_architecture.data.model.Device
 import com.rajkumarrajan.mvvm_architecture.data.model.User
 import javax.inject.Inject
 
@@ -11,5 +12,13 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
 
     suspend fun getUserById(testInt:Int): List<User>{
         return apiService.getUserById(testInt)
+    }
+
+    suspend fun login(user: User): List<User>{
+        return apiService.login(user)
+    }
+
+    suspend fun regi(device: Device) : Integer {
+        return apiService.regi(device);
     }
 }
