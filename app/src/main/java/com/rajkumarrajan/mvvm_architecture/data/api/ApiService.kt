@@ -13,7 +13,7 @@ import retrofit2.http.POST
 
 interface ApiService {
 
-    @GET("user/no")
+    @GET("user/allUser")
     suspend fun getUsers(): List<User>
 
     @POST("user/id")
@@ -24,7 +24,5 @@ interface ApiService {
 
     @POST("device/regi")
     suspend fun regi(@Body device: Device) : Integer
-
-
 
 }

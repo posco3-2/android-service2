@@ -22,7 +22,7 @@ class MainAdapter @Inject constructor(
     class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(user: User) {
             itemView.textViewUserName.text = user.name
-            itemView.textViewUserEmail.text = user.user_id
+            itemView.textViewUserEmail.text = user.userId
 
         }
     }

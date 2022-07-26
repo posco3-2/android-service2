@@ -9,18 +9,14 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven { url 'https://devrepo.kakao.com/nexus/content/groups/public/'}
+
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        jcenter()
+        classpath 'com.google.gms:google-services:4.3.13'
     }
 }
 
