@@ -10,33 +10,32 @@ data class Device(
 
     @SerializedName("id")
     var id: Int?=null,
-
-    @SerializedName("device_id")
-    val device_id: String? = null,
-    @SerializedName("phone_number")
-    val phone_number: String? = null,
-    @SerializedName("social_token")
-    val social_token: String? = null,
-    @SerializedName("user_id")
-    val user_id: Int? =null,
-    @SerializedName("user_name")
-    val user_name: String? = null,
-    @SerializedName("fcm_active")
-    val fcm_active: Int? =null,
-    @SerializedName("device_os")
-    val device_os: Char? = null,
-    @SerializedName("device_model")
-    val device_model: String? = null,
-    @SerializedName("fcm_token")
-    val fcm_token: String? = null,
-    @SerializedName("reg_date")
-    val reg_date: String? = null,
-    @SerializedName("update_date")
-    val update_date: String? = null,
-    @SerializedName("device_os_type")
-    val device_os_type: Char? = null,
-    @SerializedName("update_fcm_active")
-    val update_fcm_active: Int? =null,
+    @SerializedName("deviceId")
+    val deviceId: String? = null,
+    @SerializedName("phoneNumber")
+    val phoneNumber: String? = null,
+    @SerializedName("socialToken")
+    val socialToken: String? = null,
+    @SerializedName("userId")
+    val userId: Int? =null,
+    @SerializedName("userName")
+    val userName: String? = null,
+    @SerializedName("fcmActive")
+    val fcmActive: Int? =null,
+    @SerializedName("deviceOs")
+    val deviceOs: Char? = null,
+    @SerializedName("deviceModel")
+    val deviceModel: String? = null,
+    @SerializedName("fcmToken")
+    val fcmToken: String? = null,
+    @SerializedName("regDate")
+    val regDate: String? = null,
+    @SerializedName("updateDate")
+    val updateDate: String? = null,
+    @SerializedName("deviceOsType")
+    val deviceOsType: Char? = null,
+    @SerializedName("updateFcmActive")
+    val updateFcmActive: Int? =null,
     @SerializedName("carrier")
     val carrier: String? = null,
 

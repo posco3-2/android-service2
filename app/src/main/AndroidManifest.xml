@@ -14,13 +14,22 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- Redirect URI: "kakao${NATIVE_APP_KEY}://oauth" -->
+                <data android:host="oauth" android:scheme="kakao563d01ea237202c1de004f03316bf42c"/>
+            </intent-filter>
+        </activity>
         <activity android:name=".ui.main.view.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:host="oauth"
-                    android:scheme="kakao563d01ea237202c1de004f03316bf42c" />
             </intent-filter>
         </activity>
         <activity android:name=".ui.main.view.MainActivity">

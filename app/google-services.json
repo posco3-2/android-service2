@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "251088312071",
+    "project_id": "posco2store",
+    "storage_bucket": "posco2store.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:251088312071:android:fb63608336c2bb2d79d7a2",
+        "android_client_info": {
+          "package_name": "com.rajkumarrajan.mvvm_architecture"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "251088312071-t3vbsil9vrbfvjit9799j7mqd655gnrc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rajkumarrajan.mvvm_architecture",
+            "certificate_hash": "744847200b25682d2e6ed334a5e46d0efb497720"
+          }
+        },
+        {
+          "client_id": "251088312071-44tjkduuvfmnb005mk1ff6ji6c2grh65.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8AD6nQ51YjwWIJrzp8yNuwvpifA3lfBA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "251088312071-44tjkduuvfmnb005mk1ff6ji6c2grh65.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,6 +1,7 @@
 package com.rajkumarrajan.mvvm_architecture.ui.main.view
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
@@ -12,11 +13,22 @@ import android.telephony.TelephonyManager
 import android.util.Base64
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
@@ -29,16 +41,15 @@ import com.rajkumarrajan.mvvm_architecture.databinding.ActivityLoginBinding
 import com.rajkumarrajan.mvvm_architecture.ui.main.viewmodel.LoginViewModel
 import com.rajkumarrajan.mvvm_architecture.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.security.MessageDigest
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-
+import com.kakao.sdk.common.util.Utility
+import com.rajkumarrajan.mvvm_architecture.R
+import kotlinx.coroutines.*
 
 @AndroidEntryPoint
 class LoginActivity: AppCompatActivity() {
@@ -46,18 +57,26 @@ class LoginActivity: AppCompatActivity() {
     lateinit var binding : ActivityLoginBinding
     private val loginViewModel: LoginViewModel by viewModels()
 
+    private val TAG = this.javaClass.simpleName
+
+    private lateinit var launcher: ActivityResultLauncher<Intent>
+    private lateinit var firebaseAuth: FirebaseAuth
+
+    private var email: String = ""
+    private var tokenId: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
 
 
         setContentView(binding.root)
-        KakaoSdk.init(this, "563d01ea237202c1de004f03316bf42c")
+
         binding.button.setOnClickListener {
             val id = binding.id.text.toString()
             val password = binding.password.text.toString()
 
-                setupAPICall(User(userId = id, password = password))
+            setupAPICall(User(userId = id, password = password))
         }
         binding.kakaoLoginButton.setOnClickListener {
             if(UserApiClient.instance.isKakaoTalkLoginAvailable(this)){
@@ -67,10 +86,61 @@ class LoginActivity: AppCompatActivity() {
             }
         }
 
+        firebaseAuth = FirebaseAuth.getInstance()
+        Log.e("fire",firebaseAuth.toString())
+
+        launcher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult(), ActivityResultCallback { result ->
+                Log.e(TAG, "resultCode : ${result.resultCode}")
+                Log.e(TAG, "result : $result")
+                if (result.resultCode == RESULT_OK) {
+                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                    try {
+                        task.getResult(ApiException::class.java)?.let { account ->
+                            tokenId = account.idToken
+                            if (tokenId != null && tokenId != "") {
+                                val credential: AuthCredential = GoogleAuthProvider.getCredential(account.idToken, null)
+                                firebaseAuth.signInWithCredential(credential)
+                                    .addOnCompleteListener {
+                                        if (firebaseAuth.currentUser != null) {
+                                            val user: FirebaseUser = firebaseAuth.currentUser!!
+                                            email = user.email.toString()
+                                            Log.e(TAG, "email : $email")
+                                            Log.e(TAG,  user.displayName.toString())
+                                            kakaocheck(User(name = user.displayName.toString()))
+                                            val googleSignInToken = account.idToken ?: ""
+                                            if (googleSignInToken != "") {
+                                                Log.e(TAG, "googleSignInToken : $googleSignInToken")
+                                            } else {
+                                                Log.e(TAG, "googleSignInToken이 null")
+                                            }
+                                        }
+                                    }
+                            }
+                        } ?: throw Exception()
+                    }   catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            })
+
+            binding.run {
+                googleLoginButton.setOnClickListener {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestIdToken(getString(R.string.default_web_client_id))
+                            .requestEmail()
+                            .build()
+                        val googleSignInClient = GoogleSignIn.getClient(this@LoginActivity, gso)
+                        val signInIntent: Intent = googleSignInClient.signInIntent
+                        launcher.launch(signInIntent)
+                    }
+                }
+            }
+
     }
 
     private fun setupAPICall(user: User) = loginViewModel.fetchLogin(user).observe(this, Observer {
-
         when (it.status) {
             Status.SUCCESS -> {
                 if( it.data?.size == 0){
@@ -79,25 +149,12 @@ class LoginActivity: AppCompatActivity() {
                     binding.password.text = null;
                 }
                 if(it.data?.get(0)?.id.toString() != null){
-                    FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-                        if (!task.isSuccessful) {
-                            return@OnCompleteListener
-                        }
-                        val token = task.result
-                        inputDevice(Device(
-                            device_id = getDeviceId(),
-                            phone_number = "010-4444-4444",
-                            user_id = it.data?.get(0)?.id,
-                            user_name = it.data?.get(0)?.name,
-                            device_os = 'A',
-                            device_model = getDeviceModel(),
-                            reg_date = LocalDateTime.now().toString(),
-                            update_date = LocalDateTime.now().toString(),
-                            fcm_token = token
-                        ))
-                    })
 
+                    val userId = it.data?.get(0)?.id
+                    val userName = it.data?.get(0)?.name
 
+                    it.data?.get(0)?.id?.toInt()?.let { it1 -> checkRegiDevice(it1,
+                        userId!!, userName!!) }
                 }
             }
             Status.ERROR -> {
@@ -107,7 +164,77 @@ class LoginActivity: AppCompatActivity() {
 
     })
 
+    private fun kakaocheck(user: User) = loginViewModel.checkKakao(user).observe(this, Observer {
+        when (it.status){
+            Status.SUCCESS ->{
+                if(it.data?.get(0)?.id.toString() != null){
+                    val userId = it.data?.get(0)?.id
+                    val userName = it.data?.get(0)?.name
+                    it.data?.get(0)?.id?.toInt()?.let { it1 -> checkRegiDevice(it1,
+                        userId!!, userName!!) }
+                }
+
+            }
+            Status.ERROR -> {
+                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+            }
+        }
+
+    })
+
+
+    private fun checkRegiDevice(id: Int, userId: Int, userName: String) = loginViewModel.checkRegiDevice(id).observe(this, Observer {
+        when (it.status){
+            Status.SUCCESS ->{
+                Log.e("regi", (it.data.toString() == "1").toString());
+                if(it.data.toString() == "1"){
+                    val intent = Intent(this, MainActivity::class.java)
+                    ContextCompat.startActivity(this, intent, null )
+
+                }else{
+                    Log.e("처음등록하는","아이디")
+                    FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                        if (!task.isSuccessful) {
+                            return@OnCompleteListener
+                        }
+                        val token = task.result
+                        inputDevice(Device(
+                            deviceId = getDeviceId(),
+                            phoneNumber = "010-4444-4444",
+                            userId = userId,
+                            userName = userName,
+                            deviceOs = 'A',
+                            deviceModel = getDeviceModel(),
+                            regDate = LocalDateTime.now().toString(),
+                            updateDate = LocalDateTime.now().toString(),
+                            fcmToken = token
+                        ))
+                    })
+                }
+            }
+            Status.ERROR -> {
+                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+            }
+        }
+
+    })
+
+
+
     private fun inputDevice(device: Device) = loginViewModel.inputDevice(device).observe(this, Observer {
+        when (it.status){
+            Status.SUCCESS ->{
+                val intent = Intent(this, MainActivity::class.java)
+                ContextCompat.startActivity(this, intent, null )
+            }
+            Status.ERROR -> {
+                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+            }
+        }
+
+    })
+
+    private fun updateDevice(id: Int, updateDate: String) = loginViewModel.updateRegiDevice(id, updateDate).observe(this, Observer {
         when (it.status){
             Status.SUCCESS ->{
                 val intent = Intent(this, MainActivity::class.java)
@@ -175,10 +302,14 @@ class LoginActivity: AppCompatActivity() {
             }
         }
         else if (token != null) {
-            Toast.makeText(this, "로그인에 성공하였습니다.", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-            finish()
+            UserApiClient.instance.me { user, error ->
+                if (error != null) {
+                    Log.e("TAG", "사용자 정보 요청 실패", error)
+                }
+                else if (user != null) {
+                    kakaocheck(User(name = user.kakaoAccount?.profile?.nickname.toString()))
+                }
+            }
         }
     }
 

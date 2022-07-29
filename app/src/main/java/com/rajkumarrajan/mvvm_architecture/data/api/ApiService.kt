@@ -6,9 +6,8 @@ import com.rajkumarrajan.mvvm_architecture.data.model.Device
 import com.rajkumarrajan.mvvm_architecture.data.model.User
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
+import retrofit2.http.*
+import java.time.LocalDateTime
 
 
 interface ApiService {
@@ -22,7 +21,16 @@ interface ApiService {
     @POST("user/login")
     suspend fun login(@Body user: User): List<User>
 
-    @POST("device/regi")
+    @POST("device/")
     suspend fun regi(@Body device: Device) : Integer
+
+    @GET("device/check/{id}")
+    suspend fun checkRegiDevice(@Path("id") id:Int) : Integer
+
+    @PUT("device/update/{id}")
+    suspend fun updateRegiDevice(@Path("id") id:Int, @Body updateDate: String) : Integer
+
+    @POST("user/kakaologin")
+    suspend fun checkKakao(@Body user: User) : List<User>
 
 }

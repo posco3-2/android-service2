@@ -2,6 +2,7 @@ package com.rajkumarrajan.mvvm_architecture.ui.main.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -10,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.kakao.sdk.user.UserApiClient
 import com.rajkumarrajan.mvvm_architecture.R
 import com.rajkumarrajan.mvvm_architecture.data.model.User
 import com.rajkumarrajan.mvvm_architecture.databinding.ActivityMainBinding
@@ -31,9 +33,11 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
 
         setupUI()
         setupAPICall()
