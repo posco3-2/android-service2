@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -38,6 +39,7 @@ import com.rajkumarrajan.mvvm_architecture.data.model.Device
 import com.rajkumarrajan.mvvm_architecture.data.model.User
 import com.rajkumarrajan.mvvm_architecture.databinding.ActivityLoginBinding
 import com.rajkumarrajan.mvvm_architecture.ui.main.viewmodel.LoginViewModel
+import com.rajkumarrajan.mvvm_architecture.utils.MySharedPreferences
 import com.rajkumarrajan.mvvm_architecture.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -48,9 +50,12 @@ import java.time.LocalDateTime
 @AndroidEntryPoint
 class LoginActivity: AppCompatActivity() {
 
+    companion object {
+        lateinit var prefs : MySharedPreferences
+    }
+
     lateinit var binding : ActivityLoginBinding
     private val loginViewModel: LoginViewModel by viewModels()
-
     private val TAG = this.javaClass.simpleName
 
     private lateinit var launcher: ActivityResultLauncher<Intent>
@@ -59,9 +64,14 @@ class LoginActivity: AppCompatActivity() {
     private var email: String = ""
     private var tokenId: String? = null
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        prefs = MySharedPreferences(applicationContext)
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
+
+
 
 
         setContentView(binding.root)
@@ -71,6 +81,7 @@ class LoginActivity: AppCompatActivity() {
             val password = binding.password.text.toString()
 
             setupAPICall(User(userId = id, password = password))
+
         }
         binding.kakaoLoginButton.setOnClickListener {
             if(UserApiClient.instance.isKakaoTalkLoginAvailable(this)){
@@ -101,7 +112,8 @@ class LoginActivity: AppCompatActivity() {
                                             email = user.email.toString()
                                             Log.e(TAG, "email : $email")
                                             Log.e(TAG,  user.displayName.toString())
-                                            kakaocheck(User(name = user.displayName.toString()))
+                                            kakaocheck(User(name = user.displayName.toString()
+                                                ,phoneNumber=getPhoneNumber()))
                                             val googleSignInToken = account.idToken ?: ""
                                             if (googleSignInToken != "") {
                                                 Log.e(TAG, "googleSignInToken : $googleSignInToken")
@@ -160,6 +172,8 @@ class LoginActivity: AppCompatActivity() {
 
                     it.data?.get(0)?.id?.toInt()?.let { it1 -> checkRegiDevice(it1,
                         userId!!, userName!!) }
+
+
                 }
             }
             Status.ERROR -> {
@@ -190,9 +204,13 @@ class LoginActivity: AppCompatActivity() {
 
     private fun checkRegiDevice(id: Int, userId: Int, userName: String) = loginViewModel.checkRegiDevice(id).observe(this, Observer {
         when (it.status){
+
+
             Status.SUCCESS ->{
+
                 Log.e("regi", (it.data.toString() == "1").toString());
                 if(it.data.toString() == "1"){
+                    prefs.setString("userName", binding.id.text.toString())
                     val intent = Intent(this, MainActivity::class.java)
                     ContextCompat.startActivity(this, intent, null )
 
@@ -203,6 +221,7 @@ class LoginActivity: AppCompatActivity() {
                             return@OnCompleteListener
                         }
                         val token = task.result
+                        prefs.setString("userName", binding.id.text.toString())
                         inputDevice(Device(
                             deviceId = getDeviceId(),
                             phoneNumber = getPhoneNumber(),
@@ -216,6 +235,7 @@ class LoginActivity: AppCompatActivity() {
                             deviceOsType = isTablet(),
                             carrier = getPhoneNetwork()
                         ))
+
                     })
                 }
             }
@@ -314,7 +334,8 @@ class LoginActivity: AppCompatActivity() {
                     Log.e("TAG", "사용자 정보 요청 실패", error)
                 }
                 else if (user != null) {
-                    kakaocheck(User(name = user.kakaoAccount?.profile?.nickname.toString()))
+                    kakaocheck(User(name = user.kakaoAccount?.profile?.nickname.toString()
+                                    ,phoneNumber=getPhoneNumber()))
                 }
             }
         }

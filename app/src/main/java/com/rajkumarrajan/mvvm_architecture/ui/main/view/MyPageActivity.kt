@@ -1,9 +1,12 @@
 package com.rajkumarrajan.mvvm_architecture.ui.main.view
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.PackageInfo
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.telephony.TelephonyManager
 
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -22,10 +25,15 @@ class MyPageActivity : AppCompatActivity() {
         binding = ActivityMypageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.textView6.text = getDeviceId()
-        binding.textView8.text  = getDeviceModel()
-        binding.textView12.text = getDeviceOs()
-        binding.textView11.text = getAppVersion()
+        binding.textView6.text  = getPhoneNumber()
+        binding.textView8.text = getDeviceId()
+        binding.textView12.text = LoginActivity.prefs.getString("userName","No")
+
+
+
+        binding.button2.setOnClickListener {
+            finish()
+        }
 
     }
 
@@ -35,21 +43,18 @@ class MyPageActivity : AppCompatActivity() {
     }
 
 
-    // android devcie model 확인
-    fun getDeviceModel(): String {
-        return Build.MODEL
-    }
-
     // android devcie os 확인
     fun getDeviceOs(): String {
         return Build.VERSION.RELEASE.toString()
     }
 
-    // android app version 확인
-    fun getAppVersion(): String {
-        val info: PackageInfo = this.packageManager.getPackageInfo(this.packageName, 0)
-        return info.versionName
+    @SuppressLint("MissingPermission")
+    fun getPhoneNumber(): String {
+        var tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        return tm.line1Number
     }
+
+
 
 }
 

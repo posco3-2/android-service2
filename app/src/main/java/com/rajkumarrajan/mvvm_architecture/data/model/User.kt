@@ -30,6 +30,8 @@ data class User(
     val email: String? = null,
 
     @SerializedName("password")
-    val password: String? = null
+    val password: String? = null,
 
+    @SerializedName("phoneNumber")
+    val phoneNumber: String? = null
 )

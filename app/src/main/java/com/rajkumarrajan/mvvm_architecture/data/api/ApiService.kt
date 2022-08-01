@@ -31,7 +31,7 @@ interface ApiService {
     @PUT("user-service/device/update/{id}")
     suspend fun updateRegiDevice(@Path("id") id:Int, @Body updateDate: String) : Integer
 
-    @POST("user-service/user/kakaologin")
+    @POST("user-service/user/socialLogin")
     suspend fun checkKakao(@Body user: User) : List<User>
 
     @GET("app-service/app")
