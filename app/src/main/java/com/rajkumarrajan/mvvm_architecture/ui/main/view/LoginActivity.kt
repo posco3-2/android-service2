@@ -1,16 +1,16 @@
 package com.rajkumarrajan.mvvm_architecture.ui.main.view
 
+import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.telephony.TelephonyManager
-import android.util.Base64
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultCallback
@@ -18,10 +18,10 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.OnCompleteListener
@@ -31,25 +31,19 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.auth.model.OAuthToken
-import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.AuthErrorCause
 import com.kakao.sdk.user.UserApiClient
-import com.rajkumarrajan.mvvm_architecture.MyFirebaseMessagingService
+import com.rajkumarrajan.mvvm_architecture.R
 import com.rajkumarrajan.mvvm_architecture.data.model.Device
 import com.rajkumarrajan.mvvm_architecture.data.model.User
 import com.rajkumarrajan.mvvm_architecture.databinding.ActivityLoginBinding
 import com.rajkumarrajan.mvvm_architecture.ui.main.viewmodel.LoginViewModel
 import com.rajkumarrajan.mvvm_architecture.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.tasks.await
-import java.security.MessageDigest
-import java.time.LocalDate
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
-import com.kakao.sdk.common.util.Utility
-import com.rajkumarrajan.mvvm_architecture.R
-import kotlinx.coroutines.*
 
 @AndroidEntryPoint
 class LoginActivity: AppCompatActivity() {
@@ -138,6 +132,17 @@ class LoginActivity: AppCompatActivity() {
                 }
             }
 
+
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.READ_PHONE_NUMBERS
+                ) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(
+                    this@LoginActivity,
+                    arrayOf(Manifest.permission.READ_PHONE_NUMBERS),
+                    22
+                )
+            }
     }
 
     private fun setupAPICall(user: User) = loginViewModel.fetchLogin(user).observe(this, Observer {
@@ -200,14 +205,16 @@ class LoginActivity: AppCompatActivity() {
                         val token = task.result
                         inputDevice(Device(
                             deviceId = getDeviceId(),
-                            phoneNumber = "010-4444-4444",
+                            phoneNumber = getPhoneNumber(),
                             userId = userId,
                             userName = userName,
                             deviceOs = 'A',
                             deviceModel = getDeviceModel(),
                             regDate = LocalDateTime.now().toString(),
                             updateDate = LocalDateTime.now().toString(),
-                            fcmToken = token
+                            fcmToken = token ,
+                            deviceOsType = isTablet(),
+                            carrier = getPhoneNetwork()
                         ))
                     })
                 }
@@ -313,10 +320,26 @@ class LoginActivity: AppCompatActivity() {
         }
     }
 
+
     @SuppressLint("MissingPermission")
     fun getPhoneNumber(): String {
         var tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
         return tm.line1Number
+    }
+
+    fun getPhoneNetwork(): String {
+        var tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        return tm.networkOperatorName
+    }
+
+
+    fun isTablet(): Char {
+        val screenSizeType = resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK
+        if (screenSizeType == Configuration.SCREENLAYOUT_SIZE_XLARGE ||
+            screenSizeType == Configuration.SCREENLAYOUT_SIZE_LARGE) {
+            return 'T'
+        }
+        return 'P'
     }
 
 }

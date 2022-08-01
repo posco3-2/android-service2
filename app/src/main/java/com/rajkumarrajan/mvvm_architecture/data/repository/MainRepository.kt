@@ -1,6 +1,7 @@
 package com.rajkumarrajan.mvvm_architecture.data.repository
 
 import com.rajkumarrajan.mvvm_architecture.data.api.ApiService
+import com.rajkumarrajan.mvvm_architecture.data.model.App
 import com.rajkumarrajan.mvvm_architecture.data.model.Device
 import com.rajkumarrajan.mvvm_architecture.data.model.User
 import java.time.LocalDateTime
@@ -33,5 +34,9 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
 
     suspend fun checkKakao(user: User): List<User> {
         return apiService.checkKakao(user);
+    }
+
+    suspend fun getAllApps(): List<App>{
+        return apiService.getAllApps();
     }
 }

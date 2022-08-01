@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/BIT/Desktop/android-sample2/MVVM-Coroutines-Retrofit-Hilt/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1825" />
         <entry key="..\:/Users/BIT/Desktop/android-sample2/MVVM-Coroutines-Retrofit-Hilt/app/src/main/res/drawable/apple_resize_35dp.xml" value="0.1" />
         <entry key="..\:/Users/BIT/Desktop/android-sample2/MVVM-Coroutines-Retrofit-Hilt/app/src/main/res/drawable/google_resize_40dp.xml" value="0.1" />
         <entry key="..\:/Users/BIT/Desktop/android-sample2/MVVM-Coroutines-Retrofit-Hilt/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
@@ -11,7 +12,7 @@
         <entry key="..\:/Users/BIT/Desktop/android-sample2/MVVM-Coroutines-Retrofit-Hilt/app/src/main/res/drawable/login_button_style.xml" value="0.152" />
         <entry key="..\:/Users/BIT/Desktop/android-sample2/MVVM-Coroutines-Retrofit-Hilt/app/src/main/res/layout/activity_detail.xml" value="0.25" />
         <entry key="..\:/Users/BIT/Desktop/android-sample2/MVVM-Coroutines-Retrofit-Hilt/app/src/main/res/layout/activity_login.xml" value="0.1" />
-        <entry key="..\:/Users/BIT/Desktop/android-sample2/MVVM-Coroutines-Retrofit-Hilt/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/BIT/Desktop/android-sample2/MVVM-Coroutines-Retrofit-Hilt/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/BIT/Desktop/android-sample2/MVVM-Coroutines-Retrofit-Hilt/app/src/main/res/layout/activity_mypage.xml" value="0.33" />
         <entry key="..\:/Users/BIT/Desktop/android-sample2/MVVM-Coroutines-Retrofit-Hilt/app/src/main/res/layout/item_layout.xml" value="0.33605072463768115" />
         <entry key="..\:/Users/BIT/Desktop/android-sample2/MVVM-Coroutines-Retrofit-Hilt/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />

@@ -19,7 +19,7 @@ object NetworkingModule {
 
     @Provides
     fun providesBaseUrl(): String {
-        return "http://43.200.14.78:8000/user-service/"
+        return "http://43.200.14.78:8000/"
     }
 
     @Provides
@@ -58,7 +58,6 @@ object NetworkingModule {
     fun provideRestApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
     }
-
 
 
 }

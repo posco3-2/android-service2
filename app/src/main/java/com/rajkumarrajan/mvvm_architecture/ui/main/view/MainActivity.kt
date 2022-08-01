@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kakao.sdk.user.UserApiClient
 import com.rajkumarrajan.mvvm_architecture.R
+import com.rajkumarrajan.mvvm_architecture.data.model.App
 import com.rajkumarrajan.mvvm_architecture.data.model.User
 import com.rajkumarrajan.mvvm_architecture.databinding.ActivityMainBinding
 import com.rajkumarrajan.mvvm_architecture.ui.main.adapter.MainAdapter
@@ -66,7 +67,7 @@ class MainActivity : AppCompatActivity() {
     // User Data overserver
     private fun setupAPICall() {
 
-        mainViewModel.fetchUsers().observe(this, Observer {
+        mainViewModel.getAllApp().observe(this, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
                     progressBar.visibility = View.GONE
@@ -83,9 +84,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     // adapter에 user data list data 추가
-    private fun renderList(users: List<User>) {
+    private fun renderList(apps: List<App>) {
         adapter.apply {
-            addData(users)
+            addData(apps)
             notifyDataSetChanged()
         }
     }
