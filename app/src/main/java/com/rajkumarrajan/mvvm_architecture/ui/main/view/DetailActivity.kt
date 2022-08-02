@@ -22,27 +22,10 @@ class DetailActivity : AppCompatActivity() {
     private val detailViewModel: DetailViewModel by viewModels()
     private lateinit var binding : ActivityDetailBinding
 
-    override fun onCreate(savedInstanceState: Bundle?){
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-
-    //DetailView Model observe
-    private fun setupAPIcall(testInt: Int){
-        detailViewModel.fetchUserId(testInt).observe(this, Observer {
-            when (it.status) {
-                Status.SUCCESS -> {
-
-                }
-                Status.ERROR -> {
-                    Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
-                }
-            }
-
-        })
-
     }
-
 }
 
