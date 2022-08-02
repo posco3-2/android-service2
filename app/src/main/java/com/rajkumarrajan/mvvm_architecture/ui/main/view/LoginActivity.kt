@@ -337,6 +337,8 @@ class LoginActivity: AppCompatActivity() {
                     Log.e("TAG", "사용자 정보 요청 실패", error)
                 }
                 else if (user != null) {
+                    Log.e("TAG", user.kakaoAccount?.profile?.nickname.toString())
+                    Log.e("TAG", getPhoneNumber())
                     kakaocheck(User(name = user.kakaoAccount?.profile?.nickname.toString()
                                     ,phoneNumber=getPhoneNumber()))
                 }
