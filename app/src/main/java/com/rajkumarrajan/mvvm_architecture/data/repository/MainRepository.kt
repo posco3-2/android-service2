@@ -1,5 +1,6 @@
 package com.rajkumarrajan.mvvm_architecture.data.repository
 
+import android.icu.number.IntegerWidth
 import com.rajkumarrajan.mvvm_architecture.data.api.ApiService
 import com.rajkumarrajan.mvvm_architecture.data.model.App
 import com.rajkumarrajan.mvvm_architecture.data.model.Device
@@ -38,5 +39,9 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
 
     suspend fun getAllApps(): List<App>{
         return apiService.getAllApps();
+    }
+
+    suspend fun updateFcmActive(id:Int, fcmActive:Int): Integer{
+        return apiService.updateFcmActive(id, fcmActive)
     }
 }

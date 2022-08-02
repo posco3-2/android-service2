@@ -210,6 +210,7 @@ class LoginActivity: AppCompatActivity() {
 
                 Log.e("regi", (it.data.toString() == "1").toString());
                 if(it.data.toString() == "1"){
+                    prefs.setString("id", id.toString())
                     prefs.setString("userName", binding.id.text.toString())
                     val intent = Intent(this, MainActivity::class.java)
                     ContextCompat.startActivity(this, intent, null )
@@ -222,6 +223,8 @@ class LoginActivity: AppCompatActivity() {
                         }
                         val token = task.result
                         prefs.setString("userName", binding.id.text.toString())
+                        prefs.setString("id", id.toString())
+
                         inputDevice(Device(
                             deviceId = getDeviceId(),
                             phoneNumber = getPhoneNumber(),

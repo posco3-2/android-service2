@@ -37,4 +37,7 @@ interface ApiService {
     @GET("app-service/app")
     suspend fun getAllApps() : List<App>
 
+    @PUT("user-service/device/updateFcm/{id}")
+    suspend fun updateFcmActive(@Path("id") id:Int, @Body fcmActive: Int) : Integer
+
 }
