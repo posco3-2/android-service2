@@ -28,6 +28,20 @@ class DetailActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
+    //DetailView Model observe
+    private fun setupAPIcall(testInt: Int){
+        detailViewModel.fetchUserId(testInt).observe(this, Observer {
+            when (it.status) {
+                Status.SUCCESS -> {
+
+                }
+                Status.ERROR -> {
+                    Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                }
+            }
+
+        })
+
     }
 
 }
