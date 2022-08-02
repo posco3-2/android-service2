@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -17,13 +18,17 @@ import com.posco.posco_store.ui.main.view.DetailActivity
 import kotlinx.android.synthetic.main.activity_detail.view.*
 import kotlinx.android.synthetic.main.item_layout.view.*
 import java.io.File
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 class MainAdapter @Inject constructor(
 ) : RecyclerView.Adapter<MainAdapter.DataViewHolder>() {
 
     private var apps: ArrayList<App> = ArrayList()
+    private var appFilterList : ArrayList<App> = ArrayList()
     private var files: ArrayList<FileInfoDto> = ArrayList()
+
 
     class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(app: App) {
@@ -37,6 +42,7 @@ class MainAdapter @Inject constructor(
             itemView.textViewUserEmail.text = app.version
 
         }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -47,11 +53,11 @@ class MainAdapter @Inject constructor(
             )
         )
 
-    override fun getItemCount(): Int = apps.size
+    override fun getItemCount(): Int = appFilterList.size
 
     //user data List binding
     override fun onBindViewHolder(holder: MainAdapter.DataViewHolder, position: Int) {
-        holder.bind(apps[position])
+        holder.bind(appFilterList.get(position))
 
         //클릭시 user detail page로 이동
         holder.itemView.setOnClickListener{
@@ -62,9 +68,40 @@ class MainAdapter @Inject constructor(
         }
     }
 
+    fun getFilter(): Filter{
+        return object: Filter(){
+            override fun performFiltering(constraint: CharSequence): FilterResults{
+                val charString = constraint.toString()
+                if(charString.isEmpty()){
+                    appFilterList = apps
+                }else{
+                    val resultList = ArrayList<App>()
+                    for( row in apps){
+                        if(row.appName?.toLowerCase()?.contains(constraint.toString().toLowerCase()) == true){
+                            resultList.add(row)
+                        }
+                    }
+                    appFilterList = resultList
+                }
+                val filterResults = FilterResults()
+                filterResults.values = appFilterList
+                return filterResults
+            }
+
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                appFilterList = results?.values as ArrayList<App> /* = java.util.ArrayList<com.posco.posco_store.data.model.App> */
+                notifyDataSetChanged()
+            }
+        }
+    }
+
 
     fun addData(app: List<App>) {
         this.apps.apply {
+            clear()
+            addAll(app)
+        }
+        this.appFilterList.apply {
             clear()
             addAll(app)
         }

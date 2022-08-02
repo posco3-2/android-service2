@@ -2,6 +2,8 @@ package com.posco.posco_store.ui.main.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -11,7 +13,6 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.posco.posco_store.data.model.App
-import com.posco.posco_store.data.model.FileInfoDto
 import com.posco.posco_store.databinding.ActivityMainBinding
 import com.posco.posco_store.ui.main.adapter.MainAdapter
 import com.posco.posco_store.ui.main.viewmodel.MainViewModel
@@ -25,9 +26,7 @@ class MainActivity : AppCompatActivity() {
     private val mainViewModel: MainViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
 
-
-    @Inject
-    lateinit var adapter: MainAdapter
+    var adapter: MainAdapter = MainAdapter()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,12 +44,27 @@ class MainActivity : AppCompatActivity() {
             ContextCompat.startActivity(this, intent, null )
         }
 
+        binding.searchEdit.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                adapter.getFilter().filter(s)
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+
+            }
+
+        })
+
+
     }
 
     // user List View 
     private fun setupUI() {
         recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = MainAdapter()
         recyclerView.addItemDecoration(
             DividerItemDecoration(
                 recyclerView.context,
