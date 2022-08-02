@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         setupUI()
         setupAPICall()
 
-        binding.button.setOnClickListener {
+        binding.settingBtn.setOnClickListener {
             val intent = Intent(this, MyPageActivity::class.java)
             ContextCompat.startActivity(this, intent, null )
         }

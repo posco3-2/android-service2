@@ -1,17 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView5"
+    <ImageView
+        android:id="@+id/logo_img"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="117dp"
-        tools:layout_editor_absoluteY="104dp"
-        tools:ignore="MissingConstraints"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/minidustlogo"
+        app:layout_constraintEnd_toStartOf="@id/app_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="spread" />
+
+    <TextView
+        android:id="@+id/app_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="MINIDUST"
+        android:textColor="@color/blue_button_selected"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/version_info"
+        app:layout_constraintStart_toEndOf="@id/logo_img"
+        app:layout_constraintTop_toTopOf="@id/logo_img" />
+
+    <TextView
+        android:id="@+id/version_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="v 0.0.1"
+        app:layout_constraintBottom_toBottomOf="@+id/logo_img"
+        app:layout_constraintStart_toStartOf="@id/app_name"
+        app:layout_constraintTop_toBottomOf="@id/app_name" />
+
+
+    <Button
+        android:id="@+id/install_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/login_button_style"
+        android:backgroundTint="@color/blue_button_selected"
+        android:text="설치"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/version_info" />
+
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/app_info_img"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:padding="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/install_btn" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="앱정보"
+        android:textColor="@color/blue_button_selected"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/install_btn"
+        app:layout_constraintTop_toBottomOf="@id/app_info_img" />
+
+    <TextView
+        android:id="@+id/app_info_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/textView1"
+        app:layout_constraintTop_toBottomOf="@+id/textView1"
+        android:layout_marginTop="10dp"
+        android:text="미세먼지 정보를 측정하고 알림을 전달해주는 앱 입니다."/>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="업데이트 정보"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/blue_button_selected"
+        app:layout_constraintTop_toBottomOf="@id/app_info_text"
+        app:layout_constraintStart_toStartOf="@id/app_info_text"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
