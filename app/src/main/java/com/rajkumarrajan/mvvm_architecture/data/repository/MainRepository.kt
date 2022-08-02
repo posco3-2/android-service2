@@ -40,6 +40,10 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
     suspend fun getAllApps(): List<App>{
         return apiService.getAllApps();
     }
+    //detail 정보 알기 추가
+    suspend fun getAppDetails(id: String): App{
+        return apiService.getAppDetails(id)
+    }
 
     suspend fun updateFcmActive(id:Int, fcmActive:Int): Integer{
         return apiService.updateFcmActive(id, fcmActive)

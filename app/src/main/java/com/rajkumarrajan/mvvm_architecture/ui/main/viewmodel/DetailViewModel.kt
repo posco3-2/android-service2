@@ -15,15 +15,11 @@ class DetailViewModel @Inject constructor(
 ) : ViewModel()
 {
 
-
-
-
-
     // detail data by Id
-    fun fetchUserId(testInt: Int) = liveData(Dispatchers.IO){
+    fun fetchAppId(dataId: String) = liveData(Dispatchers.IO){
         emit(Resource.loading(null))
         try{
-            emit(Resource.success(data = mainRepository.getUserById(testInt)))
+            emit(Resource.success(data = mainRepository.getAppDetails(dataId)))
         } catch (exception: Exception){
             emit(Resource.error(exception.message ?:"ERROR ", data = null))
         }
