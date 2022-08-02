@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.rajkumarrajan.mvvm_architecture">
+    package="com.posco.posco_store">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
@@ -9,7 +9,7 @@
         android:maxSdkVersion="29" />
 
     <application
-        android:name=".MainApplication"
+        android:name="com.posco.posco_store.MainApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -29,20 +29,20 @@
                 <data android:host="oauth" android:scheme="kakao563d01ea237202c1de004f03316bf42c"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.main.view.LoginActivity">
+        <activity android:name="com.posco.posco_store.ui.main.view.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.main.view.MainActivity">
+        <activity android:name="com.posco.posco_store.ui.main.view.MainActivity">
         </activity>
-        <activity android:name=".ui.main.view.DetailActivity">
+        <activity android:name="com.posco.posco_store.ui.main.view.DetailActivity">
         </activity>
-        <activity android:name=".ui.main.view.MyPageActivity">
+        <activity android:name="com.posco.posco_store.ui.main.view.MyPageActivity">
         </activity>
        <service
-            android:name=".MyFirebaseMessagingService"
+            android:name="com.posco.posco_store.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
