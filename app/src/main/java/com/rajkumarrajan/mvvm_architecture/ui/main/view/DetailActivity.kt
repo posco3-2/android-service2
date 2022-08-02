@@ -35,7 +35,7 @@ class DetailActivity : AppCompatActivity() {
         detailViewModel.fetchUserId(testInt).observe(this, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
-                    textView5.text = it.data.toString()
+
                 }
                 Status.ERROR -> {
                     Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()

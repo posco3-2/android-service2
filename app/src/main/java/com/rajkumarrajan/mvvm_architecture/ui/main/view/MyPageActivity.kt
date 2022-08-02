@@ -46,7 +46,7 @@ class MyPageActivity : AppCompatActivity() {
 
         val id: Int = LoginActivity.prefs.getString("id","No").toInt()
 
-        binding.button2.setOnClickListener {
+        binding.imageView.setOnClickListener {
             finish()
         }
 
