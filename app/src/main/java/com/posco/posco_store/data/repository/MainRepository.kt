@@ -35,8 +35,8 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.checkKakao(user);
     }
 
-    suspend fun getAllApps(): List<App>{
-        return apiService.getAllApps();
+    suspend fun getAllApps(index: Int): List<App>{
+        return apiService.getAllApps(index);
     }
     //detail 정보 알기 추가
     suspend fun getAppDetails(id: String): App{

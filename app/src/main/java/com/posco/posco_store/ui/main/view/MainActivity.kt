@@ -7,11 +7,14 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.NonNull
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.kakao.sdk.common.KakaoSdk.type
 import com.posco.posco_store.data.model.App
 import com.posco.posco_store.databinding.ActivityMainBinding
 import com.posco.posco_store.ui.main.adapter.MainAdapter
@@ -19,14 +22,14 @@ import com.posco.posco_store.ui.main.viewmodel.MainViewModel
 import com.posco.posco_store.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val mainViewModel: MainViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
-
+    private val isLoading: Boolean = false
     var adapter: MainAdapter = MainAdapter()
+    private var index: Int = 10
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +62,20 @@ class MainActivity : AppCompatActivity() {
 
         })
 
+        binding.recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager?)!!.findLastCompletelyVisibleItemPosition() // 화면에 보이는 마지막 아이템의 position
+                val itemTotalCount = recyclerView.adapter!!.itemCount - 1 // 어댑터에 등록된 아이템의 총 개수 -1
 
+                // 스크롤이 끝에 도달했는지 확인
+                if (!binding.recyclerView.canScrollHorizontally(1) && lastVisibleItemPosition == itemTotalCount) {
+                    adapter.deleteLoading()
+                    index += 10
+                    mainViewModel.getAllApp(index)
+                }
+            }
+        })
     }
 
     // user List View 
@@ -78,12 +94,13 @@ class MainActivity : AppCompatActivity() {
     // User Data overserver
     private fun setupAPICall() {
 
-        mainViewModel.getAllApp().observe(this, Observer {
+        mainViewModel.getAllApp(index).observe(this, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
                     progressBar.visibility = View.GONE
                     it.data?.let { usersData -> renderList(usersData) }
                     recyclerView.visibility = View.VISIBLE
+
                 }
                 Status.ERROR -> {
                     //Handle Error
