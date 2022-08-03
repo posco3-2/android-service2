@@ -4,7 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
+import android.widget.AbsListView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.NonNull
@@ -22,15 +24,14 @@ import com.posco.posco_store.ui.main.viewmodel.MainViewModel
 import com.posco.posco_store.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.serialization.descriptors.buildSerialDescriptor
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val mainViewModel: MainViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
-    private val isLoading: Boolean = false
     var adapter: MainAdapter = MainAdapter()
     private var index: Int = 10
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -41,6 +42,16 @@ class MainActivity : AppCompatActivity() {
 
         setupUI()
         setupAPICall()
+
+        adapter.setOnItemClickListener {
+            val bundle = Bundle().apply {
+                putSerializable("selected_item",it)
+            }
+            val intent = Intent(this,DetailActivity::class.java)
+            intent.putExtras(bundle)
+
+            this.startActivity(intent)
+        }
 
         binding.settingBtn.setOnClickListener {
             val intent = Intent(this, MyPageActivity::class.java)
@@ -71,8 +82,11 @@ class MainActivity : AppCompatActivity() {
                 // 스크롤이 끝에 도달했는지 확인
                 if (!binding.recyclerView.canScrollHorizontally(1) && lastVisibleItemPosition == itemTotalCount) {
                     adapter.deleteLoading()
-                    index += 10
-                    mainViewModel.getAllApp(index)
+
+                    Log.i("왜 안됑?", index.toString())
+
+                    mainViewModel.getAllApp(++index)
+                    setupAPICall()
                 }
             }
         })
@@ -101,12 +115,15 @@ class MainActivity : AppCompatActivity() {
                     it.data?.let { usersData -> renderList(usersData) }
                     recyclerView.visibility = View.VISIBLE
 
+                    adapter.notifyDataSetChanged()
+
                 }
                 Status.ERROR -> {
                     //Handle Error
                     progressBar.visibility = View.GONE
                     Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
                 }
+                else -> {}
             }
         })
     }
@@ -118,4 +135,8 @@ class MainActivity : AppCompatActivity() {
             notifyDataSetChanged()
         }
     }
+
+
+
+
 }
