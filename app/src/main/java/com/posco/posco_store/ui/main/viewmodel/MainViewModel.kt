@@ -14,10 +14,10 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     //user data input
-    fun getAllApp() = liveData(Dispatchers.IO) {
+    fun getAllApp(index: Int) = liveData(Dispatchers.IO) {
         emit(Resource.loading(null))
         try {
-            emit(Resource.success(data = mainRepository.getAllApps()))
+            emit(Resource.success(data = mainRepository.getAllApps(index)))
         } catch (exception: Exception) {
             emit(Resource.error(exception.message ?: "Error Occurred!", data = null))
         }
