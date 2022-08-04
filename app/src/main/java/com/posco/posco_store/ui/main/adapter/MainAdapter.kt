@@ -1,12 +1,14 @@
 package com.posco.posco_store.ui.main.adapter
 
-import android.content.Intent
+import android.content.ClipData
 import android.view.LayoutInflater
-import android.view.View
+
 import android.view.ViewGroup
 import android.widget.Filter
+import android.widget.Filterable
 
-import androidx.core.content.ContextCompat
+
+
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.posco.posco_store.R
@@ -14,36 +16,44 @@ import com.posco.posco_store.data.model.App
 import com.posco.posco_store.data.model.FileInfoDto
 import com.posco.posco_store.databinding.ItemLayoutBinding
 import com.posco.posco_store.databinding.ItemLoadingBinding
-import com.posco.posco_store.ui.main.view.DetailActivity
-
 import kotlinx.android.synthetic.main.item_layout.view.*
-import kotlinx.coroutines.NonDisposableHandle.parent
+
 
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
 class MainAdapter @Inject constructor(
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
-    private val VIEW_TYPE_ITEM =0
-    private val VIEW_TYPE_LOADING =1
+    private val VIEW_TYPE_ITEM = 0
+    private val VIEW_TYPE_LOADING = 1
     private var apps: ArrayList<App> = ArrayList()
-    private var appFilterList: ArrayList<App> = ArrayList()
+    var appFilterList: ArrayList<App> = ArrayList()
     private var files: ArrayList<FileInfoDto> = ArrayList()
+    private var mShowLoading = false
 
 
-    inner class DataViewHolder(itemView: ItemLayoutBinding) : RecyclerView.ViewHolder(itemView.root) {
+
+    inner class DataViewHolder(itemView: ItemLayoutBinding) :
+        RecyclerView.ViewHolder(itemView.root) {
+
         fun bind(app: App) {
             itemView.textViewUserName.text = app.appName
-            val fileInfo: FileInfoDto = app.iconFileInfoDto!!
+            val fileInfo = app.iconFileInfoDto
             val imgUrl =
                 "http://ec2-43-200-14-78.ap-northeast-2.compute.amazonaws.com:8000/file-service/file/image/" +
-                        fileInfo.location + "/" + fileInfo.changedName
+                        fileInfo?.location + "/" + fileInfo?.changedName
 
-            Glide.with(itemView).load(imgUrl).error(R.drawable.poscologo)
+            Glide.with(itemView).load(imgUrl).error(R.drawable.posco)
                 .into(itemView.imageViewIcon)
 
             itemView.textViewUserEmail.text = app.version
+
+            itemView.rootView.setOnClickListener {
+                onItemClickListener?.let {
+                    it(app)
+                }
+            }
 
         }
 
@@ -55,51 +65,43 @@ class MainAdapter @Inject constructor(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when(appFilterList[position].appName){
-            " " -> VIEW_TYPE_LOADING
-            else -> VIEW_TYPE_ITEM
+        if(position < appFilterList.size){
+            return VIEW_TYPE_ITEM
         }
+        return  VIEW_TYPE_LOADING
 
     }
-
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (viewType) {
+         when (viewType) {
             VIEW_TYPE_ITEM -> {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = ItemLayoutBinding.inflate(layoutInflater, parent, false)
-                DataViewHolder(binding)
+                return DataViewHolder(binding)
             }
-            else ->{
+            else -> {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = ItemLoadingBinding.inflate(layoutInflater, parent, false)
-                LoadingViewHolder(binding)
+                return LoadingViewHolder(binding)
             }
+
+
+
         }
     }
 
-    override fun getItemCount(): Int = appFilterList.size
+    override fun getItemCount(): Int = appFilterList.size + if(mShowLoading) {1} else{0}
 
     //user data List binding
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if(holder is DataViewHolder){
+        if (holder is MainAdapter.DataViewHolder) {
             holder.bind(appFilterList.get(position))
-        }else{
-
         }
-        //holder.bind(appFilterList.get(position))
 
-//        //클릭시 user detail page로 이동
-//        holder.itemView.setOnClickListener {
-//            val intent = Intent(holder.itemView?.context, DetailActivity::class.java)
-//            // intent로 id값 전달
-//            intent.putExtra("id", "2")
-//            ContextCompat.startActivity(holder.itemView.context, intent, null)
-//        }
     }
 
-    fun getFilter(): Filter {
+    override fun getFilter(): Filter {
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence): FilterResults {
                 val charString = constraint.toString()
@@ -130,31 +132,26 @@ class MainAdapter @Inject constructor(
 
     }
 
-
-    fun deleteLoading(){
-        apps.removeAt(apps.lastIndex)
+    fun hideLoading(){
+        mShowLoading = false
+        notifyItemRemoved(itemCount)
     }
-
+    fun showLoading(){
+        mShowLoading = true
+        notifyItemInserted(itemCount+1)
+    }
 
     fun addData(app: List<App>) {
-        this.apps.apply {
-            clear()
-            addAll(app)
-
-        }
-        apps.add(App(" ", " "))
-
-        this.appFilterList.apply {
-            clear()
-            addAll(app)
-        }
-        appFilterList.add(App(" ", " "))
-
-
+        apps.addAll(app)
+        appFilterList.addAll(app)
 
     }
 
+    private var onItemClickListener:((App)->Unit)?=null
 
+    fun setOnItemClickListener(listener: (App)->Unit){
+        onItemClickListener = listener
+    }
 
 
 }

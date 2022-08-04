@@ -42,6 +42,9 @@ android {
         correctErrorTypes true
     }
 
+    androidExtensions{
+        experimental = true
+    }
 }
 
 dependencies {
@@ -107,6 +110,8 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.10.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
+    //
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0")
 }
 
 apply plugin: 'com.google.gms.google-services'

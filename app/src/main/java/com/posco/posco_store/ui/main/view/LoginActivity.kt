@@ -207,6 +207,12 @@ class LoginActivity: AppCompatActivity() {
             Status.SUCCESS ->{
                 Log.e("regi", (it.data.toString() == "1").toString());
                 if(it.data.toString() == "1"){
+                    prefs.setString("id", id.toString())
+                    prefs.setString("userName", binding.id.text.toString())
+                    val intent = Intent(this, MainActivity::class.java)
+                    Log.i("머가 문제야","여긴가")
+                    ContextCompat.startActivity(this, intent, null )
+
 
                 }else{
                     Log.e("처음등록하는","아이디")
