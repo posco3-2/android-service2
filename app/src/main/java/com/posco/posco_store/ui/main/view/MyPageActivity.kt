@@ -2,6 +2,7 @@ package com.posco.posco_store.ui.main.view
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
 import android.telephony.TelephonyManager
@@ -10,6 +11,7 @@ import androidx.lifecycle.Observer
 
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.posco.posco_store.databinding.ActivityMypageBinding
 import com.posco.posco_store.ui.main.viewmodel.MyPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,12 +32,22 @@ class MyPageActivity : AppCompatActivity() {
 
         binding.textView6.text  = getPhoneNumber()
         binding.textView8.text = getDeviceId()
-        binding.textView12.text = LoginActivity.prefs.getString("userName","No")
+        binding.textView12.text = LoginActivity.prefs.getString("userId","No")
 
-        val id: Int = LoginActivity.prefs.getString("id","No").toInt()
+        val id: Int = LoginActivity.prefs.getString("id","0").toInt()
+        if(id == 0){
+            val intent = Intent(this, LoginActivity::class.java)
+            ContextCompat.startActivity(this, intent, null )
+        }
 
         binding.imageView.setOnClickListener {
             finish()
+        }
+
+        binding.button2.setOnClickListener {
+            LoginActivity.prefs.setString("id","0")
+            val intent = Intent(this, LoginActivity::class.java)
+            ContextCompat.startActivity(this, intent, null )
         }
 
         binding.switch1.setOnCheckedChangeListener{CompoundButton, onSwitch ->

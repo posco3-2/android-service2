@@ -34,6 +34,16 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun addDevice(device: Device) = liveData(Dispatchers.IO){
+        emit(Resource.loading(null))
+        try {
+            emit(Resource.success(data = mainRepository.addDevice(device)))
+        } catch (exception: Exception) {
+            emit(Resource.error(exception.message ?: "Error Occurred!", data = null))
+        }
+    }
+
+
     fun checkRegiDevice(id: Int) = liveData(Dispatchers.IO) {
         emit(Resource.loading(null))
         try {

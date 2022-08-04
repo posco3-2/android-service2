@@ -38,4 +38,8 @@ interface ApiService {
     @PUT("user-service/device/updateFcm/{id}")
     suspend fun updateFcmActive(@Path("id") id:Int, @Body fcmActive: Int) : Integer
 
+    @POST("user-service/device/login_1")
+    suspend fun addDevice(@Body device: Device) : User
+
+
 }

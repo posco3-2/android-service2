@@ -46,4 +46,8 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
     suspend fun updateFcmActive(id:Int, fcmActive:Int): Integer{
         return apiService.updateFcmActive(id, fcmActive)
     }
+
+    suspend fun addDevice(device: Device): User{
+        return apiService.addDevice(device)
+    }
 }

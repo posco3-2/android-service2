@@ -22,4 +22,6 @@ class ApiHelper @Inject constructor(private val apiService: ApiService) {
     suspend fun getAllApps(index:Int) = apiService.getAllApps(index)
 
     suspend fun updateFcmActive(id: Int, fcmActive: Int) = apiService.updateFcmActive(id, fcmActive)
+
+    suspend fun addDevice(device: Device) = apiService.addDevice(device)
 }
