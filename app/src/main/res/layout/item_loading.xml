@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <ProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/progress_down_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
