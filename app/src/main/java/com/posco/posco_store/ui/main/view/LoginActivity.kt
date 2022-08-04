@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Build
@@ -65,23 +64,31 @@ class LoginActivity: AppCompatActivity() {
 
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         prefs = MySharedPreferences(applicationContext)
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
 
-
-
-
         setContentView(binding.root)
+
+        val id: Int = prefs.getString("id","0" ).toInt()
+
+        Log.e("id", id.toString())
+
+        if(id != 0){
+            val intent = Intent(this, MainActivity::class.java)
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            ContextCompat.startActivity(this, intent, null )
+        }
 
         binding.button.setOnClickListener {
             val id = binding.id.text.toString()
             val password = binding.password.text.toString()
-
             setupAPICall(User(userId = id, password = password))
-
         }
+
         binding.kakaoLoginButton.setOnClickListener {
             if(UserApiClient.instance.isKakaoTalkLoginAvailable(this)){
                 UserApiClient.instance.loginWithKakaoTalk(this, callback = callback)
@@ -111,8 +118,22 @@ class LoginActivity: AppCompatActivity() {
                                             email = user.email.toString()
                                             Log.e(TAG, "email : $email")
                                             Log.e(TAG,  user.displayName.toString())
-                                            kakaocheck(User(name = user.displayName.toString()
-                                                ,phoneNumber=getPhoneNumber()))
+                                            FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                                                if (!task.isSuccessful) {
+                                                    return@OnCompleteListener
+                                                }
+                                                val fcmToken = task.result
+                                                addDevice(Device(
+                                                    deviceId = getDeviceId(),
+                                                    phoneNumber = getPhoneNumber(),
+                                                    userName = user.displayName.toString(),
+                                                    deviceOs = 'A',
+                                                    deviceModel = getDeviceModel(),
+                                                    fcmToken = fcmToken ,
+                                                    deviceOsType = isTablet(),
+                                                    carrier = getPhoneNetwork()
+                                                ))
+                                            })
                                             val googleSignInToken = account.idToken ?: ""
                                             if (googleSignInToken != "") {
                                                 Log.e(TAG, "googleSignInToken : $googleSignInToken")
@@ -142,7 +163,6 @@ class LoginActivity: AppCompatActivity() {
                     }
                 }
             }
-
 
             if (ActivityCompat.checkSelfPermission(
                     this,
@@ -182,37 +202,11 @@ class LoginActivity: AppCompatActivity() {
 
     })
 
-    private fun kakaocheck(user: User) = loginViewModel.checkKakao(user).observe(this, Observer {
-        when (it.status){
-            Status.SUCCESS ->{
-                if(it.data?.get(0)?.id.toString() != null){
-                    val userId = it.data?.get(0)?.id
-                    val userName = it.data?.get(0)?.name
-                    it.data?.get(0)?.id?.toInt()?.let { it1 -> checkRegiDevice(it1,
-                        userId!!, userName!!) }
-                }
-
-            }
-            Status.ERROR -> {
-                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
-            }
-        }
-
-    })
-
-
     private fun checkRegiDevice(id: Int, userId: Int, userName: String) = loginViewModel.checkRegiDevice(id).observe(this, Observer {
         when (it.status){
-
-
             Status.SUCCESS ->{
-
                 Log.e("regi", (it.data.toString() == "1").toString());
                 if(it.data.toString() == "1"){
-                    prefs.setString("id", id.toString())
-                    prefs.setString("userName", binding.id.text.toString())
-                    val intent = Intent(this, MainActivity::class.java)
-                    ContextCompat.startActivity(this, intent, null )
 
                 }else{
                     Log.e("처음등록하는","아이디")
@@ -221,9 +215,6 @@ class LoginActivity: AppCompatActivity() {
                             return@OnCompleteListener
                         }
                         val token = task.result
-                        prefs.setString("userName", binding.id.text.toString())
-                        prefs.setString("id", id.toString())
-
                         inputDevice(Device(
                             deviceId = getDeviceId(),
                             phoneNumber = getPhoneNumber(),
@@ -248,8 +239,6 @@ class LoginActivity: AppCompatActivity() {
 
     })
 
-
-
     private fun inputDevice(device: Device) = loginViewModel.inputDevice(device).observe(this, Observer {
         when (it.status){
             Status.SUCCESS ->{
@@ -263,39 +252,13 @@ class LoginActivity: AppCompatActivity() {
 
     })
 
-    private fun updateDevice(id: Int, updateDate: String) = loginViewModel.updateRegiDevice(id, updateDate).observe(this, Observer {
-        when (it.status){
-            Status.SUCCESS ->{
-                val intent = Intent(this, MainActivity::class.java)
-                ContextCompat.startActivity(this, intent, null )
-            }
-            Status.ERROR -> {
-                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
-            }
-        }
-
-    })
-
-
     fun getDeviceId(): String {
         return Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
     }
 
-
     // android devcie model 확인
     fun getDeviceModel(): String {
         return Build.MODEL
-    }
-
-    // android devcie os 확인
-    fun getDeviceOs(): String {
-        return Build.VERSION.RELEASE.toString()
-    }
-
-    // android app version 확인
-    fun getAppVersion(): String {
-        val info: PackageInfo = this.packageManager.getPackageInfo(this.packageName, 0)
-        return info.versionName
     }
 
     val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
@@ -336,15 +299,32 @@ class LoginActivity: AppCompatActivity() {
                     Log.e("TAG", "사용자 정보 요청 실패", error)
                 }
                 else if (user != null) {
-                    Log.e("TAG", user.kakaoAccount?.profile?.nickname.toString())
                     Log.e("TAG", getPhoneNumber())
-                    kakaocheck(User(name = user.kakaoAccount?.profile?.nickname.toString()
-                                    ,phoneNumber=getPhoneNumber()))
+                    FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                        if (!task.isSuccessful) {
+                            return@OnCompleteListener
+                        }
+                        val fcmToken = task.result
+
+                        addDevice(Device(
+                            deviceId = getDeviceId(),
+                            phoneNumber = getPhoneNumber(),
+                            userName = user.kakaoAccount?.profile?.nickname.toString(),
+                            deviceOs = 'A',
+                            deviceModel = getDeviceModel(),
+                            fcmToken = fcmToken ,
+                            deviceOsType = isTablet(),
+                            carrier = getPhoneNetwork()
+                        ))
+
+
+                    })
+
+
                 }
             }
         }
     }
-
 
     @SuppressLint("MissingPermission")
     fun getPhoneNumber(): String {
@@ -366,5 +346,28 @@ class LoginActivity: AppCompatActivity() {
         }
         return 'P'
     }
+
+    private fun addDevice(device: Device) = loginViewModel.addDevice(device).observe(this, Observer {
+        when (it.status){
+            Status.SUCCESS ->{
+                if(it.data?.id.toString() != null){
+                    val id = it.data?.id
+                    val userId = it.data?.userId
+                    val userName = it.data?.name
+
+                    prefs.setString("id", id.toString())
+                    prefs.setString("userId", userId.toString())
+                    prefs.setString("userName", userName.toString())
+                    val intent = Intent(this, MainActivity::class.java)
+                    ContextCompat.startActivity(this, intent, null )
+                }
+            }
+            Status.ERROR -> {
+                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+            }
+        }
+
+    })
+
 
 }

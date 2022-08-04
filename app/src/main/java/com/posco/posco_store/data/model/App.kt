@@ -16,4 +16,4 @@ data class App (
     @SerializedName("iconFileInfo")
     val iconFileInfoDto: FileInfoDto? =null
 
-    )
+)
