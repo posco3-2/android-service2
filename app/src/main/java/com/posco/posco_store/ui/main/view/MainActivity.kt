@@ -41,11 +41,11 @@ class MainActivity : AppCompatActivity() {
 
 
         val id: Int = LoginActivity.prefs.getString("id","0" ).toInt()
-        if(id == 0){
+        if(id == 0) {
             val intent = Intent(this, LoginActivity::class.java)
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            ContextCompat.startActivity(this, intent, null )
-
+            ContextCompat.startActivity(this, intent, null)
+        }
 
         adapter.setOnItemClickListener {
             val bundle = Bundle().apply {
@@ -148,7 +148,6 @@ class MainActivity : AppCompatActivity() {
             notifyDataSetChanged()
         }
     }
-
 
 
 
