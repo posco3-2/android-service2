@@ -1,5 +1,6 @@
 package com.posco.posco_store.ui.main.view
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -29,13 +30,14 @@ class MainActivity : AppCompatActivity() {
     var adapter: MainAdapter = MainAdapter()
     private var index: Int = 10
     var isLoading = false
+    private lateinit var context: Context
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        context = this;
         setupUI()
         setupAPICall()
 
@@ -51,10 +53,10 @@ class MainActivity : AppCompatActivity() {
             val bundle = Bundle().apply {
                 putSerializable("selected_item",it)
             }
-            val intent = Intent(this,DetailActivity::class.java)
+            Log.i("bundle 확인", bundle.getSerializable("selected_item").toString())
+            val intent = Intent(this@MainActivity,DetailActivity::class.java)
             intent.putExtras(bundle)
-
-            this.startActivity(intent)
+            context.startActivity(intent)
         }
 
         binding.settingBtn.setOnClickListener {
@@ -92,11 +94,8 @@ class MainActivity : AppCompatActivity() {
                 // 스크롤이 끝에 도달했는지 확인
              //   if ( lastVisibleItemPosition == itemTotalCount) {
                 if(!isLoading) {
-                    adapter.showLoading()
-                    Log.i("여기가","되는가")
+                    //adapter.showLoading()
                     if ((visibleItemCount + firstVisibleItemPosition) >= itemTotalCount) {
-
-                        Log.i("왜 안됑?", index.toString())
 
                         index += 10
                         mainViewModel.getAllApp(index)

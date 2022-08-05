@@ -1,23 +1,16 @@
 package com.posco.posco_store.ui.main.adapter
 
-import android.content.ClipData
 import android.view.LayoutInflater
-
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-
-
-
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.posco.posco_store.R
 import com.posco.posco_store.data.model.App
-import com.posco.posco_store.data.model.FileInfoDto
 import com.posco.posco_store.databinding.ItemLayoutBinding
 import com.posco.posco_store.databinding.ItemLoadingBinding
 import kotlinx.android.synthetic.main.item_layout.view.*
-
 
 import javax.inject.Inject
 import kotlin.collections.ArrayList
@@ -29,9 +22,7 @@ class MainAdapter @Inject constructor(
     private val VIEW_TYPE_LOADING = 1
     private var apps: ArrayList<App> = ArrayList()
     var appFilterList: ArrayList<App> = ArrayList()
-    private var files: ArrayList<FileInfoDto> = ArrayList()
     private var mShowLoading = false
-
 
 
     inner class DataViewHolder(itemView: ItemLayoutBinding) :
@@ -57,7 +48,10 @@ class MainAdapter @Inject constructor(
 
         }
 
+
+
     }
+
 
     inner class LoadingViewHolder(private val binding: ItemLoadingBinding) :
         RecyclerView.ViewHolder(binding.root) {
