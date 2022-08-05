@@ -1,5 +1,6 @@
 package com.posco.posco_store.ui.main.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
@@ -30,7 +31,8 @@ class MainAdapter @Inject constructor(
 
         fun bind(app: App) {
             itemView.textViewUserName.text = app.appName
-            val fileInfo = app.iconFileInfoDto
+            val fileInfo = app.iconFileInfo
+            Log.i("fileinfodto", app.toString() )
             val imgUrl =
                 "http://ec2-43-200-14-78.ap-northeast-2.compute.amazonaws.com:8000/file-service/file/image/" +
                         fileInfo?.location + "/" + fileInfo?.changedName

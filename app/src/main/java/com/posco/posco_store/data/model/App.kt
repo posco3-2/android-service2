@@ -29,9 +29,9 @@ data class App (
 
     val os: String? = null,
 
-    val iconFileInfoDto: FileInfoDto? =null,
+    val iconFileInfo: FileInfoDto? =null,
 
-    val installFileInfoDto: FileInfoDto?= null,
+    val installFileInfo: FileInfoDto?= null,
 
     val detailFilesInfo: List<FileInfoDto>? = null
 ): Serializable
