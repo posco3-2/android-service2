@@ -1,6 +1,7 @@
 package com.posco.posco_store.data.model
 
 
+import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 
@@ -20,11 +21,17 @@ data class App (
 
     val iconFile: Int? = null,
 
+    val installFile: Int? = null,
+
+    val detailFile: Int? =null,
+
     val version: String? = null,
 
     val os: String? = null,
 
-    val iconFileInfoDto: FileInfoDto? =null
+    val iconFileInfoDto: FileInfoDto? =null,
 
-    ): Serializable
+    val installFileInfoDto: FileInfoDto?= null,
 
+    val detailFilesInfo: List<FileInfoDto>? = null
+): Serializable

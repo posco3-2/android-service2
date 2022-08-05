@@ -1,6 +1,7 @@
 package com.posco.posco_store.data.model
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class FileInfoDto (
     @SerializedName("id")
@@ -13,4 +14,4 @@ data class FileInfoDto (
     val changedName: String? = null,
     @SerializedName("location")
     val location : String? = null
-    )
+    ) : Serializable
