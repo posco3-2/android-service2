@@ -62,9 +62,6 @@ class LoginActivity: AppCompatActivity() {
     private var email: String = ""
     private var tokenId: String? = null
 
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         prefs = MySharedPreferences(applicationContext)
         super.onCreate(savedInstanceState)
@@ -78,9 +75,8 @@ class LoginActivity: AppCompatActivity() {
 
         if(id != 0){
             val intent = Intent(this, MainActivity::class.java)
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            ContextCompat.startActivity(this, intent, null )
+            finishAffinity()
+            startActivity(intent)
         }
 
         binding.button.setOnClickListener {
@@ -185,10 +181,8 @@ class LoginActivity: AppCompatActivity() {
                     binding.password.text = null;
                 }
                 if(it.data?.get(0)?.id.toString() != null){
-
                     val userId = it.data?.get(0)?.id
                     val userName = it.data?.get(0)?.name
-
                     it.data?.get(0)?.id?.toInt()?.let { it1 -> checkRegiDevice(it1,
                         userId!!, userName!!) }
 
@@ -212,8 +206,6 @@ class LoginActivity: AppCompatActivity() {
                     val intent = Intent(this, MainActivity::class.java)
                     Log.i("머가 문제야","여긴가")
                     ContextCompat.startActivity(this, intent, null )
-
-
                 }else{
                     Log.e("처음등록하는","아이디")
                     FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
@@ -311,7 +303,6 @@ class LoginActivity: AppCompatActivity() {
                             return@OnCompleteListener
                         }
                         val fcmToken = task.result
-
                         addDevice(Device(
                             deviceId = getDeviceId(),
                             phoneNumber = getPhoneNumber(),
@@ -322,11 +313,7 @@ class LoginActivity: AppCompatActivity() {
                             deviceOsType = isTablet(),
                             carrier = getPhoneNetwork()
                         ))
-
-
                     })
-
-
                 }
             }
         }
@@ -360,20 +347,18 @@ class LoginActivity: AppCompatActivity() {
                     val id = it.data?.id
                     val userId = it.data?.userId
                     val userName = it.data?.name
-
                     prefs.setString("id", id.toString())
                     prefs.setString("userId", userId.toString())
                     prefs.setString("userName", userName.toString())
                     val intent = Intent(this, MainActivity::class.java)
-                    ContextCompat.startActivity(this, intent, null )
+                    finishAffinity()
+                    startActivity(intent)
                 }
             }
             Status.ERROR -> {
                 Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
             }
         }
-
     })
-
 
 }

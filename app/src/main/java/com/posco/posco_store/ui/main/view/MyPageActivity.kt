@@ -37,7 +37,8 @@ class MyPageActivity : AppCompatActivity() {
         val id: Int = LoginActivity.prefs.getString("id","0").toInt()
         if(id == 0){
             val intent = Intent(this, LoginActivity::class.java)
-            ContextCompat.startActivity(this, intent, null )
+            finishAffinity()
+            startActivity(intent)
         }
 
         binding.imageView.setOnClickListener {
@@ -47,7 +48,8 @@ class MyPageActivity : AppCompatActivity() {
         binding.button2.setOnClickListener {
             LoginActivity.prefs.setString("id","0")
             val intent = Intent(this, LoginActivity::class.java)
-            ContextCompat.startActivity(this, intent, null )
+            finishAffinity()
+            startActivity(intent)
         }
 
         binding.switch1.setOnCheckedChangeListener{CompoundButton, onSwitch ->
