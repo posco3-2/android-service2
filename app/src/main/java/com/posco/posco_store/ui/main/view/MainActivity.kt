@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     private val mainViewModel: MainViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
     var adapter: MainAdapter = MainAdapter()
-    private var index: Int = 10
+    private var index: Int = 0
     var isLoading = false
     private lateinit var context: Context
 

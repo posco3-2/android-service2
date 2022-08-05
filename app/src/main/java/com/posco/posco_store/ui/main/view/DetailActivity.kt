@@ -55,7 +55,7 @@ class DetailActivity : AppCompatActivity() {
         }
         binding.appName.text = appDetail?.appName
         binding.appIdText.text = appDetail?.id
-        val fileInfo = appDetail?.iconFileInfoDto
+        val fileInfo = appDetail?.iconFileInfo
         val imgUrl = "http://ec2-43-200-14-78.ap-northeast-2.compute.amazonaws.com:8000/file-service/file/image/" +
                 fileInfo?.location + "/" + fileInfo?.changedName
         val imgLocation = binding.logoImg
