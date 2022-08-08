@@ -204,8 +204,8 @@ class LoginActivity: AppCompatActivity() {
                     prefs.setString("id", id.toString())
                     prefs.setString("userName", binding.id.text.toString())
                     val intent = Intent(this, MainActivity::class.java)
-                    Log.i("머가 문제야","여긴가")
-                    ContextCompat.startActivity(this, intent, null )
+                    finishAffinity()
+                    startActivity(intent)
                 }else{
                     Log.e("처음등록하는","아이디")
                     FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
@@ -241,7 +241,7 @@ class LoginActivity: AppCompatActivity() {
         when (it.status){
             Status.SUCCESS ->{
                 val intent = Intent(this, MainActivity::class.java)
-                ContextCompat.startActivity(this, intent, null )
+                startActivity(intent)
             }
             Status.ERROR -> {
                 Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
