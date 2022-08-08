@@ -140,7 +140,11 @@ class MainAdapter @Inject constructor(
     fun addData(app: List<App>) {
         apps.addAll(app)
         appFilterList.addAll(app)
+    }
 
+    fun clear(){
+        apps.clear()
+        appFilterList.clear()
     }
 
     private var onItemClickListener:((App)->Unit)?=null
