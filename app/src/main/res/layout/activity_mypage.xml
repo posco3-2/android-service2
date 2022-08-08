@@ -131,6 +131,18 @@
         app:layout_constraintTop_toBottomOf="@+id/view5"
         tools:ignore="MissingConstraints" />
 
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="근무시간외 알림 수신"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/textView10"
+        app:layout_constraintTop_toBottomOf="@+id/view6"
+        tools:ignore="MissingConstraints" />
+
     <View
         android:id="@+id/view6"
         android:layout_width="300dp"
@@ -151,6 +163,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textView10" />
 
+    <Switch
+        android:id="@+id/switch2"
+        android:layout_width="57dp"
+        android:layout_height="28dp"
+        app:layout_constraintEnd_toEndOf="@+id/switch1"
+        app:layout_constraintTop_toTopOf="@+id/textView5" />
+
     <TextView
         android:id="@+id/textView11"
         android:layout_width="wrap_content"
@@ -160,6 +179,18 @@
         android:text="알림을 받을 것인지 여부를 결정할수 있습니다"
         app:layout_constraintStart_toStartOf="@+id/textView10"
         app:layout_constraintTop_toBottomOf="@+id/textView10"
+        tools:ignore="MissingConstraints" />
+
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="12dp"
+        android:text="오전 9시 ~ 오후 6시만 알람이 수신됩니다"
+        app:layout_constraintStart_toStartOf="@+id/textView5"
+        app:layout_constraintTop_toBottomOf="@+id/textView5"
         tools:ignore="MissingConstraints" />
 
     <TextView
@@ -205,12 +236,12 @@
         android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="132dp"
+        android:layout_marginTop="100dp"
         android:text="로그아웃"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view6" />
+        app:layout_constraintTop_toBottomOf="@+id/textView13" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -35,11 +35,13 @@ interface ApiService {
     @GET("app-service/app/{id}")
     suspend fun getAppDetails(@Path("id") id: String) : App
 
-    @PUT("user-service/device/updateFcm/{id}")
-    suspend fun updateFcmActive(@Path("id") id:Int, @Body fcmActive: Int) : Integer
+    @PUT("user-service/device/updateFcm/{fcmName}/{id}")
+    suspend fun updateFcmActive(@Path("id") id:Int, @Path("fcmName") fcmName:String, @Body device: Device) : Integer
 
     @POST("user-service/device/login_1")
     suspend fun addDevice(@Body device: Device) : User
 
+    @GET("user-service/device/device/{userId}")
+    suspend fun getDevice(@Path("userId") userId: Int) : Device
 
 }

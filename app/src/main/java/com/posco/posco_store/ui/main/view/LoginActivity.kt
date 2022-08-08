@@ -322,7 +322,8 @@ class LoginActivity: AppCompatActivity() {
     @SuppressLint("MissingPermission")
     fun getPhoneNumber(): String {
         var tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        return tm.line1Number
+
+        return "0" + tm.line1Number.substring(3 )
     }
 
     fun getPhoneNetwork(): String {

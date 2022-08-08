@@ -43,11 +43,15 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.getAppDetails(id)
     }
 
-    suspend fun updateFcmActive(id:Int, fcmActive:Int): Integer{
-        return apiService.updateFcmActive(id, fcmActive)
+    suspend fun updateFcmActive(id:Int, fcmName: String, device:Device ): Integer{
+        return apiService.updateFcmActive(id, fcmName, device)
     }
 
     suspend fun addDevice(device: Device): User{
         return apiService.addDevice(device)
+    }
+
+    suspend fun getDevice(userId : Int) : Device{
+        return apiService.getDevice(userId)
     }
 }
