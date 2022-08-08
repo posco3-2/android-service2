@@ -4,7 +4,6 @@ import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.appcompat.view.menu.ActionMenuItemView
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -15,7 +14,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.posco.posco_store.R
-import com.posco.posco_store.data.model.App
+
 import com.posco.posco_store.data.model.FileInfoDto
 import com.posco.posco_store.databinding.ItemImageListBinding
 import kotlinx.android.synthetic.main.item_image_list.view.*
@@ -50,7 +49,6 @@ class ImageAdapter: RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
                     ): Boolean {
                         return false
                     }
-
                     override fun onResourceReady(
                         resource: Drawable?,
                         model: Any?,
@@ -62,7 +60,7 @@ class ImageAdapter: RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
                     }
                 }).into(itemView.imageView_item)
 
-            itemView.rootView.setOnClickListener {
+            binding.imageViewItem.setOnClickListener {
                 onItemClickListener?.let {
                     it(fileInfoDto)
                 }

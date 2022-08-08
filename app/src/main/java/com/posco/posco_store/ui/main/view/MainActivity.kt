@@ -22,6 +22,8 @@ import com.posco.posco_store.ui.main.viewmodel.MainViewModel
 import com.posco.posco_store.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
+import okhttp3.internal.notify
+import okhttp3.internal.notifyAll
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -80,7 +82,9 @@ class MainActivity : AppCompatActivity() {
         })
 
         binding.refreshBtn.setOnClickListener {
+            Toast.makeText(this,"새로고침 했습니다",Toast.LENGTH_SHORT).show()
             adapter.notifyDataSetChanged()
+
         }
 
         binding.recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {

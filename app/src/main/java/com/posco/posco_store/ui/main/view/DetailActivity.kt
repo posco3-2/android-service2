@@ -1,18 +1,23 @@
 package com.posco.posco_store.ui.main.view
 
 
+import android.app.Dialog
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 
 
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 
 
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.posco.posco_store.R
 import com.posco.posco_store.data.model.App
 import com.posco.posco_store.data.model.FileInfoDto
@@ -22,7 +27,12 @@ import com.posco.posco_store.ui.main.adapter.ImageAdapter
 
 import com.posco.posco_store.ui.main.viewmodel.DetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_mypage.*
+import kotlinx.android.synthetic.main.activity_mypage.imageView
+import kotlinx.android.synthetic.main.dialog_image_view_layout.*
+import kotlinx.android.synthetic.main.item_layout.view.*
 
 
 @AndroidEntryPoint
@@ -38,7 +48,19 @@ class DetailActivity : AppCompatActivity() {
         setContentView(binding.root)
         setUpUi()
 
+        imageAdapter.setOnItemClickListener {
+            val dialog: Dialog = Dialog(this)
+            dialog.setContentView(R.layout.dialog_image_view_layout)
+            val imgUrl =
+                "http://ec2-43-200-14-78.ap-northeast-2.compute.amazonaws.com:8000/file-service/file/image/" +
+                        it.location + "/" + it.changedName
 
+            Glide.with(this).load(imgUrl).placeholder(R.drawable.example_screen).error(R.drawable.example_screen).into(dialog.detail_img)
+
+            dialog.show()
+
+
+        }
     }
 
     // detail 화면 수정
@@ -83,6 +105,7 @@ class DetailActivity : AppCompatActivity() {
 
             AlertDialog.Builder(this).setTitle(binding.updateInfoTextView.text).setMessage(updateInfo).create().show()
         }
+
 
         initRecyclerView()
     }
