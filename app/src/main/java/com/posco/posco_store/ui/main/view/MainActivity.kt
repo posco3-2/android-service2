@@ -47,7 +47,6 @@ class MainActivity : AppCompatActivity() {
         val id: Int = LoginActivity.prefs.getString("id","0" ).toInt()
         if(id == 0) {
             val intent = Intent(this, LoginActivity::class.java)
-            finishAffinity()
             startActivity(intent)
         }
 

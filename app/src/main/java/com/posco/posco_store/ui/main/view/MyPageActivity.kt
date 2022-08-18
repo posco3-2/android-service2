@@ -45,7 +45,6 @@ class MyPageActivity : AppCompatActivity() {
         getDevice(id)
         if(id == 0){
             val intent = Intent(this, LoginActivity::class.java)
-            finishAffinity()
             startActivity(intent)
         }
 
