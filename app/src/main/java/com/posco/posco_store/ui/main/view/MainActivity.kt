@@ -82,8 +82,10 @@ class MainActivity : AppCompatActivity() {
         })
 
         binding.refreshBtn.setOnClickListener {
+
+            setupAPICall()
+           adapter.notifyDataSetChanged()
             Toast.makeText(this,"새로고침 했습니다",Toast.LENGTH_SHORT).show()
-            adapter.notifyDataSetChanged()
 
         }
 

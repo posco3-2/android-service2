@@ -192,6 +192,7 @@ class LoginActivity: AppCompatActivity() {
             Status.ERROR -> {
                 Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
             }
+            else -> {}
         }
 
     })
@@ -233,6 +234,7 @@ class LoginActivity: AppCompatActivity() {
             Status.ERROR -> {
                 Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
             }
+            else -> {}
         }
 
     })
@@ -246,6 +248,7 @@ class LoginActivity: AppCompatActivity() {
             Status.ERROR -> {
                 Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
             }
+            else -> {}
         }
 
     })
@@ -359,6 +362,7 @@ class LoginActivity: AppCompatActivity() {
             Status.ERROR -> {
                 Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
             }
+            else -> {}
         }
     })
 
