@@ -38,6 +38,10 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
     suspend fun getAllApps(index: Int): List<App>{
         return apiService.getAllApps(index);
     }
+
+    suspend fun getAppList(os: String): List<App>{
+        return apiService.getAppList(os)
+    }
     //detail 정보 알기 추가
     suspend fun getAppDetails(id: String): App{
         return apiService.getAppDetails(id)

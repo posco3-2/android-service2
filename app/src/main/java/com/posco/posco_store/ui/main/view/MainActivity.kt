@@ -97,11 +97,10 @@ class MainActivity : AppCompatActivity() {
                 val firstVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager?)!!.findFirstVisibleItemPosition() //첫번째 보이는것
 
                 // 스크롤이 끝에 도달했는지 확인
-             //   if ( lastVisibleItemPosition == itemTotalCount) {
+                // if ( lastVisibleItemPosition == itemTotalCount) {
                 if(!isLoading) {
-                    //adapter.showLoading()
+                    adapter.showLoading()
                     if ((visibleItemCount + firstVisibleItemPosition) >= itemTotalCount) {
-
                         index += 10
                         mainViewModel.getAllApp(index)
                        // adapter.notifyDataSetChanged()

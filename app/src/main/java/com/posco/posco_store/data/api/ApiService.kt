@@ -32,6 +32,9 @@ interface ApiService {
     @GET("app-service/app/all/{index}")
     suspend fun getAllApps(@Path("index") index: Int) : List<App>
 
+    @GET("app-service/app/{os}")
+    suspend fun getAppList(@Path("os") os: String): List<App>
+
     @GET("app-service/app/{id}")
     suspend fun getAppDetails(@Path("id") id: String) : App
 

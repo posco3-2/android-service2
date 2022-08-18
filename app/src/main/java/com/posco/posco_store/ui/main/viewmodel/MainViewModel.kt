@@ -22,4 +22,14 @@ class MainViewModel @Inject constructor(
             emit(Resource.error(exception.message ?: "Error Occurred!", data = null))
         }
     }
+
+
+    fun getAppList() = liveData(Dispatchers.IO) {
+        emit(Resource.loading(null))
+        try {
+            emit(Resource.success(data = mainRepository.getAppList("A")))
+        } catch (exception: Exception) {
+            emit(Resource.error(exception.message ?: "Error Occurred!", data = null))
+        }
+    }
 }
