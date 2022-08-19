@@ -1,12 +1,14 @@
 package com.posco.posco_store.ui.main.view
 
 
+import android.Manifest
 import android.app.Dialog
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
@@ -16,6 +18,8 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.posco.posco_store.R
@@ -23,6 +27,7 @@ import com.posco.posco_store.data.model.App
 import com.posco.posco_store.data.model.FileInfoDto
 import com.posco.posco_store.databinding.ActivityDetailBinding
 import com.posco.posco_store.ui.main.adapter.ImageAdapter
+import com.posco.posco_store.ui.main.view.DownloadActivity.Companion.PERMISSION_REQUEST_CODE
 import com.posco.posco_store.ui.main.viewmodel.DetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -41,18 +46,22 @@ class DetailActivity : AppCompatActivity() {
     private lateinit var downloadURL: String
     private lateinit var downloadManager: DownloadManager
     private var downloadID: Long = 1
+    private lateinit var appDetail: App
+    private val permissions = arrayOf(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = com.posco.posco_store.databinding.ActivityDetailBinding.inflate(layoutInflater)
+        binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setUpUi()
 
         imageAdapter.setOnItemClickListener {
             val dialog: Dialog = Dialog(this)
             dialog.setContentView(R.layout.dialog_image_view_layout)
-            val imgUrl =
-                "http://ec2-43-200-14-78.ap-northeast-2.compute.amazonaws.com:8000/file-service/file/image/" +
+            val imgUrl = "http://ec2-43-200-14-78.ap-northeast-2.compute.amazonaws.com:8000/file-service/file/image/" +
                         it.location + "/" + it.changedName
 
             Glide.with(this).load(imgUrl).placeholder(R.drawable.example_screen)
@@ -79,7 +88,7 @@ class DetailActivity : AppCompatActivity() {
     fun setUpUi() {
 
         val bundle = intent.extras
-        var appDetail: App
+
         try {
             appDetail = bundle?.getSerializable("selected_item") as App
         } catch (e: Exception) {
@@ -107,6 +116,8 @@ class DetailActivity : AppCompatActivity() {
         val updateInfo = appDetail.updateDesc ?: "업데이트 정보가 없습니다"
         binding.updateInfoText.text = updateInfo
         binding.adminText.text = appDetail?.admin
+
+        appDetail.scheme?.let { Log.d("!!!!!!!!!!확인~~~~~~~", it) }
 
         binding.appDetailBtn.setOnClickListener {
             AlertDialog.Builder(this).setTitle(binding.appInfoTextView.text).setMessage(appInfo)
@@ -147,12 +158,52 @@ class DetailActivity : AppCompatActivity() {
 
         binding.installBtn.setOnClickListener {
             Log.d("install btn click",downloadURL)
+            val intent = Intent(this@DetailActivity, DownloadActivity::class.java)
+
+            intent.putExtra("appName", binding.appName.text)
+            intent.putExtra("appInfoText", binding.appInfoText.text)
+            intent.putExtra("url", downloadURL)
+            intent.putExtra("scheme", appDetail.scheme)
+
+            if(hasPermissions()){
+                Log.i("있다","permission")
+                startActivity(intent)
+            }
+            else{
+                requestPermission()
+            }
+
+            startActivity(intent)
+
+
+
             //  supportFragmentManager.beginTransaction().replace(R.id.)
             //URLDownloading(Uri.parse(downloadURL))
 //            val intent = Intent(this@DetailActivity, DownloadProgressFragment::class.java)
 //            intent.putExtra("appName", binding.appName.text)
 //            intent.putExtra("appInfoText", binding.appInfoText.text)
             // intent.putExtra("url", downloadURL)
+        }
+    }
+
+    private fun hasPermissions(): Boolean {
+        for (permission in permissions) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    permission
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun requestPermission() {
+        try {
+            ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

@@ -138,7 +138,6 @@ class MainAdapter @Inject constructor(
     }
 
     fun addData(app: List<App>) {
-        apps.addAll(app)
         appFilterList.addAll(app)
     }
 

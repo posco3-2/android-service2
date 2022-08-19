@@ -29,7 +29,7 @@ interface ApiService {
     @POST("user-service/user/socialLogin")
     suspend fun checkKakao(@Body user: User) : List<User>
 
-    @GET("app-service/app/all/{index}")
+    @GET("app-service/app/all/A/{index}")
     suspend fun getAllApps(@Path("index") index: Int) : List<App>
 
     @GET("app-service/app/{os}")

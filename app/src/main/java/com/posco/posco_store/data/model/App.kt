@@ -37,6 +37,6 @@ data class App (
 
     val packageName : String?= null,
 
-    var schema: String? = null,
+    var scheme: String? = null,
 
     ): Serializable
