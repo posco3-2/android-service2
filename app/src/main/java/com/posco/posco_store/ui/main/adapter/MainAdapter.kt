@@ -1,10 +1,12 @@
 package com.posco.posco_store.ui.main.adapter
 
+import android.content.pm.PackageInfo
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import androidx.core.content.pm.PackageInfoCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.posco.posco_store.R
@@ -12,9 +14,9 @@ import com.posco.posco_store.data.model.App
 import com.posco.posco_store.databinding.ItemLayoutBinding
 import com.posco.posco_store.databinding.ItemLoadingBinding
 import kotlinx.android.synthetic.main.item_layout.view.*
-
+import org.apache.commons.lang3.ObjectUtils
 import javax.inject.Inject
-import kotlin.collections.ArrayList
+
 
 class MainAdapter @Inject constructor(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
@@ -41,6 +43,29 @@ class MainAdapter @Inject constructor(
                 .into(itemView.imageViewIcon)
 
             itemView.textViewUserEmail.text = app.version
+
+            //TODO : package 명으로 검색
+            Log.i("패키지명 확인",app.packageName.toString())
+
+            var pInfo: PackageInfo? = null;
+
+            try {
+                pInfo= itemView.context.packageManager.getPackageInfo(app.packageName.toString(), 0)
+                Log.i("이거 되나", pInfo.toString())
+            }catch (e: Exception){
+                System.out.println(e)
+            }
+
+            if(pInfo.toString().isNullOrEmpty()){
+                Log.i("나와라 얍", pInfo.toString())
+            }
+
+            if(pInfo.toString().equals(null) ){
+                itemView.start_btn.setImageResource(R.drawable.play)
+                itemView.start_text.text = "실행하기"
+                Log.i("실행되나", pInfo.toString())
+            }
+
 
             itemView.rootView.setOnClickListener {
                 onItemClickListener?.let {

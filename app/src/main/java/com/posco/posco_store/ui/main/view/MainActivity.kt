@@ -132,13 +132,14 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.getAllApp(index).observe(this, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
+                    isLoading = true
                     adapter.hideLoading()
                     progressBar.visibility = View.GONE
                     it.data?.let { usersData -> renderList(usersData) }
                     recyclerView.visibility = View.VISIBLE
 
                     adapter.notifyDataSetChanged()
-
+                    adapter.hideLoading()
                 }
                 Status.ERROR -> {
                     //Handle Error

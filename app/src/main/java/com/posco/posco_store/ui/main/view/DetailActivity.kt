@@ -4,10 +4,7 @@ package com.posco.posco_store.ui.main.view
 import android.Manifest
 import android.app.Dialog
 import android.app.DownloadManager
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
@@ -233,6 +230,12 @@ class DetailActivity : AppCompatActivity() {
     private val downloadCompleteReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
             val reference = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            // 다운로드 완료후 dialog 생성
+            val builder = AlertDialog.Builder(this@DetailActivity)
+            builder.setTitle("다운로드")
+                .setMessage("다운로드를 완료했습니다. 실행하시겠습니까?")
+                .setPositiveButton("확인", DialogInterface.OnClickListener{dialog, which -> "확인클릭" })
+                .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, which -> "취소클릭"  })
             if (downloadID == reference) {
                 val query = DownloadManager.Query() // 다운로드 항목 조회에 필요한 정보 포함
                 query.setFilterById(reference)
@@ -244,11 +247,13 @@ class DetailActivity : AppCompatActivity() {
                 val reason: Int = cursor.getInt(columnReason)
                 cursor.close()
                 when (status) {
-                    DownloadManager.STATUS_SUCCESSFUL -> Toast.makeText(
-                        this@DetailActivity,
-                        "다운로드를 완료하였습니다.",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    DownloadManager.STATUS_SUCCESSFUL -> builder.show()
+
+//                        Toast.makeText(
+//                        this@DetailActivity,
+//                        "다운로드를 완료하였습니다.",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
                     DownloadManager.STATUS_PAUSED -> Toast.makeText(
                         this@DetailActivity,
                         "다운로드가 중단되었습니다.",

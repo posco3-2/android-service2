@@ -157,8 +157,6 @@ class DownloadActivity : AppCompatActivity(), OnFileDownloadingCallback {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
         Log.d("downloadFile", " installed ")
-        val newIntent = Intent(this@DownloadActivity,MainActivity::class.java)
-        startActivity(newIntent)
 
 
     }
