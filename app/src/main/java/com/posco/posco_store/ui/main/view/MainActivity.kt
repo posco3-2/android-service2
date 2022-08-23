@@ -81,8 +81,12 @@ class MainActivity : AppCompatActivity() {
         })
 
         binding.refreshBtn.setOnClickListener {
+
+            index =0
+            adapter.clear()
+            setupAPICall()
+           adapter.notifyDataSetChanged()
             Toast.makeText(this,"새로고침 했습니다",Toast.LENGTH_SHORT).show()
-            adapter.notifyDataSetChanged()
 
         }
 
@@ -95,11 +99,10 @@ class MainActivity : AppCompatActivity() {
                 val firstVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager?)!!.findFirstVisibleItemPosition() //첫번째 보이는것
 
                 // 스크롤이 끝에 도달했는지 확인
-             //   if ( lastVisibleItemPosition == itemTotalCount) {
+                // if ( lastVisibleItemPosition == itemTotalCount) {
                 if(!isLoading) {
-                    //adapter.showLoading()
+                    adapter.showLoading()
                     if ((visibleItemCount + firstVisibleItemPosition) >= itemTotalCount) {
-
                         index += 10
                         mainViewModel.getAllApp(index)
                        // adapter.notifyDataSetChanged()
@@ -129,13 +132,14 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.getAllApp(index).observe(this, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
+                    isLoading = true
                     adapter.hideLoading()
                     progressBar.visibility = View.GONE
                     it.data?.let { usersData -> renderList(usersData) }
                     recyclerView.visibility = View.VISIBLE
 
                     adapter.notifyDataSetChanged()
-
+                    adapter.hideLoading()
                 }
                 Status.ERROR -> {
                     //Handle Error

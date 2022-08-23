@@ -32,6 +32,8 @@ data class Device(
     val deviceOsType: Char? = null,
     @SerializedName("updateFcmActive")
     val updateFcmActive: Int? =null,
+    @SerializedName("packageName")
+    val packageName: String? = null,
     @SerializedName("carrier")
     val carrier: String? = null,
 

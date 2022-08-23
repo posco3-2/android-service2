@@ -33,5 +33,10 @@ data class App (
 
     val installFileInfo: FileInfoDto?= null,
 
-    val detailFilesInfo: List<FileInfoDto>? = null
-): Serializable
+    val detailFilesInfo: List<FileInfoDto>? = null,
+
+    val packageName : String?= null,
+
+    var scheme: String? = null,
+
+    ): Serializable

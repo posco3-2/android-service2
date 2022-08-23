@@ -1,46 +1,53 @@
 package com.posco.posco_store.ui.main.view
 
 
+import android.Manifest
 import android.app.Dialog
-import android.graphics.Bitmap
+import android.app.DownloadManager
+import android.content.*
+import android.content.pm.PackageManager
+import android.database.Cursor
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.widget.Toast
-
-
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.net.toUri
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-
-
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.posco.posco_store.R
 import com.posco.posco_store.data.model.App
 import com.posco.posco_store.data.model.FileInfoDto
 import com.posco.posco_store.databinding.ActivityDetailBinding
 import com.posco.posco_store.ui.main.adapter.ImageAdapter
-
-
+import com.posco.posco_store.ui.main.view.DownloadActivity.Companion.PERMISSION_REQUEST_CODE
 import com.posco.posco_store.ui.main.viewmodel.DetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_detail.*
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_mypage.*
-import kotlinx.android.synthetic.main.activity_mypage.imageView
+
 import kotlinx.android.synthetic.main.dialog_image_view_layout.*
-import kotlinx.android.synthetic.main.item_layout.view.*
+
+import java.io.File
+import java.net.URL
 
 
 @AndroidEntryPoint
 class DetailActivity : AppCompatActivity() {
     private val detailViewModel: DetailViewModel by viewModels()
-    private lateinit var binding : ActivityDetailBinding
-    private lateinit var detailImg : List<FileInfoDto>
+    private lateinit var binding: ActivityDetailBinding
+    private lateinit var detailImg: List<FileInfoDto>
     private var imageAdapter: ImageAdapter = ImageAdapter()
+    private lateinit var downloadURL: String
+    private lateinit var downloadManager: DownloadManager
+    private var downloadID: Long = 1
+    private lateinit var appDetail: App
+    private val permissions = arrayOf(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,11 +58,11 @@ class DetailActivity : AppCompatActivity() {
         imageAdapter.setOnItemClickListener {
             val dialog: Dialog = Dialog(this)
             dialog.setContentView(R.layout.dialog_image_view_layout)
-            val imgUrl =
-                "http://ec2-43-200-14-78.ap-northeast-2.compute.amazonaws.com:8000/file-service/file/image/" +
+            val imgUrl = "http://ec2-43-200-14-78.ap-northeast-2.compute.amazonaws.com:8000/file-service/file/image/" +
                         it.location + "/" + it.changedName
 
-            Glide.with(this).load(imgUrl).placeholder(R.drawable.example_screen).error(R.drawable.example_screen).into(dialog.detail_img)
+            Glide.with(this).load(imgUrl).placeholder(R.drawable.example_screen)
+                .error(R.drawable.example_screen).into(dialog.detail_img)
 
             dialog.show()
 
@@ -63,23 +70,33 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-    // detail 화면 수정
-    fun setUpUi(){
+    override fun onResume() {
+        super.onResume()
+        val completeFilter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+        registerReceiver(downloadCompleteReceiver, completeFilter)
+    }
 
+    override fun onPause() {
+        super.onPause()
+        unregisterReceiver(downloadCompleteReceiver)
+    }
+
+    // detail 화면 수정
+    fun setUpUi() {
 
         val bundle = intent.extras
-        var appDetail: App
+
         try {
-            appDetail= bundle?.getSerializable("selected_item") as App
-        }
-        catch (e: Exception){
-            appDetail= bundle?.get("selected_item") as App
+            appDetail = bundle?.getSerializable("selected_item") as App
+        } catch (e: Exception) {
+            appDetail = bundle?.get("selected_item") as App
         }
         binding.appName.text = appDetail?.appName
         binding.appIdText.text = appDetail?.id
         val fileInfo = appDetail?.iconFileInfo
-        val imgUrl = "http://ec2-43-200-14-78.ap-northeast-2.compute.amazonaws.com:8000/file-service/file/image/" +
-                fileInfo?.location + "/" + fileInfo?.changedName
+        val imgUrl =
+            "http://ec2-43-200-14-78.ap-northeast-2.compute.amazonaws.com:8000/file-service/file/image/" +
+                    fileInfo?.location + "/" + fileInfo?.changedName
         val imgLocation = binding.logoImg
 
         detailImg = appDetail?.detailFilesInfo!!
@@ -87,7 +104,8 @@ class DetailActivity : AppCompatActivity() {
 
         imageAdapter.differ.submitList(detailImg)
 
-        Glide.with(this).load(imgUrl).error(R.drawable.posco).override(100,100).fitCenter().into(imgLocation)
+        Glide.with(this).load(imgUrl).error(R.drawable.posco).override(100, 100).fitCenter()
+            .into(imgLocation)
 
         binding.versionInfo.text = appDetail?.version
         val appInfo = appDetail.desc ?: "앱 정보가 없습니다"
@@ -96,30 +114,165 @@ class DetailActivity : AppCompatActivity() {
         binding.updateInfoText.text = updateInfo
         binding.adminText.text = appDetail?.admin
 
+        appDetail.scheme?.let { Log.d("!!!!!!!!!!확인~~~~~~~", it) }
+
         binding.appDetailBtn.setOnClickListener {
-            AlertDialog.Builder(this).setTitle(binding.appInfoTextView.text).setMessage(appInfo).create().show()
+            AlertDialog.Builder(this).setTitle(binding.appInfoTextView.text).setMessage(appInfo)
+                .create().show()
         }
 
 
         binding.updateDetailBtn.setOnClickListener {
 
-            AlertDialog.Builder(this).setTitle(binding.updateInfoTextView.text).setMessage(updateInfo).create().show()
+            AlertDialog.Builder(this).setTitle(binding.updateInfoTextView.text)
+                .setMessage(updateInfo).create().show()
         }
+
+        val downloadFile: FileInfoDto = appDetail?.installFileInfo!!
+
+        downloadURL =
+            "http://ec2-43-200-14-78.ap-northeast-2.compute.amazonaws.com:8000/file-service/file/download/install/" +
+                    downloadFile.changedName + "?org="+ downloadFile.originalName
+
+
 
 
         initRecyclerView()
+        installBtn()
+
     }
 
-    private fun initRecyclerView(){
-        Log.d("recyclerview","start")
+    private fun initRecyclerView() {
+        Log.d("recyclerview", "start")
         binding.recyclerviewImg.apply {
             adapter = imageAdapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         }
     }
 
+    fun installBtn() {
+        downloadManager = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+
+        binding.installBtn.setOnClickListener {
+            Log.d("install btn click",downloadURL)
+            val intent = Intent(this@DetailActivity, DownloadActivity::class.java)
+
+            intent.putExtra("appName", binding.appName.text)
+            intent.putExtra("appInfoText", binding.appInfoText.text)
+            intent.putExtra("url", downloadURL)
+            intent.putExtra("scheme", appDetail.scheme)
+
+            if(hasPermissions()){
+                Log.i("있다","permission")
+                startActivity(intent)
+            }
+            else{
+                requestPermission()
+            }
+
+            startActivity(intent)
+
+
+
+            //  supportFragmentManager.beginTransaction().replace(R.id.)
+            //URLDownloading(Uri.parse(downloadURL))
+//            val intent = Intent(this@DetailActivity, DownloadProgressFragment::class.java)
+//            intent.putExtra("appName", binding.appName.text)
+//            intent.putExtra("appInfoText", binding.appInfoText.text)
+            // intent.putExtra("url", downloadURL)
+        }
+    }
+
+    private fun hasPermissions(): Boolean {
+        for (permission in permissions) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    permission
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun requestPermission() {
+        try {
+            ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun URLDownloading(url: Uri) {
+        val sdCard = Environment.getExternalStorageDirectory()
+        // val outputFile: File = File(sdCard.absoluteFile, "/poscoStore")
+        val outputFilePath : String = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/poscoStore").toString().plus("/${binding.appName.text}.apk")
+        val outputFile = File(outputFilePath)
+        if (!outputFile.parentFile.exists()) {
+            outputFile.parentFile?.mkdirs()
+        }
+
+        val request = DownloadManager.Request(url)
+
+        request.setTitle(binding.appName.text)
+        Log.d("이거머양", binding.appInfoText.text.toString())
+        request.setDescription(binding.appInfoText.text)
+
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+        request.setDestinationUri(Uri.fromFile(outputFile))
+        request.setAllowedOverMetered(true)
+        downloadID = downloadManager.enqueue(request)
+
+
+    }
+
+    private val downloadCompleteReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent) {
+            val reference = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            // 다운로드 완료후 dialog 생성
+            val builder = AlertDialog.Builder(this@DetailActivity)
+            builder.setTitle("다운로드")
+                .setMessage("다운로드를 완료했습니다. 실행하시겠습니까?")
+                .setPositiveButton("확인", DialogInterface.OnClickListener{dialog, which -> "확인클릭" })
+                .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, which -> "취소클릭"  })
+            if (downloadID == reference) {
+                val query = DownloadManager.Query() // 다운로드 항목 조회에 필요한 정보 포함
+                query.setFilterById(reference)
+                val cursor: Cursor = downloadManager.query(query)
+                cursor.moveToFirst()
+                val columnIndex: Int = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
+                val columnReason: Int = cursor.getColumnIndex(DownloadManager.COLUMN_REASON)
+                val status: Int = cursor.getInt(columnIndex)
+                val reason: Int = cursor.getInt(columnReason)
+                cursor.close()
+                when (status) {
+                    DownloadManager.STATUS_SUCCESSFUL -> builder.show()
+
+//                        Toast.makeText(
+//                        this@DetailActivity,
+//                        "다운로드를 완료하였습니다.",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+                    DownloadManager.STATUS_PAUSED -> Toast.makeText(
+                        this@DetailActivity,
+                        "다운로드가 중단되었습니다.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    DownloadManager.STATUS_FAILED -> Toast.makeText(
+                        this@DetailActivity,
+                        "다운로드가 취소되었습니다.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    private fun deleteDownloadFile(){
+        downloadManager.remove(downloadID)
+    }
 
 
 
 }
-
