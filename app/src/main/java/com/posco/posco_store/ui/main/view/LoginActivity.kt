@@ -12,15 +12,21 @@ import android.provider.Settings
 import android.telephony.TelephonyManager
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.AuthErrorCause
@@ -90,56 +96,56 @@ class LoginActivity: AppCompatActivity() {
 
         firebaseAuth = FirebaseAuth.getInstance()
         Log.e("fire",firebaseAuth.toString())
-//
-//        launcher = registerForActivityResult(
-//            ActivityResultContracts.StartActivityForResult(), ActivityResultCallback { result ->
-//                Log.e(TAG, "resultCode : ${result.resultCode}")
-//                Log.e(TAG, "result : $result")
-//                if (result.resultCode == RESULT_OK) {
-//                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-//                    try {
-//                        task.getResult(ApiException::class.java)?.let { account ->
-//                            tokenId = account.idToken
-//                            if (tokenId != null && tokenId != "") {
-//                                val credential: AuthCredential = GoogleAuthProvider.getCredential(account.idToken, null)
-//                                firebaseAuth.signInWithCredential(credential)
-//                                    .addOnCompleteListener {
-//                                        if (firebaseAuth.currentUser != null) {
-//                                            val user: FirebaseUser = firebaseAuth.currentUser!!
-//                                            email = user.email.toString()
-//                                            Log.e(TAG, "email : $email")
-//                                            Log.e(TAG,  user.displayName.toString())
-//                                            FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-//                                                if (!task.isSuccessful) {
-//                                                    return@OnCompleteListener
-//                                                }
-//                                                val fcmToken = task.result
-//                                                addDevice(Device(
-//                                                    deviceId = getDeviceId(),
-//                                                    phoneNumber = getPhoneNumber(),
-//                                                    userName = user.displayName.toString(),
-//                                                    deviceOs = 'A',
-//                                                    deviceModel = getDeviceModel(),
-//                                                    fcmToken = fcmToken ,
-//                                                    deviceOsType = isTablet(),
-//                                                    carrier = getPhoneNetwork()
-//                                                ))
-//                                            })
-//                                            val googleSignInToken = account.idToken ?: ""
-//                                            if (googleSignInToken != "") {
-//                                                Log.e(TAG, "googleSignInToken : $googleSignInToken")
-//                                            } else {
-//                                                Log.e(TAG, "googleSignInToken이 null")
-//                                            }
-//                                        }
-//                                    }
-//                            }
-//                        } ?: throw Exception()
-//                    }   catch (e: Exception) {
-//                        e.printStackTrace()
-//                    }
-//                }
-//            })
+
+        launcher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult(), ActivityResultCallback { result ->
+                Log.e(TAG, "resultCode : ${result.resultCode}")
+                Log.e(TAG, "result : $result")
+                if (result.resultCode == RESULT_OK) {
+                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                    try {
+                        task.getResult(ApiException::class.java)?.let { account ->
+                            tokenId = account.idToken
+                            if (tokenId != null && tokenId != "") {
+                                val credential: AuthCredential = GoogleAuthProvider.getCredential(account.idToken, null)
+                                firebaseAuth.signInWithCredential(credential)
+                                    .addOnCompleteListener {
+                                        if (firebaseAuth.currentUser != null) {
+                                            val user: FirebaseUser = firebaseAuth.currentUser!!
+                                            email = user.email.toString()
+                                            Log.e(TAG, "email : $email")
+                                            Log.e(TAG,  user.displayName.toString())
+                                            FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                                                if (!task.isSuccessful) {
+                                                    return@OnCompleteListener
+                                                }
+                                                val fcmToken = task.result
+                                                addDevice(Device(
+                                                    deviceId = getDeviceId(),
+                                                    phoneNumber = getPhoneNumber(),
+                                                    userName = user.displayName.toString(),
+                                                    deviceOs = 'A',
+                                                    deviceModel = getDeviceModel(),
+                                                    fcmToken = fcmToken ,
+                                                    deviceOsType = isTablet(),
+                                                    carrier = getPhoneNetwork()
+                                                ))
+                                            })
+                                            val googleSignInToken = account.idToken ?: ""
+                                            if (googleSignInToken != "") {
+                                                Log.e(TAG, "googleSignInToken : $googleSignInToken")
+                                            } else {
+                                                Log.e(TAG, "googleSignInToken이 null")
+                                            }
+                                        }
+                                    }
+                            }
+                        } ?: throw Exception()
+                    }   catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            })
 
             binding.run {
                 googleLoginButton.setOnClickListener {
