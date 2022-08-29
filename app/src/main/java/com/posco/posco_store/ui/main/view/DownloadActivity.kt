@@ -2,16 +2,13 @@ package com.posco.posco_store.ui.main.view
 
 import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
+
 import android.net.Uri
 import android.os.*
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import com.google.android.gms.auth.api.signin.GoogleSignIn.hasPermissions
 import com.posco.posco_store.databinding.ActivityDownloadBinding
 import java.io.BufferedInputStream
 import java.io.File
@@ -20,7 +17,6 @@ import java.io.InputStream
 import java.net.URL
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import kotlin.reflect.KClass
 
 class DownloadActivity : AppCompatActivity(), OnFileDownloadingCallback {
     private lateinit var mBinding: ActivityDownloadBinding

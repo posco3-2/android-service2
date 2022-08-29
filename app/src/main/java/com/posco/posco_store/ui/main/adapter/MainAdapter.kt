@@ -1,11 +1,15 @@
 package com.posco.posco_store.ui.main.adapter
 
+import android.app.DownloadManager
+import android.content.Context
 import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -13,8 +17,9 @@ import com.posco.posco_store.R
 import com.posco.posco_store.data.model.App
 import com.posco.posco_store.databinding.ItemLayoutBinding
 import com.posco.posco_store.databinding.ItemLoadingBinding
+import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.item_layout.view.*
-import org.apache.commons.lang3.ObjectUtils
+import kotlinx.coroutines.NonDisposableHandle.parent
 import javax.inject.Inject
 
 
@@ -44,27 +49,22 @@ class MainAdapter @Inject constructor(
 
             itemView.textViewUserEmail.text = app.version
 
-            //TODO : package 명으로 검색
             Log.i("패키지명 확인",app.packageName.toString())
+            val packageName = app.packageName.toString()
+            val pm : PackageManager = itemView.context.packageManager
 
-            var pInfo: PackageInfo? = null;
-
-            try {
-                pInfo= itemView.context.packageManager.getPackageInfo(app.packageName.toString(), 0)
-                Log.i("이거 되나", pInfo.toString())
-            }catch (e: Exception){
-                System.out.println(e)
-            }
-
-            if(pInfo.toString().isNullOrEmpty()){
-                Log.i("나와라 얍", pInfo.toString())
-            }
-
-            if(pInfo.toString().equals(null) ){
+            if(isPackageInstalled(packageName, pm)){
+                Log.d("이거", packageName +" 설치됨")
                 itemView.start_btn.setImageResource(R.drawable.play)
                 itemView.start_text.text = "실행하기"
-                Log.i("실행되나", pInfo.toString())
+            }else{
+                Log.d("모르겠다", packageName+" 머냐")
+                itemView.start_btn.setImageResource(R.drawable.download)
+                itemView.start_text.text="다운로드"
             }
+
+
+
 
 
             itemView.rootView.setOnClickListener {
@@ -177,6 +177,14 @@ class MainAdapter @Inject constructor(
         onItemClickListener = listener
     }
 
+    private fun isPackageInstalled(packageName: String, packageManager: PackageManager) : Boolean{
+        try{
+            packageManager.getPackageInfo(packageName, 0);
+            return true;
+        }catch (e : PackageManager.NameNotFoundException){
+            return false
+        }
+    }
 
 }
 

@@ -186,8 +186,6 @@ class LoginActivity: AppCompatActivity() {
                     val userName = it.data?.get(0)?.name
                     it.data?.get(0)?.id?.toInt()?.let { it1 -> checkRegiDevice(it1,
                         userId!!, userName!!) }
-
-
                 }
             }
             Status.ERROR -> {
