@@ -5,6 +5,7 @@ import android.Manifest
 import android.app.Dialog
 import android.app.DownloadManager
 import android.content.*
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
@@ -122,6 +123,8 @@ class DetailActivity : AppCompatActivity() {
         }
 
 
+
+
         binding.updateDetailBtn.setOnClickListener {
 
             AlertDialog.Builder(this).setTitle(binding.updateInfoTextView.text)
@@ -134,11 +137,47 @@ class DetailActivity : AppCompatActivity() {
             "http://ec2-43-200-14-78.ap-northeast-2.compute.amazonaws.com:8000/file-service/file/download/install/" +
                     downloadFile.changedName + "?org="+ downloadFile.originalName
 
+        val pm : PackageManager = packageManager
+        var pInfo: PackageInfo? = null;
+        try{
+             pInfo = appDetail.packageName?.let { pm.getPackageInfo(it, PackageManager.GET_INSTRUMENTATION) }!!
+            Log.d("package Info 확인", pInfo.toString())
+            
+        }catch (e: PackageManager.NameNotFoundException){
+            e.printStackTrace()
+        }
+        
+        if(pInfo != null){
+            Log.d("pInfo version", pInfo.versionName.toString() + " " + appDetail.version)
+            if(pInfo.versionName.toString().equals(appDetail.version)){
+                binding.installBtn.text = "실행"
+                binding.installBtn.setOnClickListener {
+                    val intent = appDetail.packageName?.let { it1 ->
+                        baseContext.packageManager.getLaunchIntentForPackage(
+                            it1
+                        )
+                    }
+
+                    startActivity(intent)
+                }
+
+            }else{
+                binding.installBtn.text="업데이트"
+                installBtn()
+            }
+
+            
+        }else{
+            binding.installBtn.text="설치"
+            installBtn()
+        }
+       
+
 
 
 
         initRecyclerView()
-        installBtn()
+
 
     }
 
@@ -151,7 +190,10 @@ class DetailActivity : AppCompatActivity() {
     }
 
     fun installBtn() {
+
         downloadManager = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+
+
 
         binding.installBtn.setOnClickListener {
             Log.d("install btn click",downloadURL)
@@ -248,12 +290,6 @@ class DetailActivity : AppCompatActivity() {
                 cursor.close()
                 when (status) {
                     DownloadManager.STATUS_SUCCESSFUL -> builder.show()
-
-//                        Toast.makeText(
-//                        this@DetailActivity,
-//                        "다운로드를 완료하였습니다.",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
                     DownloadManager.STATUS_PAUSED -> Toast.makeText(
                         this@DetailActivity,
                         "다운로드가 중단되었습니다.",
