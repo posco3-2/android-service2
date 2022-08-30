@@ -1,20 +1,32 @@
 package com.posco.posco_store.ui.main.adapter
 
+import android.app.DownloadManager
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.gms.common.wrappers.Wrappers.packageManager
 import com.posco.posco_store.R
 import com.posco.posco_store.data.model.App
 import com.posco.posco_store.databinding.ItemLayoutBinding
 import com.posco.posco_store.databinding.ItemLoadingBinding
+import kotlinx.android.synthetic.main.activity_main.view.*
 import kotlinx.android.synthetic.main.item_layout.view.*
-import org.apache.commons.lang3.ObjectUtils
+import kotlinx.coroutines.NonDisposableHandle.parent
+import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.URL
 import javax.inject.Inject
 
 
@@ -30,7 +42,7 @@ class MainAdapter @Inject constructor(
 
     inner class DataViewHolder(itemView: ItemLayoutBinding) :
         RecyclerView.ViewHolder(itemView.root) {
-
+        private val context = itemView.root.context
         fun bind(app: App) {
             itemView.textViewUserName.text = app.appName
             val fileInfo = app.iconFileInfo
@@ -44,27 +56,35 @@ class MainAdapter @Inject constructor(
 
             itemView.textViewUserEmail.text = app.version
 
-            //TODO : package 명으로 검색
             Log.i("패키지명 확인",app.packageName.toString())
+            val packageName = app.packageName.toString()
+            val pm : PackageManager = itemView.context.packageManager
 
-            var pInfo: PackageInfo? = null;
-
-            try {
-                pInfo= itemView.context.packageManager.getPackageInfo(app.packageName.toString(), 0)
-                Log.i("이거 되나", pInfo.toString())
-            }catch (e: Exception){
-                System.out.println(e)
+            if(isPackageInstalled(packageName, pm)){
+                val pi = app.packageName?.let { pm.getPackageInfo(it, PackageManager.GET_INSTRUMENTATION) }
+                if(pi != null && pi.versionName.toString().equals(app.version)){
+                    Log.d("이거", packageName +" 설치됨")
+                    itemView.start_btn.setImageResource(R.drawable.play)
+                    itemView.start_text.text = "실행하기"
+                    itemView.start_btn.setOnClickListener {
+                        //Todo: 실행하기 
+                        val intent = pm.getLaunchIntentForPackage(packageName)
+                        context.startActivity(intent)
+                    }
+                }
+               else{
+                    itemView.start_btn.setImageResource(R.drawable.update)
+                    itemView.start_text.text = "업데이트"
+                    //Todo : 업데이트
+                }
+            }else{
+                Log.d("모르겠다", packageName+" 머냐")
+                itemView.start_btn.setImageResource(R.drawable.download)
+                itemView.start_text.text="다운로드"
+                //TODO: 다운로드
             }
 
-            if(pInfo.toString().isNullOrEmpty()){
-                Log.i("나와라 얍", pInfo.toString())
-            }
 
-            if(pInfo.toString().equals(null) ){
-                itemView.start_btn.setImageResource(R.drawable.play)
-                itemView.start_text.text = "실행하기"
-                Log.i("실행되나", pInfo.toString())
-            }
 
 
             itemView.rootView.setOnClickListener {
@@ -177,6 +197,23 @@ class MainAdapter @Inject constructor(
         onItemClickListener = listener
     }
 
+    private fun isPackageInstalled(packageName: String, packageManager: PackageManager) : Boolean{
+        try{
+            packageManager.getPackageInfo(packageName, 0);
+            return true;
+        }catch (e : PackageManager.NameNotFoundException){
+            return false
+        }
+    }
+
+    private fun appUpdate(apkUrl: String){
+        try{
+            val url = URL(apkUrl)
+            val c : HttpURLConnection = url.openConnection() as HttpURLConnection
+        }catch(e: IOException){
+
+        }
+    }
 
 }
 
