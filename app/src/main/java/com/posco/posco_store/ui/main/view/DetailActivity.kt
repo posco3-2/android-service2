@@ -18,8 +18,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.android.gms.auth.api.signin.GoogleSignIn.hasPermissions
 import com.posco.posco_store.R
 import com.posco.posco_store.data.model.App
 import com.posco.posco_store.data.model.FileInfoDto
@@ -30,9 +32,7 @@ import com.posco.posco_store.ui.main.viewmodel.DetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 import kotlinx.android.synthetic.main.dialog_image_view_layout.*
-
 import java.io.File
-import java.net.URL
 
 
 @AndroidEntryPoint
@@ -54,6 +54,7 @@ class DetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
         setUpUi()
 
         imageAdapter.setOnItemClickListener {
@@ -100,30 +101,31 @@ class DetailActivity : AppCompatActivity() {
                     fileInfo?.location + "/" + fileInfo?.changedName
         val imgLocation = binding.logoImg
 
-        detailImg = appDetail?.detailFilesInfo!!
-        Log.d("details", detailImg.toString())
+        try{
+            //detail이 있을때
+            detailImg = appDetail?.detailFilesInfo!!
 
-        imageAdapter.differ.submitList(detailImg)
+            Log.d("details", detailImg.toString())
 
-        Glide.with(this).load(imgUrl).error(R.drawable.posco).override(100, 100).fitCenter()
-            .into(imgLocation)
-
-        binding.versionInfo.text = appDetail?.version
-        val appInfo = appDetail.desc ?: "앱 정보가 없습니다"
-        binding.appInfoText.text = appInfo
-        val updateInfo = appDetail.updateDesc ?: "업데이트 정보가 없습니다"
-        binding.updateInfoText.text = updateInfo
-        binding.adminText.text = appDetail?.admin
-
-        appDetail.scheme?.let { Log.d("!!!!!!!!!!확인~~~~~~~", it) }
-
-        binding.appDetailBtn.setOnClickListener {
-            AlertDialog.Builder(this).setTitle(binding.appInfoTextView.text).setMessage(appInfo)
-                .create().show()
+        }catch (e: java.lang.Exception) {
+            println(e)
         }
+            imageAdapter.differ.submitList(detailImg)
 
+            Glide.with(this).load(imgUrl).error(R.drawable.posco).override(100, 100).fitCenter()
+                .into(imgLocation)
 
+            binding.versionInfo.text = appDetail?.version
+            val appInfo = appDetail.desc ?: "앱 정보가 없습니다"
+            binding.appInfoText.text = appInfo
+            val updateInfo = appDetail.updateDesc ?: "업데이트 정보가 없습니다"
+            binding.updateInfoText.text = updateInfo
+            binding.adminText.text = appDetail?.admin
 
+            binding.appDetailBtn.setOnClickListener {
+                AlertDialog.Builder(this).setTitle(binding.appInfoTextView.text).setMessage(appInfo)
+                    .create().show()
+            }
 
         binding.updateDetailBtn.setOnClickListener {
 
@@ -131,26 +133,21 @@ class DetailActivity : AppCompatActivity() {
                 .setMessage(updateInfo).create().show()
         }
 
-        val downloadFile: FileInfoDto = appDetail?.installFileInfo!!
-
-        downloadURL =
-            "http://ec2-43-200-14-78.ap-northeast-2.compute.amazonaws.com:8000/file-service/file/download/install/" +
-                    downloadFile.changedName + "?org="+ downloadFile.originalName
-
         val pm : PackageManager = packageManager
         var pInfo: PackageInfo? = null;
         try{
-             pInfo = appDetail.packageName?.let { pm.getPackageInfo(it, PackageManager.GET_INSTRUMENTATION) }!!
+            pInfo = appDetail.packageName?.let { pm.getPackageInfo(it, PackageManager.GET_INSTRUMENTATION) }!!
             Log.d("package Info 확인", pInfo.toString())
-            
+
         }catch (e: PackageManager.NameNotFoundException){
             e.printStackTrace()
         }
-        
+
         if(pInfo != null){
             Log.d("pInfo version", pInfo.versionName.toString() + " " + appDetail.version)
             if(pInfo.versionName.toString().equals(appDetail.version)){
                 binding.installBtn.text = "실행"
+                binding.deleteBtn.isVisible = true
                 binding.installBtn.setOnClickListener {
                     val intent = appDetail.packageName?.let { it1 ->
                         baseContext.packageManager.getLaunchIntentForPackage(
@@ -163,17 +160,39 @@ class DetailActivity : AppCompatActivity() {
 
             }else{
                 binding.installBtn.text="업데이트"
+                binding.deleteBtn.isVisible = true
                 installBtn()
             }
 
-            
+
         }else{
             binding.installBtn.text="설치"
             installBtn()
         }
-       
+
+        try {
+            val downloadFile: FileInfoDto = appDetail?.installFileInfo!!
+
+            downloadURL =
+                "http://ec2-43-200-14-78.ap-northeast-2.compute.amazonaws.com:8000/file-service/file/download/install/" +
+                        downloadFile.changedName + "?org=" + downloadFile.originalName
+        }catch (e: java.lang.Exception){
+            println(e)
+           binding.installBtn.text="설치 파일이 없음"
+            binding.installBtn.setTextColor(R.color.kakao_yellow)
+            binding.installBtn.setOnClickListener {
+                Toast.makeText(this, "설치 할 수 없습니다.",Toast.LENGTH_SHORT).show()
+            }
+        }
 
 
+
+
+        binding.deleteBtn.setOnClickListener {
+            Log.d("packageName", appDetail.packageName.toString())
+
+            deleteApp(appDetail.appName.toString())
+        }
 
 
         initRecyclerView()
@@ -190,10 +209,6 @@ class DetailActivity : AppCompatActivity() {
     }
 
     fun installBtn() {
-
-        downloadManager = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-
-
 
         binding.installBtn.setOnClickListener {
             Log.d("install btn click",downloadURL)
@@ -214,14 +229,6 @@ class DetailActivity : AppCompatActivity() {
 
             startActivity(intent)
 
-
-
-            //  supportFragmentManager.beginTransaction().replace(R.id.)
-            //URLDownloading(Uri.parse(downloadURL))
-//            val intent = Intent(this@DetailActivity, DownloadProgressFragment::class.java)
-//            intent.putExtra("appName", binding.appName.text)
-//            intent.putExtra("appInfoText", binding.appInfoText.text)
-            // intent.putExtra("url", downloadURL)
         }
     }
 
@@ -246,28 +253,6 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun URLDownloading(url: Uri) {
-        val sdCard = Environment.getExternalStorageDirectory()
-        // val outputFile: File = File(sdCard.absoluteFile, "/poscoStore")
-        val outputFilePath : String = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/poscoStore").toString().plus("/${binding.appName.text}.apk")
-        val outputFile = File(outputFilePath)
-        if (!outputFile.parentFile.exists()) {
-            outputFile.parentFile?.mkdirs()
-        }
-
-        val request = DownloadManager.Request(url)
-
-        request.setTitle(binding.appName.text)
-        Log.d("이거머양", binding.appInfoText.text.toString())
-        request.setDescription(binding.appInfoText.text)
-
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-        request.setDestinationUri(Uri.fromFile(outputFile))
-        request.setAllowedOverMetered(true)
-        downloadID = downloadManager.enqueue(request)
-
-
-    }
 
     private val downloadCompleteReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
@@ -305,8 +290,12 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun deleteDownloadFile(){
-        downloadManager.remove(downloadID)
+    private fun deleteApp(mAppName: String){
+        val path = File(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "$mAppName")
+        val packageUri: Uri = Uri.fromParts("package", path.toString(),null)
+        Log.d("package", packageUri.toString())
+        val uninstallIntent = Intent(Intent.ACTION_DELETE, packageUri)
+        startActivity(uninstallIntent);
     }
 
 

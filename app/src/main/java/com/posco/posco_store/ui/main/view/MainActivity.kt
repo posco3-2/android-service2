@@ -21,6 +21,7 @@ import com.posco.posco_store.ui.main.adapter.MainAdapter
 import com.posco.posco_store.ui.main.viewmodel.MainViewModel
 import com.posco.posco_store.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.internal.notify
 import okhttp3.internal.notifyAll
@@ -30,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     private val mainViewModel: MainViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
     var adapter: MainAdapter = MainAdapter()
+    private var userId: Int = 0
     private var index: Int = 0
     var isLoading = false
     private lateinit var context: Context
@@ -41,14 +43,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         context = this;
         setupUI()
-        setupAPICall()
 
 
-        val id: Int = LoginActivity.prefs.getString("id","0" ).toInt()
-        if(id == 0) {
+        userId = LoginActivity.prefs.getString("id","0" ).toInt()
+        Log.d("이거머양", userId.toString())
+        if(userId == 0) {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
+        setupAPICall()
 
         adapter.setOnItemClickListener {
             val bundle = Bundle().apply {
@@ -105,7 +108,7 @@ class MainActivity : AppCompatActivity() {
                     if ((visibleItemCount + firstVisibleItemPosition) >= itemTotalCount) {
                         index += 10
                         mainViewModel.getAllApp(index)
-                       // adapter.notifyDataSetChanged()
+                        adapter.notifyDataSetChanged()
                         setupAPICall()
                     }
                 }
@@ -129,7 +132,7 @@ class MainActivity : AppCompatActivity() {
     // User Data overserver
     private fun setupAPICall() {
 
-        mainViewModel.getAllApp(index).observe(this, Observer {
+        mainViewModel.getAppListByUser(userId, index).observe(this, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
                     isLoading = true

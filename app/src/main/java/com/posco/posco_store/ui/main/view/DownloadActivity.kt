@@ -134,6 +134,7 @@ class DownloadActivity : AppCompatActivity(), OnFileDownloadingCallback {
         }
     }
 
+
     private fun installApk() {
         Log.d("downloadFile", " canRequestPackageInstalls ")
         Log.d("downloadFile", " installApk ")
