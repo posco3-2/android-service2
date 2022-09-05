@@ -18,7 +18,7 @@ interface ApiService {
     suspend fun login(@Body user: User): List<User>
 
     @POST("user-service/device/")
-    suspend fun regi(@Body device: Device) : Integer
+    suspend fun regi(@Body device: Device) : Device
 
     @GET("user-service/device/check/{id}")
     suspend fun checkRegiDevice(@Path("id") id:Int) : Integer
@@ -38,6 +38,9 @@ interface ApiService {
     @GET("app-service/app/{id}")
     suspend fun getAppDetails(@Path("id") id: String) : App
 
+    @GET("app-service/app/all/A/{userId}/{index}")
+    suspend fun getAppUserList(@Path("userId") userId: Int, @Path("index") index: Int) : List<App>
+
     @PUT("user-service/device/updateFcm/{fcmName}/{id}")
     suspend fun updateFcmActive(@Path("id") id:Int, @Path("fcmName") fcmName:String, @Body device: Device) : Integer
 
@@ -46,5 +49,7 @@ interface ApiService {
 
     @GET("user-service/device/device/{userId}")
     suspend fun getDevice(@Path("userId") userId: Int) : Device
+
+
 
 }

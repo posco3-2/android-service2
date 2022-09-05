@@ -15,21 +15,28 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.giahn.acDto
+import com.example.giahn.giahnxois
 import com.posco.posco_store.data.model.App
 import com.posco.posco_store.databinding.ActivityMainBinding
 import com.posco.posco_store.ui.main.adapter.MainAdapter
 import com.posco.posco_store.ui.main.viewmodel.MainViewModel
 import com.posco.posco_store.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_main.*
-import okhttp3.internal.notify
-import okhttp3.internal.notifyAll
+import java.lang.Exception
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+    @Inject
+    lateinit var giahnxois: giahnxois
+
     private val mainViewModel: MainViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
     var adapter: MainAdapter = MainAdapter()
+    private var userId: Int = 0
     private var index: Int = 0
     var isLoading = false
     private lateinit var context: Context
@@ -39,16 +46,36 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
         context = this;
         setupUI()
-        setupAPICall()
 
-
-        val id: Int = LoginActivity.prefs.getString("id","0" ).toInt()
-        if(id == 0) {
+        userId = LoginActivity.prefs.getString("id","0" ).toInt()
+        Log.d("이거머양", userId.toString())
+        if(userId == 0) {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
+
+
+        try {
+            giahnxois.postaccess(
+                acDto(
+                    "AA_016",
+                    "SERVICE",
+                    "리스트 페이지 접속",
+                    0,
+                    userId,
+                    "A000001",
+                    'A',
+                    "A_016"
+                )
+            )
+        }catch (e : Exception){
+            Log.e("e",e.toString())
+        }
+        setupAPICall()
 
         adapter.setOnItemClickListener {
             val bundle = Bundle().apply {
@@ -105,7 +132,7 @@ class MainActivity : AppCompatActivity() {
                     if ((visibleItemCount + firstVisibleItemPosition) >= itemTotalCount) {
                         index += 10
                         mainViewModel.getAllApp(index)
-                       // adapter.notifyDataSetChanged()
+                        adapter.notifyDataSetChanged()
                         setupAPICall()
                     }
                 }
@@ -129,7 +156,7 @@ class MainActivity : AppCompatActivity() {
     // User Data overserver
     private fun setupAPICall() {
 
-        mainViewModel.getAllApp(index).observe(this, Observer {
+        mainViewModel.getAppListByUser(userId, index).observe(this, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
                     isLoading = true

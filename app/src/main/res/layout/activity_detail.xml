@@ -63,12 +63,28 @@
         app:layout_constraintStart_toStartOf="@id/app_name"
         app:layout_constraintTop_toBottomOf="@id/app_name" />
 
+    <Button
+        android:id="@+id/delete_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="제거"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/install_btn"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        android:layout_marginHorizontal="20dp"
+        android:textSize="18sp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/login_button_style"
+        app:layout_constraintTop_toBottomOf="@id/version_info"
+        app:layout_constraintStart_toStartOf="parent"/>
+
 
     <Button
         android:id="@+id/install_btn"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="30dp"
+        android:layout_marginHorizontal="20dp"
         android:layout_marginTop="30dp"
         android:background="@drawable/login_button_style"
         android:backgroundTint="@color/blue_button_selected"
@@ -76,8 +92,8 @@
         android:textColor="@color/white"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/version_info" />
+        app:layout_constraintTop_toBottomOf="@id/version_info"
+        app:layout_constraintStart_toEndOf="@id/delete_btn"/>
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -99,7 +115,7 @@
         android:textColor="@color/blue_button_selected"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@id/install_btn"
+        app:layout_constraintStart_toStartOf="@id/logo_img"
         app:layout_constraintTop_toBottomOf="@id/recyclerview_img" />
 
     <ImageButton

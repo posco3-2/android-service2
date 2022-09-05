@@ -19,7 +19,7 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.login(user)
     }
 
-    suspend fun regi(device: Device) : Integer {
+    suspend fun regi(device: Device) : Device {
         return apiService.regi(device);
     }
 
@@ -57,5 +57,9 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
 
     suspend fun getDevice(userId : Int) : Device{
         return apiService.getDevice(userId)
+    }
+
+    suspend fun getAppUserList(userId: Int, index: Int):List<App>{
+        return apiService.getAppUserList(userId, index)
     }
 }

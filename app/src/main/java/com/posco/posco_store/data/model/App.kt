@@ -19,6 +19,8 @@ data class App (
 
     val updateDate: String? = null,
 
+    val extraUrl: String?= null,
+
     val iconFile: Int? = null,
 
     val installFile: Int? = null,

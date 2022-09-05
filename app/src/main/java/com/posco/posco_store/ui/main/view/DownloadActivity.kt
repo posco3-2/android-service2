@@ -9,7 +9,10 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import com.example.giahn.acDto
+import com.example.giahn.giahnxois
 import com.posco.posco_store.databinding.ActivityDownloadBinding
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -17,8 +20,12 @@ import java.io.InputStream
 import java.net.URL
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class DownloadActivity : AppCompatActivity(), OnFileDownloadingCallback {
+    @Inject
+    lateinit var giahnxois: giahnxois
     private lateinit var mBinding: ActivityDownloadBinding
     private lateinit var mAppName: String
     private val permissions = arrayOf(
@@ -34,6 +41,23 @@ class DownloadActivity : AppCompatActivity(), OnFileDownloadingCallback {
         super.onCreate(savedInstanceState)
         mBinding = ActivityDownloadBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
+
+        try {
+            giahnxois.postaccess(
+                acDto(
+                    "AA_019",
+                    "SERVICE",
+                    "다운로드 페이지 접속",
+                    0,
+                    LoginActivity.prefs.getString("id","0" ).toInt(),
+                    "A000001",
+                    'A',
+                    "A_019"
+                )
+            )
+        }catch (e : java.lang.Exception){
+            Log.e("e",e.toString())
+        }
 
         setUpUi()
     }
@@ -133,6 +157,7 @@ class DownloadActivity : AppCompatActivity(), OnFileDownloadingCallback {
             }
         }
     }
+
 
     private fun installApk() {
         Log.d("downloadFile", " canRequestPackageInstalls ")
