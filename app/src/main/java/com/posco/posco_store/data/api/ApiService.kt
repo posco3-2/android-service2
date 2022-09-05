@@ -2,6 +2,7 @@ package com.posco.posco_store.data.api
 
 import com.posco.posco_store.data.model.App
 import com.posco.posco_store.data.model.Device
+import com.posco.posco_store.data.model.Login
 import com.posco.posco_store.data.model.User
 import retrofit2.http.*
 
@@ -14,8 +15,8 @@ interface ApiService {
     @POST("user-service/user/id")
     suspend fun getUserById(@Body testInt: Int): List<User>
 
-    @POST("user-service/user/login")
-    suspend fun login(@Body user: User): List<User>
+    @POST("user-service/user/login_1")
+    suspend fun login(@Body login: Login): Login
 
     @POST("user-service/device/")
     suspend fun regi(@Body device: Device) : Device
@@ -45,7 +46,7 @@ interface ApiService {
     suspend fun updateFcmActive(@Path("id") id:Int, @Path("fcmName") fcmName:String, @Body device: Device) : Integer
 
     @POST("user-service/device/login_1")
-    suspend fun addDevice(@Body device: Device) : User
+    suspend fun addDevice(@Body device: Device) : Login
 
     @GET("user-service/device/device/{userId}")
     suspend fun getDevice(@Path("userId") userId: Int) : Device

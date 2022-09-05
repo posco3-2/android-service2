@@ -3,6 +3,7 @@ package com.posco.posco_store.data.repository
 import com.posco.posco_store.data.api.ApiService
 import com.posco.posco_store.data.model.App
 import com.posco.posco_store.data.model.Device
+import com.posco.posco_store.data.model.Login
 import com.posco.posco_store.data.model.User
 import javax.inject.Inject
 
@@ -15,8 +16,8 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.getUserById(testInt)
     }
 
-    suspend fun login(user: User): List<User>{
-        return apiService.login(user)
+    suspend fun login(login: Login): Login {
+        return apiService.login(login)
     }
 
     suspend fun regi(device: Device) : Device {
@@ -51,7 +52,7 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.updateFcmActive(id, fcmName, device)
     }
 
-    suspend fun addDevice(device: Device): User{
+    suspend fun addDevice(device: Device): Login {
         return apiService.addDevice(device)
     }
 

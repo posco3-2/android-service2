@@ -35,6 +35,7 @@ import com.kakao.sdk.common.model.AuthErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.posco.posco_store.R
 import com.posco.posco_store.data.model.Device
+import com.posco.posco_store.data.model.Login
 import com.posco.posco_store.data.model.User
 import com.posco.posco_store.databinding.ActivityLoginBinding
 import com.posco.posco_store.ui.main.viewmodel.LoginViewModel
@@ -105,7 +106,7 @@ class LoginActivity: AppCompatActivity() {
         binding.button.setOnClickListener {
             val id = binding.id.text.toString()
             val password = binding.password.text.toString()
-            setupAPICall(User(userId = id, password = password))
+            setupAPICall(Login(userId = id, password = password))
         }
 
         binding.kakaoLoginButton.setOnClickListener {
@@ -197,18 +198,21 @@ class LoginActivity: AppCompatActivity() {
             }
     }
 
-    private fun setupAPICall(user: User) = loginViewModel.fetchLogin(user).observe(this, Observer {
+    private fun setupAPICall(login: Login) = loginViewModel.fetchLogin(login).observe(this, Observer {
         when (it.status) {
             Status.SUCCESS -> {
-                if( it.data?.size == 0){
+                if( it.data == null ){
                     Toast.makeText(this@LoginActivity,"아이디와 비밀번호 다시 확인", Toast.LENGTH_SHORT).show()
                     binding.id.text = null;
                     binding.password.text = null;
                 }
-                if(it.data?.get(0)?.id.toString() != null){
-                    val userId = it.data?.get(0)?.id
-                    val userName = it.data?.get(0)?.name
-                    it.data?.get(0)?.id?.toInt()?.let { it1 -> checkRegiDevice(it1,
+                if(it.data?.id.toString() != null){
+
+                    prefs.setString("deviceId", it.data?.deviceId.toString())
+
+                    val userId = it.data?.id
+                    val userName = it.data?.name
+                    it.data?.id?.toInt()?.let { it1 -> checkRegiDevice(it1,
                         userId!!, userName!!) }
                 }
             }
@@ -377,9 +381,14 @@ class LoginActivity: AppCompatActivity() {
                     val id = it.data?.id
                     val userId = it.data?.userId
                     val userName = it.data?.name
+                    val deviceI = it.data?.deviceId
+
+                    Log.e("it",it.toString())
+
                     prefs.setString("id", id.toString())
                     prefs.setString("userId", userId.toString())
                     prefs.setString("userName", userName.toString())
+                    prefs.setString("deviceId", deviceI.toString())
                     val intent = Intent(this, MainActivity::class.java)
                     finishAffinity()
                     startActivity(intent)

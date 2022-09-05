@@ -59,13 +59,15 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        val deivceId = LoginActivity.prefs.getString("deviceId","0").toInt()
+
         try {
             giahnxois.postaccess(
                 acDto(
                     "AA_016",
                     "SERVICE",
                     "리스트 페이지 접속",
-                    0,
+                    deivceId,
                     userId,
                     "A000001",
                     'A',
@@ -75,6 +77,7 @@ class MainActivity : AppCompatActivity() {
         }catch (e : Exception){
             Log.e("e",e.toString())
         }
+
         setupAPICall()
 
         adapter.setOnItemClickListener {
