@@ -229,6 +229,7 @@ class LoginActivity: AppCompatActivity() {
                     Log.d("이거먼데<regi>", it.data.toString())
                     prefs.setString("id", id.toString())
                     prefs.setString("userName", binding.id.text.toString())
+                    Log.d("아이디", id.toString())
                     val intent = Intent(this, MainActivity::class.java)
                     finishAffinity()
                     startActivity(intent)
