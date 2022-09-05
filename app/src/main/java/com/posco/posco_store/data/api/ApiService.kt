@@ -18,7 +18,7 @@ interface ApiService {
     suspend fun login(@Body user: User): List<User>
 
     @POST("user-service/device/")
-    suspend fun regi(@Body device: Device) : Integer
+    suspend fun regi(@Body device: Device) : Device
 
     @GET("user-service/device/check/{id}")
     suspend fun checkRegiDevice(@Path("id") id:Int) : Integer

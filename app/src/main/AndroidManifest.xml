@@ -14,7 +14,9 @@
     <application
         android:name="com.posco.posco_store.MainApplication"
         android:allowBackup="true"
+
         android:launchMode="singleTop"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_main"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_main_round"
@@ -40,11 +42,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.posco.posco_store.ui.main.view.MainActivity">
+        <activity android:name="com.posco.posco_store.ui.main.view.MainActivity"
+            android:exported="true">
         </activity>
-        <activity android:name="com.posco.posco_store.ui.main.view.DetailActivity">
-        </activity>
-        <activity android:name="com.posco.posco_store.ui.main.view.MyPageActivity">
+        <activity android:name="com.posco.posco_store.ui.main.view.DetailActivity"
+            android:exported="true"/>
+        <activity android:name="com.posco.posco_store.ui.main.view.MyPageActivity"
+            android:exported="true">
         </activity>
        <service
             android:name="com.posco.posco_store.MyFirebaseMessagingService"

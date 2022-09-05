@@ -19,6 +19,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
+import com.example.giahn.acDto
+import com.example.giahn.giahnxois
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -43,9 +45,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginActivity: AppCompatActivity() {
+    @Inject
+    lateinit var giahnxois: giahnxois
 
     companion object {
         lateinit var prefs : MySharedPreferences
@@ -67,6 +72,25 @@ class LoginActivity: AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
 
         setContentView(binding.root)
+
+        try {
+            giahnxois.postaccess(
+                acDto(
+                    "AA_015",
+                    "SERVICE",
+                    "로그인 화면 접속",
+                    0,
+                    0,
+                    "A000001",
+                    'A',
+                    "A_015"
+                )
+            )
+        }catch (e : java.lang.Exception){
+            Log.e("e",e.toString())
+        }
+
+
 
         val id: Int = prefs.getString("id","0" ).toInt()
 
@@ -199,8 +223,10 @@ class LoginActivity: AppCompatActivity() {
     private fun checkRegiDevice(id: Int, userId: Int, userName: String) = loginViewModel.checkRegiDevice(id).observe(this, Observer {
         when (it.status){
             Status.SUCCESS ->{
+                Log.e("이거 원래 먼데", id.toString())
                 Log.e("regi", (it.data.toString() == "1").toString());
                 if(it.data.toString() == "1"){
+                    Log.d("이거먼데<regi>", it.data.toString())
                     prefs.setString("id", id.toString())
                     prefs.setString("userName", binding.id.text.toString())
                     val intent = Intent(this, MainActivity::class.java)

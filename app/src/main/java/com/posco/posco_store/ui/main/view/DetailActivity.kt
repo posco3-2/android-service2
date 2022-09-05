@@ -21,6 +21,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.example.giahn.acDto
+import com.example.giahn.giahnxois
 import com.google.android.gms.auth.api.signin.GoogleSignIn.hasPermissions
 import com.posco.posco_store.R
 import com.posco.posco_store.data.model.App
@@ -33,10 +35,13 @@ import dagger.hilt.android.AndroidEntryPoint
 
 import kotlinx.android.synthetic.main.dialog_image_view_layout.*
 import java.io.File
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class DetailActivity : AppCompatActivity() {
+    @Inject
+    lateinit var giahnxois: giahnxois
     private val detailViewModel: DetailViewModel by viewModels()
     private lateinit var binding: ActivityDetailBinding
     private lateinit var detailImg: List<FileInfoDto>
@@ -56,6 +61,24 @@ class DetailActivity : AppCompatActivity() {
         setContentView(binding.root)
         downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
         setUpUi()
+
+        val userId = LoginActivity.prefs.getString("id","0" ).toInt()
+        try {
+            giahnxois.postaccess(
+                acDto(
+                    "AA_017",
+                    "SERVICE",
+                    "디테일 페이지 접속",
+                    0,
+                    userId,
+                    "A000001",
+                    'A',
+                    "A_017"
+                )
+            )
+        }catch (e : java.lang.Exception){
+            Log.e("e",e.toString())
+        }
 
         imageAdapter.setOnItemClickListener {
             val dialog: Dialog = Dialog(this)
@@ -291,8 +314,9 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun deleteApp(mAppName: String){
-        val path = File(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "$mAppName")
-        val packageUri: Uri = Uri.fromParts("package", path.toString(),null)
+        val path = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+        Log.d("path 확인", path.toString())
+        val packageUri: Uri = Uri.fromParts("package", path.toString() + mAppName,null)
         Log.d("package", packageUri.toString())
         val uninstallIntent = Intent(Intent.ACTION_DELETE, packageUri)
         startActivity(uninstallIntent);

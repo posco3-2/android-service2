@@ -107,7 +107,13 @@ class MainAdapter @Inject constructor(
                     try{
                         itemView.start_btn.setOnClickListener {
                             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(app.extraUrl))
-                            context.startActivity(intent)
+                            try {
+                                context.startActivity(intent)
+                            }
+                            catch(e: Exception){
+                                System.out.println(e)
+
+                            }
                         }
                     }catch (e: Exception){
                         System.out.println(e)

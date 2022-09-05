@@ -13,15 +13,21 @@ import androidx.lifecycle.Observer
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.example.giahn.acDto
+import com.example.giahn.giahnxois
 import com.posco.posco_store.data.model.Device
 import com.posco.posco_store.databinding.ActivityMypageBinding
 import com.posco.posco_store.ui.main.viewmodel.MyPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_detail.*
+import java.lang.Exception
 import java.util.*
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MyPageActivity : AppCompatActivity() {
+    @Inject
+    lateinit var giahnxois: giahnxois
 
     private val myPageViewModel: MyPageViewModel by viewModels()
     private lateinit var binding: ActivityMypageBinding
@@ -31,6 +37,23 @@ class MyPageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMypageBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        try {
+            giahnxois.postaccess(
+                acDto(
+                    "AA_018",
+                    "SERVICE",
+                    "세팅 페이지 접속",
+                    0,
+                    LoginActivity.prefs.getString("id","0" ).toInt(),
+                    "A000001",
+                    'A',
+                    "A_018"
+                )
+            )
+        }catch (e : Exception){
+            Log.e("e",e.toString())
+        }
 
         val userId = LoginActivity.prefs.getString("userId","No")
 
