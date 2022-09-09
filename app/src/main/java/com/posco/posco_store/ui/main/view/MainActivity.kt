@@ -48,11 +48,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        context = this;
+        context = this
         setupUI()
 
         userId = LoginActivity.prefs.getString("id","0" ).toInt()
-        Log.d("이거머양", userId.toString())
         if(userId == 0) {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)

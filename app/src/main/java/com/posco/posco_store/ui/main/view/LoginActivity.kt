@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Build
@@ -227,7 +228,7 @@ class LoginActivity: AppCompatActivity() {
     private fun checkRegiDevice(id: Int, userId: Int, userName: String) = loginViewModel.checkRegiDevice(id).observe(this, Observer {
         when (it.status){
             Status.SUCCESS ->{
-                Log.e("이거 원래 먼데", id.toString())
+
                 Log.e("regi", (it.data.toString() == "1").toString());
                 if(it.data.toString() == "1"){
                     Log.d("이거먼데<regi>", it.data.toString())
@@ -377,22 +378,20 @@ class LoginActivity: AppCompatActivity() {
     private fun addDevice(device: Device) = loginViewModel.addDevice(device).observe(this, Observer {
         when (it.status){
             Status.SUCCESS ->{
-                if(it.data?.id.toString() != null){
-                    val id = it.data?.id
-                    val userId = it.data?.userId
-                    val userName = it.data?.name
-                    val deviceI = it.data?.deviceId
+                val id = it.data?.id
+                val userId = it.data?.userId
+                val userName = it.data?.name
+                val deviceI = it.data?.deviceId
 
-                    Log.e("it",it.toString())
+                Log.e("it",it.toString())
 
-                    prefs.setString("id", id.toString())
-                    prefs.setString("userId", userId.toString())
-                    prefs.setString("userName", userName.toString())
-                    prefs.setString("deviceId", deviceI.toString())
-                    val intent = Intent(this, MainActivity::class.java)
-                    finishAffinity()
-                    startActivity(intent)
-                }
+                prefs.setString("id", id.toString())
+                prefs.setString("userId", userId.toString())
+                prefs.setString("userName", userName.toString())
+                prefs.setString("deviceId", deviceI.toString())
+                val intent = Intent(this, MainActivity::class.java)
+                finishAffinity()
+                startActivity(intent)
             }
             Status.ERROR -> {
                 Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
@@ -400,5 +399,11 @@ class LoginActivity: AppCompatActivity() {
             else -> {}
         }
     })
+
+    fun getVersionInfo() : String {
+        val info: PackageInfo = baseContext.packageManager.getPackageInfo(baseContext.packageName, 0)
+        val version = info.versionName
+        return version
+    }
 
 }

@@ -21,23 +21,23 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
     }
 
     suspend fun regi(device: Device) : Device {
-        return apiService.regi(device);
+        return apiService.regi(device)
     }
 
-    suspend fun checkRegiDevice(id: Int): Integer{
-        return apiService.checkRegiDevice(id);
+    suspend fun checkRegiDevice(id: Int): Int{
+        return apiService.checkRegiDevice(id)
     }
 
-    suspend fun updateRegiDevice(id:Int, updateDate: String): Integer {
-        return apiService.updateRegiDevice(id, updateDate);
+    suspend fun updateRegiDevice(id:Int, updateDate: String): Int {
+        return apiService.updateRegiDevice(id, updateDate)
     }
 
     suspend fun checkKakao(user: User): List<User> {
-        return apiService.checkKakao(user);
+        return apiService.checkKakao(user)
     }
 
     suspend fun getAllApps(index: Int): List<App>{
-        return apiService.getAllApps(index);
+        return apiService.getAllApps(index)
     }
 
     suspend fun getAppList(os: String): List<App>{
@@ -48,7 +48,7 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.getAppDetails(id)
     }
 
-    suspend fun updateFcmActive(id:Int, fcmName: String, device:Device ): Integer{
+    suspend fun updateFcmActive(id:Int, fcmName: String, device:Device ): Int{
         return apiService.updateFcmActive(id, fcmName, device)
     }
 
@@ -62,5 +62,9 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
 
     suspend fun getAppUserList(userId: Int, index: Int):List<App>{
         return apiService.getAppUserList(userId, index)
+    }
+
+    suspend fun getNewVersion(appId: String, userId: Int): String{
+        return apiService.getNewVersion(appId, userId)
     }
 }

@@ -1,6 +1,7 @@
 package com.posco.posco_store.ui.main.adapter
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -8,9 +9,11 @@ import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.webkit.URLUtil
 import android.widget.Filter
 import android.widget.Filterable
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -19,6 +22,7 @@ import com.posco.posco_store.data.model.App
 import com.posco.posco_store.databinding.ItemLayoutBinding
 import com.posco.posco_store.databinding.ItemLoadingBinding
 import com.posco.posco_store.ui.main.view.DownloadActivity
+import com.posco.posco_store.ui.main.view.MainActivity
 import kotlinx.android.synthetic.main.item_layout.view.*
 import java.io.IOException
 import java.lang.Exception
@@ -91,18 +95,20 @@ class MainAdapter @Inject constructor(
                 itemView.start_btn.setImageResource(R.drawable.download)
                 itemView.start_text.text="다운로드"
 
-                if( app.extraUrl.isNullOrBlank() || app.extraUrl.isNullOrEmpty()){
+                if( app.extraUrl.isNullOrBlank() || app.extraUrl.isNullOrEmpty() || !URLUtil.isValidUrl(app.extraUrl) ){
                     itemView.start_btn.setOnClickListener {
+                        Log.d("확인", "dlrjrdkj")
                         if(app.installFileInfo != null){
                             goToInstall(app, context)
+
                         }
                         else {
-                            itemView.start_btn.setImageResource(0)
-                            itemView.start_text.text=""
+                            Toast.makeText(context, "앱을 설치할 수 없습니다. ", Toast.LENGTH_SHORT).show()
                         }
                     }
 
                 }else{
+
                     Log.d("이거로",Uri.parse(app.extraUrl).toString())
                     try{
                         itemView.start_btn.setOnClickListener {
@@ -186,11 +192,15 @@ class MainAdapter @Inject constructor(
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence): FilterResults {
                 val charString = constraint.toString()
+                Log.d("charString", charString)
                 if (charString.isEmpty()) {
+                    Log.d("apps", apps.toString())
                     appFilterList = apps
                 } else {
                     val resultList = ArrayList<App>()
+                    Log.d("apps확인", apps.toString())
                     for (row in apps) {
+                        Log.e("appName 확인", row.appName.toString())
                         if (row.appName?.toLowerCase()
                                 ?.contains(constraint.toString().toLowerCase()) == true
                         ) {
@@ -223,6 +233,7 @@ class MainAdapter @Inject constructor(
     }
 
     fun addData(app: List<App>) {
+        apps.addAll(app)
         appFilterList.addAll(app)
     }
 
@@ -271,11 +282,35 @@ class MainAdapter @Inject constructor(
 
         Log.d("이거", intent.toString())
 
+
         if(hasPermissions(context)){
             Log.i("있다","permission")
             context.startActivity(intent)
+        }else{
+            Log.i("없다","permission")
+            val result =  requestPermission(context)
+            if(result){
+                context.startActivity(intent)
+            }
+            Toast.makeText(context, "권한을 받지 못했습니다", Toast.LENGTH_SHORT).show()
         }
+
     }
+
+    private fun requestPermission(context: Context) : Boolean {
+        try {
+            ActivityCompat.requestPermissions(
+                context as Activity, permissions,
+                DownloadActivity.PERMISSION_REQUEST_CODE
+            )
+            return true
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return false
+    }
+
+
 
 }
 

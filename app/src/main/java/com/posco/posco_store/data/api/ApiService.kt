@@ -22,10 +22,10 @@ interface ApiService {
     suspend fun regi(@Body device: Device) : Device
 
     @GET("user-service/device/check/{id}")
-    suspend fun checkRegiDevice(@Path("id") id:Int) : Integer
+    suspend fun checkRegiDevice(@Path("id") id:Int) : Int
 
     @PUT("user-service/device/update/{id}")
-    suspend fun updateRegiDevice(@Path("id") id:Int, @Body updateDate: String) : Integer
+    suspend fun updateRegiDevice(@Path("id") id:Int, @Body updateDate: String) : Int
 
     @POST("user-service/user/socialLogin")
     suspend fun checkKakao(@Body user: User) : List<User>
@@ -39,11 +39,14 @@ interface ApiService {
     @GET("app-service/app/{id}")
     suspend fun getAppDetails(@Path("id") id: String) : App
 
+    @GET("app-service/app/version/{id}")
+    suspend fun getNewVersion(@Path("appId") appId: String,@Path("userId") userId:Int) : String
+
     @GET("app-service/app/all/A/{userId}/{index}")
     suspend fun getAppUserList(@Path("userId") userId: Int, @Path("index") index: Int) : List<App>
 
     @PUT("user-service/device/updateFcm/{fcmName}/{id}")
-    suspend fun updateFcmActive(@Path("id") id:Int, @Path("fcmName") fcmName:String, @Body device: Device) : Integer
+    suspend fun updateFcmActive(@Path("id") id:Int, @Path("fcmName") fcmName:String, @Body device: Device) : Int
 
     @POST("user-service/device/login_1")
     suspend fun addDevice(@Body device: Device) : Login
