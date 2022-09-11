@@ -63,8 +63,4 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
     suspend fun getAppUserList(userId: Int, index: Int):List<App>{
         return apiService.getAppUserList(userId, index)
     }
-
-    suspend fun getNewVersion(appId: String, userId: Int): String{
-        return apiService.getNewVersion(appId, userId)
-    }
 }
