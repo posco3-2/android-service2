@@ -54,6 +54,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+
     fun updateRegiDevice(id: Int, updateDate: String) = liveData(Dispatchers.IO) {
         emit(Resource.loading(null))
         try {
@@ -71,5 +72,6 @@ class LoginViewModel @Inject constructor(
             emit(Resource.error(exception.message ?: "Error Occurred!", data = null))
         }
     }
+
 
 }

@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Build
@@ -11,6 +12,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.telephony.TelephonyManager
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
@@ -36,10 +38,10 @@ import com.kakao.sdk.user.UserApiClient
 import com.posco.posco_store.R
 import com.posco.posco_store.data.model.Device
 import com.posco.posco_store.data.model.Login
-import com.posco.posco_store.data.model.User
 import com.posco.posco_store.databinding.ActivityLoginBinding
 import com.posco.posco_store.ui.main.viewmodel.LoginViewModel
 import com.posco.posco_store.utils.MySharedPreferences
+import com.posco.posco_store.utils.OnSingleClickListener
 import com.posco.posco_store.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -98,12 +100,10 @@ class LoginActivity: AppCompatActivity() {
         Log.e("id", id.toString())
 
         if(id != 0){
-            val intent = Intent(this, MainActivity::class.java)
-            finishAffinity()
-            startActivity(intent)
+           goToMainActivity()
         }
 
-        binding.button.setOnClickListener {
+        binding.button.setOnSingleClickListener{
             val id = binding.id.text.toString()
             val password = binding.password.text.toString()
             setupAPICall(Login(userId = id, password = password))
@@ -206,15 +206,15 @@ class LoginActivity: AppCompatActivity() {
                     binding.id.text = null;
                     binding.password.text = null;
                 }
-                if(it.data?.id.toString() != null){
 
-                    prefs.setString("deviceId", it.data?.deviceId.toString())
+                prefs.setString("deviceId", it.data?.deviceId.toString())
 
-                    val userId = it.data?.id
-                    val userName = it.data?.name
-                    it.data?.id?.toInt()?.let { it1 -> checkRegiDevice(it1,
-                        userId!!, userName!!) }
-                }
+                val userId = it.data?.id
+                val userName = it.data?.name
+                it.data?.id?.toInt()?.let { it1 -> checkRegiDevice(it1,
+                    userId!!, userName!!) }
+
+
             }
             Status.ERROR -> {
                 Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
@@ -227,16 +227,12 @@ class LoginActivity: AppCompatActivity() {
     private fun checkRegiDevice(id: Int, userId: Int, userName: String) = loginViewModel.checkRegiDevice(id).observe(this, Observer {
         when (it.status){
             Status.SUCCESS ->{
-                Log.e("이거 원래 먼데", id.toString())
                 Log.e("regi", (it.data.toString() == "1").toString());
                 if(it.data.toString() == "1"){
-                    Log.d("이거먼데<regi>", it.data.toString())
                     prefs.setString("id", id.toString())
                     prefs.setString("userName", binding.id.text.toString())
-                    Log.d("아이디", id.toString())
-                    val intent = Intent(this, MainActivity::class.java)
-                    finishAffinity()
-                    startActivity(intent)
+                    Log.e("아이디", id.toString())
+                    goToMainActivity()
                 }else{
                     Log.e("처음등록하는","아이디")
                     FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
@@ -272,8 +268,7 @@ class LoginActivity: AppCompatActivity() {
     private fun inputDevice(device: Device) = loginViewModel.inputDevice(device).observe(this, Observer {
         when (it.status){
             Status.SUCCESS ->{
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
+                goToMainActivity()
             }
             Status.ERROR -> {
                 Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
@@ -377,22 +372,18 @@ class LoginActivity: AppCompatActivity() {
     private fun addDevice(device: Device) = loginViewModel.addDevice(device).observe(this, Observer {
         when (it.status){
             Status.SUCCESS ->{
-                if(it.data?.id.toString() != null){
-                    val id = it.data?.id
-                    val userId = it.data?.userId
-                    val userName = it.data?.name
-                    val deviceI = it.data?.deviceId
+                val id = it.data?.id
+                val userId = it.data?.userId
+                val userName = it.data?.name
+                val deviceId = it.data?.deviceId
 
-                    Log.e("it",it.toString())
+                Log.e("it",it.toString())
 
-                    prefs.setString("id", id.toString())
-                    prefs.setString("userId", userId.toString())
-                    prefs.setString("userName", userName.toString())
-                    prefs.setString("deviceId", deviceI.toString())
-                    val intent = Intent(this, MainActivity::class.java)
-                    finishAffinity()
-                    startActivity(intent)
-                }
+                prefs.setString("id", id.toString())
+                prefs.setString("userId", userId.toString())
+                prefs.setString("userName", userName.toString())
+                prefs.setString("deviceId", deviceId.toString())
+                goToMainActivity()
             }
             Status.ERROR -> {
                 Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
@@ -400,5 +391,25 @@ class LoginActivity: AppCompatActivity() {
             else -> {}
         }
     })
+
+    fun getVersionInfo() : String {
+        val info: PackageInfo = baseContext.packageManager.getPackageInfo(baseContext.packageName, 0)
+        val version = info.versionName
+        return version
+    }
+
+    fun View.setOnSingleClickListener(onSingleClick: (View) -> Unit) {
+        val oneClick = OnSingleClickListener {
+            onSingleClick(it)
+        }
+        setOnClickListener(oneClick)
+    }
+
+    fun goToMainActivity() {
+
+        val intent = Intent(this, MainActivity::class.java)
+        finishAffinity()
+        startActivity(intent)
+    }
 
 }

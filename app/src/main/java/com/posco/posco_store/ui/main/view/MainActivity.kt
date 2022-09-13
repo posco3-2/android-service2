@@ -1,7 +1,9 @@
 package com.posco.posco_store.ui.main.view
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -40,6 +42,10 @@ class MainActivity : AppCompatActivity() {
     private var index: Int = 0
     var isLoading = false
     private lateinit var context: Context
+    private val permissions = arrayOf(
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -48,11 +54,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        context = this;
+        context = this
         setupUI()
 
         userId = LoginActivity.prefs.getString("id","0" ).toInt()
-        Log.d("이거머양", userId.toString())
         if(userId == 0) {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
@@ -187,6 +192,19 @@ class MainActivity : AppCompatActivity() {
             addData(apps)
             notifyDataSetChanged()
         }
+    }
+
+    private fun hasPermissions(context: Context): Boolean {
+        for (permission in permissions) {
+            if (ContextCompat.checkSelfPermission(
+                    context,
+                    permission
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                return false
+            }
+        }
+        return true
     }
 
 

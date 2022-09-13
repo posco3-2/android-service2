@@ -199,6 +199,7 @@ class DetailActivity : AppCompatActivity() {
             downloadURL =
                 "http://ec2-43-200-14-78.ap-northeast-2.compute.amazonaws.com:8000/file-service/file/download/install/" +
                         downloadFile.changedName + "?org=" + downloadFile.originalName
+            Log.e("downloadUrl", downloadURL.toString())
         }catch (e: java.lang.Exception){
             println(e)
            binding.installBtn.text="설치 파일이 없음"
