@@ -32,6 +32,7 @@
 
                 <!-- Redirect URI: "kakao${NATIVE_APP_KEY}://oauth" -->
                 <data android:host="oauth" android:scheme="kakao563d01ea237202c1de004f03316bf42c"/>
+                <data android:host="action" android:scheme="posco_store"/>
             </intent-filter>
         </activity>
         <activity android:name=".ui.main.view.DownloadActivity" />
