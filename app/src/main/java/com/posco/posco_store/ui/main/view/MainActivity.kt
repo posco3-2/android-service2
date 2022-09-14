@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
     private val mainViewModel: MainViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
     lateinit var adapter: MainAdapter
-    private var token: String = ""
+    private var token: String? = null
     private var index: Int = 0
     private var userId: Int = 0
     var isLoading = false

@@ -177,6 +177,7 @@ class DetailActivity : AppCompatActivity() {
                     startActivity(intent)
                 }
 
+
             }else{
                 binding.installBtn.text="업데이트"
                 binding.deleteBtn.isVisible = true
@@ -211,7 +212,7 @@ class DetailActivity : AppCompatActivity() {
         binding.deleteBtn.setOnClickListener {
             Log.d("packageName", appDetail.packageName.toString())
 
-            deleteApp(appDetail.appName.toString())
+            deleteApp(appDetail.packageName.toString())
         }
 
 
@@ -310,13 +311,17 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun deleteApp(mAppName: String){
-        val path = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
-        Log.d("path 확인", path.toString())
-        val packageUri: Uri = Uri.fromParts("package", path.toString() + mAppName,null)
-        Log.d("package", packageUri.toString())
-        val uninstallIntent = Intent(Intent.ACTION_DELETE, packageUri)
-        startActivity(uninstallIntent);
+    private fun deleteApp(packageName: String){
+        Log.d("이거 맞아", packageName)
+        val packageURI =Uri.parse("package:$packageName")
+        val intent = Intent(Intent.ACTION_DELETE).setData(packageURI)
+        startActivity(intent)
+//        val path = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+//        Log.d("path 확인", path.toString())
+//        val packageUri: Uri = Uri.fromParts("package", path.toString() + mAppName,null)
+//        Log.d("package", packageUri.toString())
+//        val uninstallIntent = Intent(Intent.ACTION_DELETE, packageUri)
+//        startActivity(uninstallIntent);
     }
 
 

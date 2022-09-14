@@ -378,7 +378,7 @@ class LoginActivity: AppCompatActivity() {
 
             // Get new FCM registration token
             tokened = task.result
-
+            Log.d("token 확인", tokened)
             // Log and toast
             if(tokened.isBlank()){
                 val msg = "fcm 토큰 오류"
