@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.posco.posco_store.data.model.Device
 import com.posco.posco_store.data.model.Login
+import com.posco.posco_store.data.model.LoginDto
 import com.posco.posco_store.data.model.User
 import com.posco.posco_store.data.repository.MainRepository
 import com.posco.posco_store.utils.Resource
@@ -17,10 +18,10 @@ class LoginViewModel @Inject constructor(
 ) : ViewModel()
 {
 
-    fun fetchLogin(login: Login) = liveData(Dispatchers.IO){
+    fun fetchLogin(loginDto: LoginDto) = liveData(Dispatchers.IO){
         emit(Resource.loading(null))
         try {
-            emit(Resource.success(data = mainRepository.login(login)))
+            emit(Resource.success(data = mainRepository.login(loginDto)))
         } catch (exception: Exception) {
             emit(Resource.error(exception.message ?: "Error Occurred!", data = null))
         }

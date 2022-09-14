@@ -32,7 +32,6 @@
 
                 <!-- Redirect URI: "kakao${NATIVE_APP_KEY}://oauth" -->
                 <data android:host="oauth" android:scheme="kakao563d01ea237202c1de004f03316bf42c"/>
-                <data android:host="action" android:scheme="posco_store"/>
             </intent-filter>
         </activity>
         <activity android:name=".ui.main.view.DownloadActivity" />
@@ -45,13 +44,19 @@
         </activity>
         <activity android:name="com.posco.posco_store.ui.main.view.MainActivity"
             android:exported="true">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="http" android:scheme="posco_store"/>
+            </intent-filter>
         </activity>
         <activity android:name="com.posco.posco_store.ui.main.view.DetailActivity"
             android:exported="true"/>
         <activity android:name="com.posco.posco_store.ui.main.view.MyPageActivity"
             android:exported="true">
         </activity>
-       <service
+        <service
             android:name="com.posco.posco_store.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
