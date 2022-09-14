@@ -49,6 +49,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:host="action" android:scheme="posco_store"/>
+
             </intent-filter>
         </activity>
         <activity android:name="com.posco.posco_store.ui.main.view.DetailActivity"
@@ -56,7 +57,7 @@
         <activity android:name="com.posco.posco_store.ui.main.view.MyPageActivity"
             android:exported="true">
         </activity>
-       <service
+        <service
             android:name="com.posco.posco_store.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
