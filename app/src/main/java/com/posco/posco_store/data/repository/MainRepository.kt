@@ -1,10 +1,7 @@
 package com.posco.posco_store.data.repository
 
 import com.posco.posco_store.data.api.ApiService
-import com.posco.posco_store.data.model.App
-import com.posco.posco_store.data.model.Device
-import com.posco.posco_store.data.model.Login
-import com.posco.posco_store.data.model.User
+import com.posco.posco_store.data.model.*
 import javax.inject.Inject
 
 class MainRepository @Inject constructor(private val apiService: ApiService) {
@@ -16,7 +13,7 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.getUserById(testInt)
     }
 
-    suspend fun login(login: Login): Login {
+    suspend fun login(login: LoginDto): LoginResultDto {
         return apiService.login(login)
     }
 

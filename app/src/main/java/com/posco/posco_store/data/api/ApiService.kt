@@ -1,9 +1,6 @@
 package com.posco.posco_store.data.api
 
-import com.posco.posco_store.data.model.App
-import com.posco.posco_store.data.model.Device
-import com.posco.posco_store.data.model.Login
-import com.posco.posco_store.data.model.User
+import com.posco.posco_store.data.model.*
 import retrofit2.http.*
 
 
@@ -15,8 +12,8 @@ interface ApiService {
     @POST("user-service/user/id")
     suspend fun getUserById(@Body testInt: Int): List<User>
 
-    @POST("user-service/user/login_1")
-    suspend fun login(@Body login: Login): Login
+    @POST("user-service/device/login_2")
+    suspend fun login(@Body login: LoginDto): LoginResultDto
 
     @POST("user-service/device/")
     suspend fun regi(@Body device: Device) : Device
