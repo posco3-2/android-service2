@@ -9,12 +9,11 @@ data class LoginResultDto (
     @SerializedName("userId")
     val userId: String? = null,
 
-
     @SerializedName("name")
     val name: String? = null,
 
     @SerializedName("deviceId")
-    val deviceId: String? = null,
+    val deviceId: Int? = null,
 
     @SerializedName("token")
     val token: String? = null

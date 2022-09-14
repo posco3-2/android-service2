@@ -46,6 +46,7 @@ import com.posco.posco_store.utils.MySharedPreferences
 import com.posco.posco_store.utils.OnSingleClickListener
 import com.posco.posco_store.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -112,11 +113,11 @@ class LoginActivity: AppCompatActivity() {
         }
 
 
-        val id: Int = prefs.getString("id","0" ).toInt()
+        val token: String = prefs.getString("token","0" )
 
-        Log.e("id", id.toString())
+        Log.e("token", token.toString())
 
-        if(id != 0){
+        if(token != "0"){
            goToMainActivity()
         }
 
@@ -235,14 +236,16 @@ class LoginActivity: AppCompatActivity() {
         when (it.status) {
             Status.SUCCESS -> {
                 val id = it.data?.id
-                val userId = it.data?.userId
+                val userId = it.data?.userId //사용자의 id
                 val userName = it.data?.name
                 val deviceId = it.data?.deviceId
                 val token = it.data?.token
-                prefs.setString("id", id.toString())
+
+                id?.let { it1 -> prefs.setInt("id", it1) }
                 prefs.setString("userId", userId.toString())
+
                 prefs.setString("userName", userName.toString())
-                prefs.setString("deviceId", deviceId.toString())
+                deviceId?.let { it1 -> prefs.setInt("deviceId", it1) }
                 prefs.setString("token", token.toString())
 
                 goToMainActivity()

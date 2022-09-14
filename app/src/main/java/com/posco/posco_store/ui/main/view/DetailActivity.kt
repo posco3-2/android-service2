@@ -58,14 +58,14 @@ class DetailActivity : AppCompatActivity() {
         downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
         setUpUi()
 
-        val userId = LoginActivity.prefs.getString("id","0" ).toInt()
+        val userId = LoginActivity.prefs.getInt("id",0 )
         try {
             giahnxois.postaccess(
                 acDto(
                     "AA_017",
                     "SERVICE",
                     "디테일 페이지 접속",
-                    0,
+                    LoginActivity.prefs.getInt("deviceId", 0),
                     userId,
                     "A000001",
                     'A',

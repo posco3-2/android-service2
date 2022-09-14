@@ -14,8 +14,8 @@ class MySharedPreferences(context: Context) {
         prefs.edit().putString(key, value).apply()
     }
 
-    fun getInt(key: String, defValue: Int) : String {
-        return prefs.getInt(key, defValue).toString()
+    fun getInt(key: String, defValue: Int) : Int {
+        return prefs.getInt(key, defValue)
     }
 
     fun setInt(key: String, defValue: Int)  {

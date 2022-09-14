@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.posco.posco_store">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -37,6 +38,12 @@
         <activity android:name=".ui.main.view.DownloadActivity" />
         <activity android:name="com.posco.posco_store.ui.main.view.LoginActivity"
             android:exported="true">
+
+        </activity>
+
+        <activity android:name=".ui.main.view.SplashActivity"
+            android:theme="@style/SplashTheme"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -44,7 +51,8 @@
         </activity>
         <activity android:name="com.posco.posco_store.ui.main.view.MainActivity"
             android:exported="true">
-            <intent-filter android:autoVerify="true">
+            <intent-filter android:autoVerify="true"
+                tools:targetApi="m">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
