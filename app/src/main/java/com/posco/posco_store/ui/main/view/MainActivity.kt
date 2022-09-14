@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -37,11 +38,10 @@ class MainActivity : AppCompatActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
-    var adapter: MainAdapter = MainAdapter()
+    lateinit var adapter: MainAdapter
     private var userId: Int = 0
     private var index: Int = 0
     var isLoading = false
-    private lateinit var context: Context
     private val permissions = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -53,9 +53,10 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-        context = this
+        adapter = MainAdapter()
+        hasPermissions(this)
         setupUI()
+
 
         userId = LoginActivity.prefs.getString("id","0" ).toInt()
         if(userId == 0) {
@@ -85,6 +86,7 @@ class MainActivity : AppCompatActivity() {
 
         setupAPICall()
 
+
         adapter.setOnItemClickListener {
             val bundle = Bundle().apply {
                 putSerializable("selected_item",it)
@@ -92,8 +94,10 @@ class MainActivity : AppCompatActivity() {
             Log.i("bundle 확인", bundle.getSerializable("selected_item").toString())
             val intent = Intent(this@MainActivity,DetailActivity::class.java)
             intent.putExtras(bundle)
-            context.startActivity(intent)
+            this.startActivity(intent)
         }
+
+
 
         binding.settingBtn.setOnClickListener {
             val intent = Intent(this, MyPageActivity::class.java)
@@ -119,8 +123,9 @@ class MainActivity : AppCompatActivity() {
 
             index =0
             adapter.clear()
+            mainViewModel.app.clear()
             setupAPICall()
-           adapter.notifyDataSetChanged()
+            adapter.notifyDataSetChanged()
             Toast.makeText(this,"새로고침 했습니다",Toast.LENGTH_SHORT).show()
 
         }
@@ -146,6 +151,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+
     }
 
     // user List View 
@@ -164,17 +170,23 @@ class MainActivity : AppCompatActivity() {
     // User Data overserver
     private fun setupAPICall() {
 
-        mainViewModel.getAppListByUser(userId, index).observe(this, Observer {
+        mainViewModel.getAppListByUser(userId, index).observe(this) {
             when (it.status) {
                 Status.SUCCESS -> {
+                    adapter.clear()
+                    mainViewModel.app.clear()
                     isLoading = true
-                    adapter.hideLoading()
                     progressBar.visibility = View.GONE
-                    it.data?.let { usersData -> renderList(usersData) }
+
+
+                    it.data?.let { it -> mainViewModel.app.addAll(it) }
+
+                    //it.data?.let { usersData -> renderList(usersData) }
+                    renderList(mainViewModel.app)
                     recyclerView.visibility = View.VISIBLE
 
                     adapter.notifyDataSetChanged()
-                    adapter.hideLoading()
+                    checkUri()
                 }
                 Status.ERROR -> {
                     //Handle Error
@@ -183,7 +195,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 else -> {}
             }
-        })
+        }
     }
 
     // adapter에 user data list data 추가
@@ -205,6 +217,41 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("다시","start")
+    }
+
+    fun checkUri(){
+        val action:String?=intent.action
+        Log.d("action 확인", action.toString())
+        val data: Uri? = intent.data
+        Log.d("uri 확인", data.toString())
+
+        if(action == Intent.ACTION_VIEW){
+            val page = data?.getQueryParameter("page")
+            val appIds = data?.getQueryParameter("appId")
+            Log.d("page", page.toString())
+            Log.d("appId", appIds.toString())
+            Log.e("있나", mainViewModel.app.toString())
+
+            val oneApp = mainViewModel.app.filter{
+                it -> it.id == appIds
+            }
+            if(!oneApp.isEmpty()){
+                val bundle = Bundle().apply {
+                putSerializable("selected_item", oneApp.get(0))
+            }
+                Log.e("확인!!!", oneApp.get(0).toString())
+                val intent = Intent(this@MainActivity,DetailActivity::class.java)
+                intent.putExtras(bundle)
+                this.startActivity(intent)
+
+            }
+
+        }
     }
 
 

@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -73,6 +74,7 @@ class LoginActivity: AppCompatActivity() {
         prefs = MySharedPreferences(applicationContext)
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
+
 
         setContentView(binding.root)
 
@@ -411,5 +413,8 @@ class LoginActivity: AppCompatActivity() {
         finishAffinity()
         startActivity(intent)
     }
+
+
+
 
 }
