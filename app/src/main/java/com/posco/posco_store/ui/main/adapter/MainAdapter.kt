@@ -13,6 +13,7 @@ import android.webkit.URLUtil
 import android.widget.Filter
 import android.widget.Filterable
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -23,6 +24,7 @@ import com.posco.posco_store.databinding.ItemLayoutBinding
 import com.posco.posco_store.databinding.ItemLoadingBinding
 import com.posco.posco_store.ui.main.view.DownloadActivity
 import com.posco.posco_store.ui.main.view.MainActivity
+import com.posco.posco_store.ui.main.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.item_layout.view.*
 import java.io.IOException
 import java.lang.Exception
@@ -30,14 +32,17 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 
 class MainAdapter @Inject constructor(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
+
     private val VIEW_TYPE_ITEM = 0
     private val VIEW_TYPE_LOADING = 1
-    private var apps: ArrayList<App> = ArrayList()
+    var apps: ArrayList<App> = ArrayList()
+    //val apps: ArrayList<App> = mainViewModel.app
     var appFilterList: ArrayList<App> = ArrayList()
     private var mShowLoading = false
     private val permissions = arrayOf(
@@ -50,7 +55,9 @@ class MainAdapter @Inject constructor(
         RecyclerView.ViewHolder(itemView.root) {
         private val context = itemView.root.context
 
+
         fun bind(app: App) {
+
             itemView.textViewUserName.text = app.appName
             val fileInfo = app.iconFileInfo
             Log.i("fileinfodto", app.toString() )
@@ -91,7 +98,6 @@ class MainAdapter @Inject constructor(
 
                 }
             }else{
-                Log.d("모르겠다", packageName+" 머냐")
                 itemView.start_btn.setImageResource(R.drawable.download)
                 itemView.start_text.text="다운로드"
 
@@ -146,7 +152,7 @@ class MainAdapter @Inject constructor(
     }
 
 
-    inner class LoadingViewHolder(private val binding: ItemLoadingBinding) :
+    inner class LoadingViewHolder(binding: ItemLoadingBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
     }
@@ -201,8 +207,8 @@ class MainAdapter @Inject constructor(
                     Log.d("apps확인", apps.toString())
                     for (row in apps) {
                         Log.e("appName 확인", row.appName.toString())
-                        if (row.appName?.toLowerCase()
-                                ?.contains(constraint.toString().toLowerCase()) == true
+                        if (row.appName?.lowercase()
+                                ?.contains(constraint.toString().lowercase()) == true
                         ) {
                             resultList.add(row)
                         }
@@ -216,7 +222,7 @@ class MainAdapter @Inject constructor(
 
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
                 appFilterList =
-                    results?.values as ArrayList<App> /* = java.util.ArrayList<com.posco.posco_store.data.model.App> */
+                    results?.values as ArrayList<App>
                 notifyDataSetChanged()
             }
         }
@@ -250,8 +256,8 @@ class MainAdapter @Inject constructor(
 
     private fun isPackageInstalled(packageName: String, packageManager: PackageManager) : Boolean{
         try{
-            packageManager.getPackageInfo(packageName, 0);
-            return true;
+            packageManager.getPackageInfo(packageName, 0)
+            return true
         }catch (e : PackageManager.NameNotFoundException){
             return false
         }

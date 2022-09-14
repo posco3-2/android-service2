@@ -48,7 +48,8 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="http" android:scheme="posco_store"/>
+                <data android:host="action" android:scheme="posco_store"/>
+
             </intent-filter>
         </activity>
         <activity android:name="com.posco.posco_store.ui.main.view.DetailActivity"

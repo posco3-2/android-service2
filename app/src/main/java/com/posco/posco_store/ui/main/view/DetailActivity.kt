@@ -325,4 +325,5 @@ class DetailActivity : AppCompatActivity() {
 
 
 
+
 }
