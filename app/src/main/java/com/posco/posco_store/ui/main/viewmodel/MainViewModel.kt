@@ -17,25 +17,6 @@ class MainViewModel @Inject constructor(
 
     var app: ArrayList<App> = ArrayList()
 
-    //user data input
-    fun getAllApp(index: Int) = liveData(Dispatchers.IO) {
-        emit(Resource.loading(null))
-        try {
-            emit(Resource.success(data = mainRepository.getAllApps(index)))
-        } catch (exception: Exception) {
-            emit(Resource.error(exception.message ?: "Error Occurred!", data = null))
-        }
-    }
-
-
-    fun getAppList() = liveData(Dispatchers.IO) {
-        emit(Resource.loading(null))
-        try {
-            emit(Resource.success(data = mainRepository.getAppList("A")))
-        } catch (exception: Exception) {
-            emit(Resource.error(exception.message ?: "Error Occurred!", data = null))
-        }
-    }
 
     fun getAppListByUser(userId: Int, index: Int) = liveData(Dispatchers.IO) {
         emit(Resource.loading(null))

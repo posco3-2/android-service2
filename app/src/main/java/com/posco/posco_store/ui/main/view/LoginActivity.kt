@@ -234,10 +234,13 @@ class LoginActivity: AppCompatActivity() {
                     val userId = it.data?.userId
                     val userName = it.data?.name
                     val deviceId = it.data?.deviceId
+                    val token = it.data?.token
                     prefs.setString("id", id.toString())
                     prefs.setString("userId", userId.toString())
                     prefs.setString("userName", userName.toString())
                     prefs.setString("deviceId", deviceId.toString())
+                    prefs.setString("token", token.toString())
+
                     goToMainActivity()
             }
             Status.ERROR -> {

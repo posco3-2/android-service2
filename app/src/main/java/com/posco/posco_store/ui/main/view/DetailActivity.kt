@@ -23,18 +23,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.giahn.acDto
 import com.example.giahn.giahnxois
-import com.google.android.gms.auth.api.signin.GoogleSignIn.hasPermissions
 import com.posco.posco_store.R
 import com.posco.posco_store.data.model.App
 import com.posco.posco_store.data.model.FileInfoDto
 import com.posco.posco_store.databinding.ActivityDetailBinding
 import com.posco.posco_store.ui.main.adapter.ImageAdapter
 import com.posco.posco_store.ui.main.view.DownloadActivity.Companion.PERMISSION_REQUEST_CODE
-import com.posco.posco_store.ui.main.viewmodel.DetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 import kotlinx.android.synthetic.main.dialog_image_view_layout.*
-import java.io.File
 import javax.inject.Inject
 
 
@@ -42,7 +39,6 @@ import javax.inject.Inject
 class DetailActivity : AppCompatActivity() {
     @Inject
     lateinit var giahnxois: giahnxois
-    private val detailViewModel: DetailViewModel by viewModels()
     private lateinit var binding: ActivityDetailBinding
     private lateinit var detailImg: List<FileInfoDto>
     private var imageAdapter: ImageAdapter = ImageAdapter()

@@ -18,11 +18,9 @@ class ApiHelper @Inject constructor(private val apiService: ApiService) {
 
     suspend fun checkKakao(user: User) = apiService.checkKakao(user)
 
-    suspend fun getAllApps(index:Int) = apiService.getAllApps(index)
-
-    suspend fun updateFcmActive(id: Int, fcmName: String, device: Device) = apiService.updateFcmActive(id, fcmName, device)
+    suspend fun updateFcmActive(id: Int, fcmName: String, device: Device, authToken: String) = apiService.updateFcmActive(id, fcmName, device, authToken)
 
     suspend fun addDevice(device: Device) = apiService.addDevice(device)
 
-    suspend fun getDevice(userId: Int) = apiService.getDevice(userId)
+    suspend fun getDevice(userId: Int, authToken: String) = apiService.getDevice(userId, authToken)
 }

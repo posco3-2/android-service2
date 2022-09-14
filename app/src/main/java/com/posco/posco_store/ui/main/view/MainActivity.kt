@@ -144,7 +144,8 @@ class MainActivity : AppCompatActivity() {
                     adapter.showLoading()
                     if ((visibleItemCount + firstVisibleItemPosition) >= itemTotalCount) {
                         index += 10
-                        mainViewModel.getAllApp(index)
+                        mainViewModel.getAppListByUser(userId, index)
+                        //mainViewModel.getAllApp(index)
                         adapter.notifyDataSetChanged()
                         setupAPICall()
                     }

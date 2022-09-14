@@ -2,9 +2,13 @@ package com.posco.posco_store.data.repository
 
 import com.posco.posco_store.data.api.ApiService
 import com.posco.posco_store.data.model.*
+import com.posco.posco_store.ui.main.view.LoginActivity
 import javax.inject.Inject
 
 class MainRepository @Inject constructor(private val apiService: ApiService) {
+
+    val authToken = "Bearer"+ LoginActivity.prefs.getString("token","")
+
     suspend fun getUsers(): List<User> {
         return apiService.getUsers()
     }
@@ -33,20 +37,9 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.checkKakao(user)
     }
 
-    suspend fun getAllApps(index: Int): List<App>{
-        return apiService.getAllApps(index)
-    }
-
-    suspend fun getAppList(os: String): List<App>{
-        return apiService.getAppList(os)
-    }
-    //detail 정보 알기 추가
-    suspend fun getAppDetails(id: String): App{
-        return apiService.getAppDetails(id)
-    }
 
     suspend fun updateFcmActive(id:Int, fcmName: String, device:Device ): Int{
-        return apiService.updateFcmActive(id, fcmName, device)
+        return apiService.updateFcmActive(id, fcmName, device, authToken)
     }
 
     suspend fun addDevice(device: Device): Login {
@@ -54,10 +47,11 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
     }
 
     suspend fun getDevice(userId : Int) : Device{
-        return apiService.getDevice(userId)
+        return apiService.getDevice(userId, authToken)
     }
 
+    //appList 가져오는것
     suspend fun getAppUserList(userId: Int, index: Int):List<App>{
-        return apiService.getAppUserList(userId, index)
+        return apiService.getAppUserList(userId, index, authToken)
     }
 }
