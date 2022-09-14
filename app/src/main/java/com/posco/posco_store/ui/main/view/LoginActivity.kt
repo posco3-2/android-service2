@@ -121,10 +121,10 @@ class LoginActivity: AppCompatActivity() {
         }
 
         binding.button.setOnSingleClickListener{
-            val id = binding.id.text.toString()
+            val ids = binding.id.text.toString()
             val password = binding.password.text.toString()
             setupAPICall(LoginDto(
-                userId = id,
+                userId = ids,
                 password = password,
                 type =  "COMMON",
                 deviceId = getDeviceId(),
@@ -164,53 +164,57 @@ class LoginActivity: AppCompatActivity() {
         Log.e("fire",firebaseAuth.toString())
 
         launcher = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult(), ActivityResultCallback { result ->
-                Log.e(TAG, "resultCode : ${result.resultCode}")
-                Log.e(TAG, "result : $result")
-                if (result.resultCode == RESULT_OK) {
-                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-                    try {
-                        task.getResult(ApiException::class.java)?.let { account ->
-                            tokenId = account.idToken
-                            if (tokenId != null && tokenId != "") {
-                                val credential: AuthCredential = GoogleAuthProvider.getCredential(account.idToken, null)
-                                firebaseAuth.signInWithCredential(credential)
-                                    .addOnCompleteListener {
-                                        if (firebaseAuth.currentUser != null) {
-                                            val user: FirebaseUser = firebaseAuth.currentUser!!
-                                            email = user.email.toString()
-                                            Log.e(TAG, "email : $email")
-                                            Log.e(TAG,  user.displayName.toString())
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            Log.e(TAG, "resultCode : ${result.resultCode}")
+            Log.e(TAG, "result : $result")
+            if (result.resultCode == RESULT_OK) {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                try {
+                    task.getResult(ApiException::class.java)?.let { account ->
+                        tokenId = account.idToken
+                        if (tokenId != null && tokenId != "") {
+                            val credential: AuthCredential =
+                                GoogleAuthProvider.getCredential(account.idToken, null)
+                            firebaseAuth.signInWithCredential(credential)
+                                .addOnCompleteListener {
+                                    if (firebaseAuth.currentUser != null) {
+                                        val user: FirebaseUser = firebaseAuth.currentUser!!
+                                        email = user.email.toString()
+                                        Log.e(TAG, "email : $email")
+                                        Log.e(TAG, user.displayName.toString())
 
-                                            val googleSignInToken = account.idToken ?: ""
-                                            if (googleSignInToken != "") {
-                                                Log.e(TAG, "googleSignInToken : $googleSignInToken")
-                                            } else {
-                                                Log.e(TAG, "googleSignInToken이 null")
-                                            }
+                                        val googleSignInToken = account.idToken ?: ""
+                                        if (googleSignInToken != "") {
+                                            Log.e(TAG, "googleSignInToken : $googleSignInToken")
+                                        } else {
+                                            Log.e(TAG, "googleSignInToken이 null")
+                                        }
 
-                                            setupAPICall(LoginDto(
-                                                type =  "SOCIAL",
+                                        setupAPICall(
+                                            LoginDto(
+                                                type = "SOCIAL",
                                                 deviceId = getDeviceId(),
                                                 phoneNumber = getPhoneNumber(),
                                                 deviceOs = "A",
                                                 deviceModel = getDeviceModel(),
-                                                fcmToken = tokened ,
+                                                fcmToken = tokened,
                                                 deviceOsType = isTablet(),
                                                 carrier = getPhoneNetwork()
-                                            ))
+                                            )
+                                        )
 
-                                        }
                                     }
-                            }
-                        } ?: throw Exception()
-                    }   catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                                }
+                        }
+                    } ?: throw Exception()
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-            })
+            }
+        }
 
-            binding.run {
+        binding.run {
                 googleLoginButton.setOnClickListener {
                     CoroutineScope(Dispatchers.IO).launch {
                         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -227,34 +231,34 @@ class LoginActivity: AppCompatActivity() {
 
     }
 
-    private fun setupAPICall(login: LoginDto) = loginViewModel.fetchLogin(login).observe(this, Observer {
+    private fun setupAPICall(login: LoginDto) = loginViewModel.fetchLogin(login).observe(this) {
         when (it.status) {
             Status.SUCCESS -> {
-                    val id = it.data?.id
-                    val userId = it.data?.userId
-                    val userName = it.data?.name
-                    val deviceId = it.data?.deviceId
-                    val token = it.data?.token
-                    prefs.setString("id", id.toString())
-                    prefs.setString("userId", userId.toString())
-                    prefs.setString("userName", userName.toString())
-                    prefs.setString("deviceId", deviceId.toString())
-                    prefs.setString("token", token.toString())
+                val id = it.data?.id
+                val userId = it.data?.userId
+                val userName = it.data?.name
+                val deviceId = it.data?.deviceId
+                val token = it.data?.token
+                prefs.setString("id", id.toString())
+                prefs.setString("userId", userId.toString())
+                prefs.setString("userName", userName.toString())
+                prefs.setString("deviceId", deviceId.toString())
+                prefs.setString("token", token.toString())
 
-                    goToMainActivity()
+                goToMainActivity()
             }
             Status.ERROR -> {
                 Log.e("dataLength", it.data.toString())
-                Toast.makeText(this@LoginActivity,"아이디와 비밀번호 다시 확인", Toast.LENGTH_SHORT).show()
-                binding.id.text = null;
-                binding.password.text = null;
+                Toast.makeText(this@LoginActivity, "아이디와 비밀번호 다시 확인", Toast.LENGTH_SHORT).show()
+                binding.id.text = null
+                binding.password.text = null
             }
             else -> {
                 Log.e("dataLength2", it.data.toString())
             }
         }
 
-    })
+    }
 
     val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
         if (error != null) {
@@ -289,8 +293,8 @@ class LoginActivity: AppCompatActivity() {
             }
         }
         else if (token != null) {
-            UserApiClient.instance.me { user, error ->
-                if (error != null) {
+            UserApiClient.instance.me { user, it ->
+                if (it != null) {
                     Log.e("TAG", "사용자 정보 요청 실패", error)
                 }
                 else if (user != null) {
@@ -322,7 +326,7 @@ class LoginActivity: AppCompatActivity() {
     @SuppressLint("MissingPermission")
     fun getPhoneNumber(): String {
         val tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        return "0" + tm.line1Number.substring(3);
+        return "0" + tm.line1Number.substring(3)
     }
 
     fun getPhoneNetwork(): String {
@@ -340,26 +344,6 @@ class LoginActivity: AppCompatActivity() {
         return "P"
     }
 
-    private fun addDevice(device: Device) = loginViewModel.addDevice(device).observe(this, Observer {
-        when (it.status){
-            Status.SUCCESS ->{
-                val id = it.data?.id
-                val userId = it.data?.userId
-                val userName = it.data?.name
-                val deviceId = it.data?.deviceId
-
-                prefs.setString("id", id.toString())
-                prefs.setString("userId", userId.toString())
-                prefs.setString("userName", userName.toString())
-                prefs.setString("deviceId", deviceId.toString())
-                goToMainActivity()
-            }
-            Status.ERROR -> {
-                Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
-            }
-            else -> {}
-        }
-    })
 
     fun getVersionInfo() : String {
         val info: PackageInfo = baseContext.packageManager.getPackageInfo(baseContext.packageName, 0)
@@ -382,7 +366,7 @@ class LoginActivity: AppCompatActivity() {
     }
 
     private fun getFcmToken()  {
-        tokened ="";
+        tokened =""
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.w(TAG, "Fetching FCM registration token failed", task.exception)
