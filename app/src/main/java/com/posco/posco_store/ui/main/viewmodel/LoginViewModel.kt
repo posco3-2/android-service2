@@ -27,33 +27,6 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun inputDevice(device: Device) = liveData(Dispatchers.IO){
-        emit(Resource.loading(null))
-        try {
-            emit(Resource.success(data = mainRepository.regi(device)))
-        } catch (exception: Exception) {
-            emit(Resource.error(exception.message ?: "Error Occurred!", data = null))
-        }
-    }
-
-    fun addDevice(device: Device) = liveData(Dispatchers.IO){
-        emit(Resource.loading(null))
-        try {
-            emit(Resource.success(data = mainRepository.addDevice(device)))
-        } catch (exception: Exception) {
-            emit(Resource.error(exception.message ?: "Error Occurred!", data = null))
-        }
-    }
-
-
-    fun updateRegiDevice(id: Int, updateDate: String) = liveData(Dispatchers.IO) {
-        emit(Resource.loading(null))
-        try {
-            emit(Resource.success(data = mainRepository.updateRegiDevice(id, updateDate)))
-        } catch (exception: Exception) {
-            emit(Resource.error(exception.message ?: "Error Occurred!", data = null))
-        }
-    }
 
 
 }

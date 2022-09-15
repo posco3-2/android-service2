@@ -7,43 +7,14 @@ import javax.inject.Inject
 
 class MainRepository @Inject constructor(private val apiService: ApiService) {
 
-    val authToken = "Bearer"+ LoginActivity.prefs.getString("token","")
-
-    suspend fun getUsers(): List<User> {
-        return apiService.getUsers()
-    }
-
-    suspend fun getUserById(testInt:Int): List<User>{
-        return apiService.getUserById(testInt)
-    }
+    val authToken = "Bearer "+ LoginActivity.prefs.getString("token","")
 
     suspend fun login(login: LoginDto): LoginResultDto {
         return apiService.login(login)
     }
 
-    suspend fun regi(device: Device) : Device {
-        return apiService.regi(device)
-    }
-
-    suspend fun checkRegiDevice(id: Int): Int{
-        return apiService.checkRegiDevice(id)
-    }
-
-    suspend fun updateRegiDevice(id:Int, updateDate: String): Int {
-        return apiService.updateRegiDevice(id, updateDate)
-    }
-
-    suspend fun checkKakao(user: User): List<User> {
-        return apiService.checkKakao(user)
-    }
-
-
     suspend fun updateFcmActive(id:Int, fcmName: String, device:Device ): Int{
         return apiService.updateFcmActive(id, fcmName, device, authToken)
-    }
-
-    suspend fun addDevice(device: Device): Login {
-        return apiService.addDevice(device)
     }
 
     suspend fun getDevice(userId : Int) : Device{
