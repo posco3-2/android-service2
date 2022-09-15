@@ -59,8 +59,8 @@ class MainActivity : AppCompatActivity() {
         setupUI()
 
 
+        userId = LoginActivity.prefs.getInt("id",0 )
         token = LoginActivity.prefs.getString("token","0" )
-        userId = LoginActivity.prefs.getInt("id", 0 )
         val deivceId = LoginActivity.prefs.getInt("deviceId",0)
         if(token == "0") {
             val intent = Intent(this, LoginActivity::class.java)
