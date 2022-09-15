@@ -39,8 +39,9 @@ class MainActivity : AppCompatActivity() {
     private val mainViewModel: MainViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
     lateinit var adapter: MainAdapter
-    private var userId: Int = 0
+    private var token: String? = null
     private var index: Int = 0
+    private var userId: Int = 0
     var isLoading = false
     private val permissions = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -58,14 +59,18 @@ class MainActivity : AppCompatActivity() {
         setupUI()
 
 
-        userId = LoginActivity.prefs.getString("id","0" ).toInt()
-        if(userId == 0) {
+        token = LoginActivity.prefs.getString("token","0" )
+        userId = LoginActivity.prefs.getInt("id", 0 )
+        val deivceId = LoginActivity.prefs.getInt("deviceId",0)
+        if(token == "0") {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
 
 
-        val deivceId = LoginActivity.prefs.getString("deviceId","0").toInt()
+
+
+
 
         try {
             giahnxois.postaccess(
@@ -144,7 +149,8 @@ class MainActivity : AppCompatActivity() {
                     adapter.showLoading()
                     if ((visibleItemCount + firstVisibleItemPosition) >= itemTotalCount) {
                         index += 10
-                        mainViewModel.getAllApp(index)
+                        mainViewModel.getAppListByUser(userId, index)
+                        //mainViewModel.getAllApp(index)
                         adapter.notifyDataSetChanged()
                         setupAPICall()
                     }

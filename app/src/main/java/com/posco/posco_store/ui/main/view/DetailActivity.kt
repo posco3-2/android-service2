@@ -23,18 +23,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.giahn.acDto
 import com.example.giahn.giahnxois
-import com.google.android.gms.auth.api.signin.GoogleSignIn.hasPermissions
 import com.posco.posco_store.R
 import com.posco.posco_store.data.model.App
 import com.posco.posco_store.data.model.FileInfoDto
 import com.posco.posco_store.databinding.ActivityDetailBinding
 import com.posco.posco_store.ui.main.adapter.ImageAdapter
 import com.posco.posco_store.ui.main.view.DownloadActivity.Companion.PERMISSION_REQUEST_CODE
-import com.posco.posco_store.ui.main.viewmodel.DetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 import kotlinx.android.synthetic.main.dialog_image_view_layout.*
-import java.io.File
 import javax.inject.Inject
 
 
@@ -42,7 +39,6 @@ import javax.inject.Inject
 class DetailActivity : AppCompatActivity() {
     @Inject
     lateinit var giahnxois: giahnxois
-    private val detailViewModel: DetailViewModel by viewModels()
     private lateinit var binding: ActivityDetailBinding
     private lateinit var detailImg: List<FileInfoDto>
     private var imageAdapter: ImageAdapter = ImageAdapter()
@@ -62,14 +58,14 @@ class DetailActivity : AppCompatActivity() {
         downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
         setUpUi()
 
-        val userId = LoginActivity.prefs.getString("id","0" ).toInt()
+        val userId = LoginActivity.prefs.getInt("id",0 )
         try {
             giahnxois.postaccess(
                 acDto(
                     "AA_017",
                     "SERVICE",
                     "디테일 페이지 접속",
-                    0,
+                    LoginActivity.prefs.getInt("deviceId", 0),
                     userId,
                     "A000001",
                     'A',
@@ -181,6 +177,7 @@ class DetailActivity : AppCompatActivity() {
                     startActivity(intent)
                 }
 
+
             }else{
                 binding.installBtn.text="업데이트"
                 binding.deleteBtn.isVisible = true
@@ -215,7 +212,7 @@ class DetailActivity : AppCompatActivity() {
         binding.deleteBtn.setOnClickListener {
             Log.d("packageName", appDetail.packageName.toString())
 
-            deleteApp(appDetail.appName.toString())
+            deleteApp(appDetail.packageName.toString())
         }
 
 
@@ -314,13 +311,17 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun deleteApp(mAppName: String){
-        val path = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
-        Log.d("path 확인", path.toString())
-        val packageUri: Uri = Uri.fromParts("package", path.toString() + mAppName,null)
-        Log.d("package", packageUri.toString())
-        val uninstallIntent = Intent(Intent.ACTION_DELETE, packageUri)
-        startActivity(uninstallIntent);
+    private fun deleteApp(packageName: String){
+        Log.d("이거 맞아", packageName)
+        val packageURI =Uri.parse("package:$packageName")
+        val intent = Intent(Intent.ACTION_DELETE).setData(packageURI)
+        startActivity(intent)
+//        val path = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+//        Log.d("path 확인", path.toString())
+//        val packageUri: Uri = Uri.fromParts("package", path.toString() + mAppName,null)
+//        Log.d("package", packageUri.toString())
+//        val uninstallIntent = Intent(Intent.ACTION_DELETE, packageUri)
+//        startActivity(uninstallIntent);
     }
 
 

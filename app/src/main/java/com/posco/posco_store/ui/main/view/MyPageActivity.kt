@@ -7,12 +7,14 @@ import android.os.Bundle
 import android.provider.Settings
 import android.telephony.TelephonyManager
 import android.util.Log
+import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.lifecycle.Observer
 
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import com.example.giahn.acDto
 import com.example.giahn.giahnxois
 import com.posco.posco_store.data.model.Device
@@ -20,6 +22,7 @@ import com.posco.posco_store.databinding.ActivityMypageBinding
 import com.posco.posco_store.ui.main.viewmodel.MyPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_detail.*
+import kotlinx.android.synthetic.main.activity_login.*
 import java.lang.Exception
 import java.util.*
 import javax.inject.Inject
@@ -64,9 +67,10 @@ class MyPageActivity : AppCompatActivity() {
 
 
 
-        val id: Int = LoginActivity.prefs.getString("id","0").toInt()
+        val token: String = LoginActivity.prefs.getString("token","0")
+        val id: Int = LoginActivity.prefs.getInt("id", 0)
         getDevice(id)
-        if(id == 0){
+        if(token == "0"){
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
@@ -76,13 +80,14 @@ class MyPageActivity : AppCompatActivity() {
         }
 
         binding.button2.setOnClickListener {
-            LoginActivity.prefs.setString("id","0")
+            LoginActivity.prefs.setString("token","0")
             val intent = Intent(this, LoginActivity::class.java)
             finishAffinity()
             startActivity(intent)
         }
 
-        binding.switch1.setOnCheckedChangeListener{CompoundButton, onSwitch ->
+        binding.switch1.setOnCheckedChangeListener{
+        CompoundButton, onSwitch ->
 
             //  스위치가 켜지면
             if (onSwitch){
