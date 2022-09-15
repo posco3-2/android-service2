@@ -65,8 +65,6 @@ class MyPageActivity : AppCompatActivity() {
         binding.textView12.text = userId
 
 
-
-
         val token: String = LoginActivity.prefs.getString("token","0")
         val id: Int = LoginActivity.prefs.getInt("id", 0)
         getDevice(id)
@@ -124,7 +122,7 @@ class MyPageActivity : AppCompatActivity() {
 
     @SuppressLint("MissingPermission")
     fun getPhoneNumber(): String {
-        var tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        val tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
         return "0" + tm.line1Number.substring(3 )
     }
 

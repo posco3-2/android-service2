@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.giahn.acDto
 import com.example.giahn.giahnxois
+import com.google.firebase.messaging.FirebaseMessaging
 import com.posco.posco_store.data.model.App
 import com.posco.posco_store.databinding.ActivityMainBinding
 import com.posco.posco_store.ui.main.adapter.MainAdapter
@@ -69,6 +70,14 @@ class MainActivity : AppCompatActivity() {
 
 
 
+        FirebaseMessaging.getInstance().subscribeToTopic("A000001")
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.i("A000001", "구독 요청 성공")
+                } else {
+                    Log.i("A000001", "구독 요청 실패")
+                }
+            }
 
 
 
