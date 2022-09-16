@@ -32,8 +32,8 @@ import com.posco.posco_store.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_main.*
-import java.lang.Exception
 import javax.inject.Inject
+import kotlin.Exception
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity() {
     private var token: String? = null
     private var index: Int = 0
     private var userId: Int = 0
+    val deviceId = MainApplication.sharedPreference.deviceId
     var isLoading = false
     private val permissions = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -60,12 +61,41 @@ class MainActivity : AppCompatActivity() {
 
         adapter = MainAdapter()
         hasPermissions(this)
+
+        try {
+            giahnxois.postaccess(
+                acDto(
+                    "AA_016",
+                    "SERVICE",
+                    "리스트 페이지 접속",
+                    deviceId,
+                    userId,
+                    "A000001",
+                    'A',
+                    "A_016"
+                )
+            )
+        }catch (e : Exception){
+            Log.e("e",e.toString())
+            giahnxois.posterror(
+                acDto(
+                    "E002",
+                    "SERVICE",
+                    "E_002: 리스트페이지 접속 오류",
+                    deviceId,
+                    userId,
+                    "A000001",
+                    'A',
+                    "E_016"
+                )
+            )
+        }
+
         setupUI()
 
 
         userId = MainApplication.sharedPreference.userId //LoginActivity.prefs.getInt("id",0 )
         token = MainApplication.sharedPreference.token //LoginActivity.prefs.getString("token","0" )
-        val deivceId = MainApplication.sharedPreference.deviceId
 
 
 
@@ -85,6 +115,18 @@ class MainActivity : AppCompatActivity() {
                 Status.ERROR ->{
                     MainApplication.sharedPreference.tokenActive = 1
                     MainApplication.sharedPreference.updateTokenActive = 1
+                    giahnxois.posterror(
+                        acDto(
+                            "E100",
+                            "HTTP 요청 실패",
+                            "E_100:http request failed",
+                            deviceId,
+                            userId,
+                            "A000001",
+                            'A',
+                            "E_016"
+                        )
+                    )
                 }
                 else -> {}
             }
@@ -117,22 +159,7 @@ class MainActivity : AppCompatActivity() {
         })
 
 
-        try {
-            giahnxois.postaccess(
-                acDto(
-                    "AA_016",
-                    "SERVICE",
-                    "리스트 페이지 접속",
-                    deivceId,
-                    userId,
-                    "A000001",
-                    'A',
-                    "A_016"
-                )
-            )
-        }catch (e : Exception){
-            Log.e("e",e.toString())
-        }
+
 
         setupAPICall()
 
@@ -277,9 +304,7 @@ class MainActivity : AppCompatActivity() {
 
     fun checkUri(){
         val action:String?=intent.action
-        Log.d("action 확인", action.toString())
         val data: Uri? = intent.data
-        Log.d("uri 확인", data.toString())
 
         if(action == Intent.ACTION_VIEW){
             val page = data?.getQueryParameter("page")
@@ -296,9 +321,24 @@ class MainActivity : AppCompatActivity() {
                 putSerializable("selected_item", oneApp.get(0))
             }
                 Log.e("확인!!!", oneApp.get(0).toString())
-                val intent = Intent(this@MainActivity,DetailActivity::class.java)
-                intent.putExtras(bundle)
-                this.startActivity(intent)
+                try {
+                    val intent = Intent(this@MainActivity, DetailActivity::class.java)
+                    intent.putExtras(bundle)
+                    this.startActivity(intent)
+                }catch (e: Exception){
+                    giahnxois.posterror(
+                        acDto(
+                            "E103",
+                            "페이지 이동 실패",
+                            "E_103:" + e.message,
+                            deviceId,
+                            userId,
+                            "A000001",
+                            'A',
+                            "E_016"
+                        )
+                    )
+                }
 
             }
 

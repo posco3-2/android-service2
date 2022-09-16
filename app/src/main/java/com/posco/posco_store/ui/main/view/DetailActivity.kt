@@ -47,6 +47,8 @@ class DetailActivity : AppCompatActivity() {
     private lateinit var downloadManager: DownloadManager
     private var downloadID: Long = 1
     private lateinit var appDetail: App
+    val userId = MainApplication.sharedPreference.userId
+    val deviceId = MainApplication.sharedPreference.deviceId
     private val permissions = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -59,8 +61,7 @@ class DetailActivity : AppCompatActivity() {
         downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
         setUpUi()
 
-        val userId = MainApplication.sharedPreference.userId
-        val deviceId = MainApplication.sharedPreference.deviceId
+
         try {
             giahnxois.postaccess(
                 acDto(
@@ -76,6 +77,19 @@ class DetailActivity : AppCompatActivity() {
             )
         }catch (e : java.lang.Exception){
             Log.e("e",e.toString())
+
+            giahnxois.posterror(
+                acDto(
+                    "E100",
+                    "HTTP 요청 실패",
+                    "E_100:http request failed",
+                     deviceId,
+                    userId,
+                    "A000001",
+                    'A',
+                    "E_017"
+                )
+            )
         }
 
         imageAdapter.setOnItemClickListener {
@@ -88,7 +102,6 @@ class DetailActivity : AppCompatActivity() {
                 .error(R.drawable.example_screen).into(dialog.detail_img)
 
             dialog.show()
-
 
         }
     }
@@ -129,7 +142,18 @@ class DetailActivity : AppCompatActivity() {
             Log.d("details", detailImg.toString())
 
         }catch (e: java.lang.Exception) {
-            println(e)
+            giahnxois.posterror(
+                acDto(
+                    "AE_002",
+                    "HTTP 요청 실패",
+                    "E_002:http request failed",
+                    deviceId,
+                    userId,
+                    "A000001",
+                    'A',
+                    "A_017"
+                )
+            )
         }
             imageAdapter.differ.submitList(detailImg)
 
@@ -206,6 +230,20 @@ class DetailActivity : AppCompatActivity() {
             binding.installBtn.setOnClickListener {
                 Toast.makeText(this, "설치 할 수 없습니다.",Toast.LENGTH_SHORT).show()
             }
+
+            giahnxois.posterror(
+                acDto(
+                    "E101",
+                    "설치 요청 실패 ",
+                    "E_101:설치파일 없음 ",
+                    deviceId,
+                    userId,
+                    "A000001",
+                    'A',
+                    "E_017"
+                )
+            )
+
         }
 
 
@@ -318,12 +356,7 @@ class DetailActivity : AppCompatActivity() {
         val packageURI =Uri.parse("package:$packageName")
         val intent = Intent(Intent.ACTION_DELETE).setData(packageURI)
         startActivity(intent)
-//        val path = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
-//        Log.d("path 확인", path.toString())
-//        val packageUri: Uri = Uri.fromParts("package", path.toString() + mAppName,null)
-//        Log.d("package", packageUri.toString())
-//        val uninstallIntent = Intent(Intent.ACTION_DELETE, packageUri)
-//        startActivity(uninstallIntent);
+
     }
 
 

@@ -108,6 +108,18 @@ class LoginActivity: AppCompatActivity() {
             )
         }catch (e : java.lang.Exception){
             Log.e("e",e.toString())
+            giahnxois.posterror(
+                acDto(
+                    "E001",
+                    "SERVICE",
+                    "E_001: 통신 오류",
+                    0,
+                    0,
+                    "A000001",
+                    'A',
+                    "E_015"
+                )
+            )
         }
 
 
@@ -148,10 +160,8 @@ class LoginActivity: AppCompatActivity() {
                 )
             }
             if(UserApiClient.instance.isKakaoTalkLoginAvailable(this)){
-                Log.e("gg","ggg")
                 UserApiClient.instance.loginWithKakaoTalk(this, callback = callback)
             }else{
-                Log.e("gg333","ggg333")
                 UserApiClient.instance.loginWithKakaoAccount(this, callback = callback)
             }
 
@@ -186,7 +196,18 @@ class LoginActivity: AppCompatActivity() {
                                         if (googleSignInToken != "") {
                                             Log.e(TAG, "googleSignInToken : $googleSignInToken")
                                         } else {
-                                            Log.e(TAG, "googleSignInToken이 null")
+                                            giahnxois.posterror(
+                                                acDto(
+                                                    "E102",
+                                                    "SERVICE",
+                                                    "E_102: 로그인 토큰 없음",
+                                                    0,
+                                                    0,
+                                                    "A000001",
+                                                    'A',
+                                                    "E_015"
+                                                )
+                                            )
                                         }
 
                                         setupAPICall(
@@ -251,7 +272,18 @@ class LoginActivity: AppCompatActivity() {
                 goToMainActivity()
             }
             Status.ERROR -> {
-                Log.e("dataLength", it.data.toString())
+                giahnxois.posterror(
+                    acDto(
+                        "E100",
+                        "SERVICE",
+                        "E_100: 로그인 요청 실패",
+                        0,
+                        0,
+                        "A000001",
+                        'A',
+                        "E_015"
+                    )
+                )
                 Toast.makeText(this@LoginActivity, "아이디와 비밀번호 다시 확인", Toast.LENGTH_SHORT).show()
                 binding.id.text = null
                 binding.password.text = null
@@ -384,6 +416,19 @@ class LoginActivity: AppCompatActivity() {
                 val msg = "fcm 토큰 오류"
                 Log.d(TAG, msg)
                 Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                giahnxois.posterror(
+                    acDto(
+                        "E102",
+                        "SERVICE",
+                        "E_102: FCM 토큰 없음",
+                        0,
+                        0,
+                        "A000001",
+                        'A',
+                        "E_015"
+                    )
+                )
+
             }
 
         })
