@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.giahn.acDto
 import com.example.giahn.giahnxois
+import com.posco.posco_store.MainApplication
 import com.posco.posco_store.R
 import com.posco.posco_store.data.model.App
 import com.posco.posco_store.data.model.FileInfoDto
@@ -58,14 +59,15 @@ class DetailActivity : AppCompatActivity() {
         downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
         setUpUi()
 
-        val userId = LoginActivity.prefs.getInt("id",0 )
+        val userId = MainApplication.sharedPreference.userId
+        val deviceId = MainApplication.sharedPreference.deviceId
         try {
             giahnxois.postaccess(
                 acDto(
                     "AA_017",
                     "SERVICE",
                     "디테일 페이지 접속",
-                    LoginActivity.prefs.getInt("deviceId", 0),
+                    deviceId,
                     userId,
                     "A000001",
                     'A',

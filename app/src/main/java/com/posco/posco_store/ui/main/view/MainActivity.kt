@@ -20,11 +20,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.giahn.acDto
 import com.example.giahn.giahnxois
+import com.google.android.gms.auth.api.signin.GoogleSignIn.hasPermissions
 import com.google.firebase.messaging.FirebaseMessaging
+import com.posco.posco_store.MainApplication
 import com.posco.posco_store.data.model.App
 import com.posco.posco_store.databinding.ActivityMainBinding
 import com.posco.posco_store.ui.main.adapter.MainAdapter
 import com.posco.posco_store.ui.main.viewmodel.MainViewModel
+import com.posco.posco_store.utils.LiveSharedPreferences
 import com.posco.posco_store.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_login.*
@@ -60,25 +63,58 @@ class MainActivity : AppCompatActivity() {
         setupUI()
 
 
-        userId = LoginActivity.prefs.getInt("id",0 )
-        token = LoginActivity.prefs.getString("token","0" )
-        val deivceId = LoginActivity.prefs.getInt("deviceId",0)
+        userId = MainApplication.sharedPreference.userId //LoginActivity.prefs.getInt("id",0 )
+        token = MainApplication.sharedPreference.token //LoginActivity.prefs.getString("token","0" )
+        val deivceId = MainApplication.sharedPreference.deviceId
+
+
+
         if(token == "0") {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
 
-
-
-        FirebaseMessaging.getInstance().subscribeToTopic("A000001")
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.i("A000001", "구독 요청 성공")
-                } else {
-                    Log.i("A000001", "구독 요청 실패")
+        mainViewModel.getFcm(userId).observe(this){
+            when (it.status){
+                Status.SUCCESS -> {
+                    it.data?.fcmActive?.let { it1 ->MainApplication.sharedPreference.tokenActive = 1}//LoginActivity.prefs.setInt("fcmActive" , it1) }
+                    it.data?.updateFcmActive?.let { it1 ->
+                        MainApplication.sharedPreference.updateTokenActive = it1
+                    }
                 }
+                Status.ERROR ->{
+                    MainApplication.sharedPreference.tokenActive = 1
+                    MainApplication.sharedPreference.updateTokenActive = 1
+                }
+                else -> {}
             }
+        }
 
+        val sharedPreference =
+            getSharedPreferences("posco_store", Context.MODE_PRIVATE)
+        val liveSharedPreference = LiveSharedPreferences(sharedPreference)
+
+
+        liveSharedPreference.getInt("tokenActive",1).observe(this, Observer { result ->
+            if(result == 1){
+                FirebaseMessaging.getInstance().subscribeToTopic("A000001")
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.i("A000001", "구독 요청 성공")
+                        } else {
+                            Log.i("A000001", "구독 요청 실패")
+                        }
+                    }
+            }else{
+                FirebaseMessaging.getInstance().unsubscribeFromTopic("A000001")
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.i("A000001", "구독 취소 요청 성공")
+                        } else {
+                            Log.i("A000001", "구독 취소 요청 실패")
+                        }  }
+            }
+        })
 
 
         try {
@@ -268,6 +304,7 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
+
 
 
 

@@ -7,7 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.net.Uri
+import android.hardware.usb.UsbDevice.getDeviceId
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -15,7 +15,6 @@ import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -24,9 +23,11 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import com.example.giahn.acDto
 import com.example.giahn.giahnxois
+import com.firebase.ui.auth.util.data.PhoneNumberUtils.getPhoneNumber
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.util.DeviceProperties.isTablet
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
@@ -36,21 +37,20 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.AuthErrorCause
 import com.kakao.sdk.user.UserApiClient
+import com.posco.posco_store.MainApplication
 import com.posco.posco_store.R
-import com.posco.posco_store.data.model.Device
-import com.posco.posco_store.data.model.Login
 import com.posco.posco_store.data.model.LoginDto
 import com.posco.posco_store.databinding.ActivityLoginBinding
 import com.posco.posco_store.ui.main.viewmodel.LoginViewModel
+import com.posco.posco_store.utils.LiveSharedPreferences
 import com.posco.posco_store.utils.MySharedPreferences
 import com.posco.posco_store.utils.OnSingleClickListener
 import com.posco.posco_store.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
+import java.lang.reflect.Array.setInt
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -59,9 +59,6 @@ class LoginActivity: AppCompatActivity() {
     @Inject
     lateinit var giahnxois: giahnxois
 
-    companion object {
-        lateinit var prefs : MySharedPreferences
-    }
 
     lateinit var binding : ActivityLoginBinding
     private val loginViewModel: LoginViewModel by viewModels()
@@ -76,10 +73,11 @@ class LoginActivity: AppCompatActivity() {
     var tokened : String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        prefs = MySharedPreferences(applicationContext)
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
 
+        val sharedPreference = getSharedPreferences("posco_store", Context.MODE_PRIVATE)
+        val liveSharedPreferences = LiveSharedPreferences(sharedPreference)
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS)
                 != PackageManager.PERMISSION_GRANTED){
@@ -113,13 +111,12 @@ class LoginActivity: AppCompatActivity() {
         }
 
 
-        val token: String = prefs.getString("token","0" )
-
-        Log.e("token", token.toString())
-
-        if(token != "0"){
-           goToMainActivity()
-        }
+        liveSharedPreferences.getString("token","0").observe(this, Observer<String> {
+            result ->
+            if(result != "0") {
+                goToMainActivity()
+            }
+        })
 
         binding.button.setOnSingleClickListener{
             val ids = binding.id.text.toString()
@@ -237,16 +234,19 @@ class LoginActivity: AppCompatActivity() {
             Status.SUCCESS -> {
                 val id = it.data?.id
                 val userId = it.data?.userId //사용자의 id
+
                 val userName = it.data?.name
                 val deviceId = it.data?.deviceId
                 val token = it.data?.token
 
-                id?.let { it1 -> prefs.setInt("id", it1) }
-                prefs.setString("userId", userId.toString())
-
-                prefs.setString("userName", userName.toString())
-                deviceId?.let { it1 -> prefs.setInt("deviceId", it1) }
-                prefs.setString("token", token.toString())
+                id?.let { it1 -> MainApplication.sharedPreference.userId = id  }
+//                prefs.setString("userId", userId.toString())
+//
+//                prefs.setString("userName", userName.toString())
+                //deviceId?.let { it1 -> prefs.setInt("deviceId", it1) }
+                deviceId?.let { it1 ->MainApplication.sharedPreference.deviceId = it1}
+                //prefs.setString("token", token.toString())
+                MainApplication.sharedPreference.token = token
 
                 goToMainActivity()
             }

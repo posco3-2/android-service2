@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import com.example.giahn.acDto
 import com.example.giahn.giahnxois
+import com.posco.posco_store.MainApplication
 import com.posco.posco_store.databinding.ActivityDownloadBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.BufferedInputStream
@@ -48,8 +49,8 @@ class DownloadActivity : AppCompatActivity(), OnFileDownloadingCallback {
                     "AA_019",
                     "SERVICE",
                     "다운로드 페이지 접속",
-                    0,
-                    LoginActivity.prefs.getString("id","0" ).toInt(),
+                    MainApplication.sharedPreference.deviceId,
+                    MainApplication.sharedPreference.userId, // LoginActivity.prefs.getString("id","0" ).toInt(),
                     "A000001",
                     'A',
                     "A_019"

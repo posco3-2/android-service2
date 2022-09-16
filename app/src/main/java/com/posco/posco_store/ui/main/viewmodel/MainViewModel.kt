@@ -26,4 +26,13 @@ class MainViewModel @Inject constructor(
             emit(Resource.error(exception.message ?: "Error Occurred!", data = null))
         }
     }
+
+    fun getFcm(userId: Int) = liveData(Dispatchers.IO){
+        emit(Resource.loading(null))
+        try {
+            emit(Resource.success(data = mainRepository.getFcmActive(userId)))
+        } catch (exception: Exception) {
+            emit(Resource.error(exception.message ?: "Error Occurred!", data = null))
+        }
+    }
 }

@@ -10,8 +10,8 @@
     </item>
     <item android:drawable="@drawable/slogan"
         android:gravity="center"
-        android:height="120dp"
-        android:width="300dp">
+        android:height="20mm"
+        android:width="55mm">
     </item>
 
 </layer-list>

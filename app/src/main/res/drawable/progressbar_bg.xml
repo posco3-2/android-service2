@@ -6,10 +6,10 @@
             <corners android:radius="5dp"/>
             <gradient
                     android:angle="180"
-                    android:centerColor="@color/teal_700"
+                    android:centerColor="@color/blue_button_selected"
                     android:centerY="0.75"
-                    android:endColor="@color/teal_700"
-                    android:startColor="@color/teal_700"
+                    android:endColor="@color/blue_button_selected"
+                    android:startColor="@color/blue_button_selected"
             />
         </shape>
     </item>
@@ -19,10 +19,10 @@
                 <corners android:radius="5dp"/>
                 <gradient
                         android:angle="270"
-                        android:centerColor="@color/design_default_color_primary"
+                        android:centerColor="@color/blue_title_color"
                         android:centerY="0.75"
-                        android:endColor="@color/design_default_color_primary"
-                        android:startColor="@color/design_default_color_primary"
+                        android:endColor="@color/blue_title_color"
+                        android:startColor="@color/blue_title_color"
                 />
             </shape>
         </clip>
@@ -34,10 +34,10 @@
                 <corners android:radius="5dp"/>
                 <gradient
                         android:angle="180"
-                        android:centerColor="@color/design_default_color_primary"
+                        android:centerColor="@color/blue_title_color"
                         android:centerY="0.75"
-                        android:endColor="@color/design_default_color_primary"
-                        android:startColor="@color/design_default_color_primary"
+                        android:endColor="@color/blue_title_color"
+                        android:startColor="@color/blue_title_color"
                 />
             </shape>
         </clip>
