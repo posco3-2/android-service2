@@ -53,7 +53,6 @@
         <activity android:name=".ui.main.view.DownloadActivity" />
         <activity android:name="com.posco.posco_store.ui.main.view.LoginActivity"
             android:exported="true">
-
         </activity>
 
         <activity android:name=".ui.main.view.SplashActivity"
