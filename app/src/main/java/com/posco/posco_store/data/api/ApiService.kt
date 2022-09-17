@@ -18,4 +18,7 @@ interface ApiService {
     @GET("user-service/device/device/{userId}")
     suspend fun getDevice(@Path("userId") userId: Int, @Header("Authorization") authToken: String) : Device
 
+    @GET("user-service/device/fcmInfo/{userId}")
+    suspend fun getDeviceFcm(@Path("userId") userId: Int) : DeviceFcm
+
 }

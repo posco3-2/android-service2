@@ -20,16 +20,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.giahn.acDto
 import com.example.giahn.giahnxois
+import com.google.android.gms.auth.api.signin.GoogleSignIn.hasPermissions
+import com.google.firebase.messaging.FirebaseMessaging
+import com.posco.posco_store.MainApplication
 import com.posco.posco_store.data.model.App
 import com.posco.posco_store.databinding.ActivityMainBinding
 import com.posco.posco_store.ui.main.adapter.MainAdapter
 import com.posco.posco_store.ui.main.viewmodel.MainViewModel
+import com.posco.posco_store.utils.LiveSharedPreferences
 import com.posco.posco_store.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_main.*
-import java.lang.Exception
 import javax.inject.Inject
+import kotlin.Exception
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -42,6 +46,8 @@ class MainActivity : AppCompatActivity() {
     private var token: String? = null
     private var index: Int = 0
     private var userId: Int = 0
+    private var deviceId: Int = 0
+
     var isLoading = false
     private val permissions = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -56,21 +62,20 @@ class MainActivity : AppCompatActivity() {
 
         adapter = MainAdapter()
         hasPermissions(this)
+
+
+
         setupUI()
 
+        userId = MainApplication.sharedPreference.userId //LoginActivity.prefs.getInt("id",0 )
+        token = MainApplication.sharedPreference.token //LoginActivity.prefs.getString("token","0" )
+        deviceId = MainApplication.sharedPreference.deviceId
 
-        userId = LoginActivity.prefs.getInt("id",0 )
-        token = LoginActivity.prefs.getString("token","0" )
-        val deivceId = LoginActivity.prefs.getInt("deviceId",0)
+
         if(token == "0") {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
-
-
-
-
-
 
         try {
             giahnxois.postaccess(
@@ -78,16 +83,73 @@ class MainActivity : AppCompatActivity() {
                     "AA_016",
                     "SERVICE",
                     "리스트 페이지 접속",
-                    deivceId,
+                    deviceId,
                     userId,
                     "A000001",
                     'A',
                     "A_016"
                 )
             )
-        }catch (e : Exception){
+        }catch (e : java.lang.NullPointerException){
             Log.e("e",e.toString())
         }
+
+        mainViewModel.getFcm(userId).observe(this){
+            when (it.status){
+                Status.SUCCESS -> {
+                    it.data?.fcmActive?.let { it1 ->MainApplication.sharedPreference.tokenActive = 1}//LoginActivity.prefs.setInt("fcmActive" , it1) }
+                    it.data?.updateFcmActive?.let { it1 ->
+                        MainApplication.sharedPreference.updateTokenActive = it1
+                    }
+                }
+                Status.ERROR ->{
+                    MainApplication.sharedPreference.tokenActive = 1
+                    MainApplication.sharedPreference.updateTokenActive = 1
+                    giahnxois.posterror(
+                        acDto(
+                            "E100",
+                            "SERVICE",
+                            "E_100:http request failed",
+                            deviceId,
+                            userId,
+                            "A000001",
+                            'A',
+                            "E_016"
+                        )
+                    )
+                }
+                else -> {}
+            }
+        }
+
+        val sharedPreference =
+            getSharedPreferences("posco_store", Context.MODE_PRIVATE)
+        val liveSharedPreference = LiveSharedPreferences(sharedPreference)
+
+
+        liveSharedPreference.getInt("tokenActive",1).observe(this, Observer { result ->
+            if(result == 1){
+                FirebaseMessaging.getInstance().subscribeToTopic("A000001")
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.i("A000001", "구독 요청 성공")
+                        } else {
+                            Log.i("A000001", "구독 요청 실패")
+                        }
+                    }
+            }else{
+                FirebaseMessaging.getInstance().unsubscribeFromTopic("A000001")
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.i("A000001", "구독 취소 요청 성공")
+                        } else {
+                            Log.i("A000001", "구독 취소 요청 실패")
+                        }  }
+            }
+        })
+
+
+
 
         setupAPICall()
 
@@ -225,16 +287,10 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onResume() {
-        super.onResume()
-        Log.d("다시","start")
-    }
 
     fun checkUri(){
         val action:String?=intent.action
-        Log.d("action 확인", action.toString())
         val data: Uri? = intent.data
-        Log.d("uri 확인", data.toString())
 
         if(action == Intent.ACTION_VIEW){
             val page = data?.getQueryParameter("page")
@@ -251,14 +307,30 @@ class MainActivity : AppCompatActivity() {
                 putSerializable("selected_item", oneApp.get(0))
             }
                 Log.e("확인!!!", oneApp.get(0).toString())
-                val intent = Intent(this@MainActivity,DetailActivity::class.java)
-                intent.putExtras(bundle)
-                this.startActivity(intent)
+                try {
+                    val intent = Intent(this@MainActivity, DetailActivity::class.java)
+                    intent.putExtras(bundle)
+                    this.startActivity(intent)
+                }catch (e: Exception){
+                    giahnxois.posterror(
+                        acDto(
+                            "E103",
+                            "SERVICE",
+                            "E_103:" + e.message,
+                            deviceId,
+                            userId,
+                            "A000001",
+                            'A',
+                            "E_016"
+                        )
+                    )
+                }
 
             }
 
         }
     }
+
 
 
 

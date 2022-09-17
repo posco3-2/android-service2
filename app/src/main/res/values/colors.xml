@@ -14,9 +14,13 @@
     <color name="white">#FFFFFFFF</color>
 
 
+    <color name="white_back_color">#d7d7d7</color>
     <color name="gray_button_color">#DADADA</color>
     <color name="blue_button_selected">#0093DD</color>
     <color name="blue_title_color">#0c4c88</color>
     <color name="kakao_yellow">#FFE900</color>
     <color name="apple_blue">#283544</color>
+
+    <color name="night_background_color">#20293A</color>
+    <color name="sub_back_color">#2B3447</color>
 </resources>

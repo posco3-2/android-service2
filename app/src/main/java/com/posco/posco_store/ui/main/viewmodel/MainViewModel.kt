@@ -18,10 +18,21 @@ class MainViewModel @Inject constructor(
     var app: ArrayList<App> = ArrayList()
 
 
+
+
     fun getAppListByUser(userId: Int, index: Int) = liveData(Dispatchers.IO) {
         emit(Resource.loading(null))
         try {
             emit(Resource.success(data = mainRepository.getAppUserList(userId, index)))
+        } catch (exception: Exception) {
+            emit(Resource.error(exception.message ?: "Error Occurred!", data = null))
+        }
+    }
+
+    fun getFcm(userId: Int) = liveData(Dispatchers.IO){
+        emit(Resource.loading(null))
+        try {
+            emit(Resource.success(data = mainRepository.getFcmActive(userId)))
         } catch (exception: Exception) {
             emit(Resource.error(exception.message ?: "Error Occurred!", data = null))
         }

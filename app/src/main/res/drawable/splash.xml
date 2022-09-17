@@ -8,10 +8,11 @@
                 android:startColor="#00C1B6"/>
         </shape>
     </item>
-    <item android:drawable="@drawable/slogan"
-        android:gravity="center"
-        android:height="120dp"
-        android:width="300dp">
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/slogan"/>
     </item>
+   
 
 </layer-list>
