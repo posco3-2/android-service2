@@ -8,10 +8,6 @@
                 android:startColor="#00C1B6"/>
         </shape>
     </item>
-    <item android:drawable="@drawable/slogan"
-        android:gravity="center"
-        android:height="20mm"
-        android:width="55mm">
-    </item>
+   
 
 </layer-list>

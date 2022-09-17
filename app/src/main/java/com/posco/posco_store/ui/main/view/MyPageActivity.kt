@@ -63,7 +63,18 @@ class MyPageActivity : AppCompatActivity() {
                 )
             )
         }catch (e : Exception){
-            Log.e("e",e.toString())
+            giahnxois.posterror(
+                acDto(
+                    "E001",
+                    "SERVICE",
+                    "E_001: 세팅 페이지 접속 실패",
+                    deviceId,
+                    userId,
+                    "A000001",
+                    'A',
+                    "E_018"
+                )
+            )
         }
 
 

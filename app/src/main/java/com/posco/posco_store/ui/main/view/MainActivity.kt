@@ -46,7 +46,8 @@ class MainActivity : AppCompatActivity() {
     private var token: String? = null
     private var index: Int = 0
     private var userId: Int = 0
-    val deviceId = MainApplication.sharedPreference.deviceId
+    private var deviceId: Int = 0
+
     var isLoading = false
     private val permissions = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -62,6 +63,20 @@ class MainActivity : AppCompatActivity() {
         adapter = MainAdapter()
         hasPermissions(this)
 
+
+
+        setupUI()
+
+        userId = MainApplication.sharedPreference.userId //LoginActivity.prefs.getInt("id",0 )
+        token = MainApplication.sharedPreference.token //LoginActivity.prefs.getString("token","0" )
+        deviceId = MainApplication.sharedPreference.deviceId
+
+
+        if(token == "0") {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
         try {
             giahnxois.postaccess(
                 acDto(
@@ -75,33 +90,8 @@ class MainActivity : AppCompatActivity() {
                     "A_016"
                 )
             )
-        }catch (e : Exception){
+        }catch (e : java.lang.NullPointerException){
             Log.e("e",e.toString())
-            giahnxois.posterror(
-                acDto(
-                    "E002",
-                    "SERVICE",
-                    "E_002: 리스트페이지 접속 오류",
-                    deviceId,
-                    userId,
-                    "A000001",
-                    'A',
-                    "E_016"
-                )
-            )
-        }
-
-        setupUI()
-
-
-        userId = MainApplication.sharedPreference.userId //LoginActivity.prefs.getInt("id",0 )
-        token = MainApplication.sharedPreference.token //LoginActivity.prefs.getString("token","0" )
-
-
-
-        if(token == "0") {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
         }
 
         mainViewModel.getFcm(userId).observe(this){
@@ -118,7 +108,7 @@ class MainActivity : AppCompatActivity() {
                     giahnxois.posterror(
                         acDto(
                             "E100",
-                            "HTTP 요청 실패",
+                            "SERVICE",
                             "E_100:http request failed",
                             deviceId,
                             userId,
@@ -297,10 +287,6 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onResume() {
-        super.onResume()
-        Log.d("다시","start")
-    }
 
     fun checkUri(){
         val action:String?=intent.action
@@ -329,7 +315,7 @@ class MainActivity : AppCompatActivity() {
                     giahnxois.posterror(
                         acDto(
                             "E103",
-                            "페이지 이동 실패",
+                            "SERVICE",
                             "E_103:" + e.message,
                             deviceId,
                             userId,

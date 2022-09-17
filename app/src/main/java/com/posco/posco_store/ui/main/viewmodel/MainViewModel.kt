@@ -18,6 +18,8 @@ class MainViewModel @Inject constructor(
     var app: ArrayList<App> = ArrayList()
 
 
+
+
     fun getAppListByUser(userId: Int, index: Int) = liveData(Dispatchers.IO) {
         emit(Resource.loading(null))
         try {

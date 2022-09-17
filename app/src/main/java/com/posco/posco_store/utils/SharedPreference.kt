@@ -14,17 +14,17 @@ class SharedPreference(context: Context) {
 
     var userId: Int
         get() =sharedPreferences.getInt("id",0)
-        set(value) = sharedPreferences.edit().putInt("id", value).apply()
+        set(value) = value.let { sharedPreferences.edit().putInt("id", it).apply() }
 
     var tokenActive: Int
         get() =sharedPreferences.getInt("tokenActive", 0)
-        set(value) = sharedPreferences.edit().putInt("tokenActive", value).apply()
+        set(value) = value.let { sharedPreferences.edit().putInt("tokenActive", it).apply() }
 
     var updateTokenActive: Int
         get() =sharedPreferences.getInt("updateTokenActive", 0)
-        set(value) = sharedPreferences.edit().putInt("updateTokenActive", value).apply()
+        set(value) = value.let { sharedPreferences.edit().putInt("updateTokenActive", it).apply() }
 
     var deviceId: Int
         get() =sharedPreferences.getInt("deviceId", 0)
-        set(value) = sharedPreferences.edit().putInt("deviceId", value).apply()
+        set(value) = value.let { sharedPreferences.edit().putInt("deviceId", it).apply() }
 }

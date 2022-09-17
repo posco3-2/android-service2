@@ -35,7 +35,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     /** 메시지 수신 메서드(포그라운드) */
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Log.d(TAG, "From: " + remoteMessage!!.from)
+        Log.d(TAG, "From: " + remoteMessage.from)
 
         // Notification 메시지를 수신할 경우
         // remoteMessage.notification?.body!! 여기에 내용이 저장되있음

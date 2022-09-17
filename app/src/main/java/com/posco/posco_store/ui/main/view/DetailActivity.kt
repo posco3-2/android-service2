@@ -47,8 +47,8 @@ class DetailActivity : AppCompatActivity() {
     private lateinit var downloadManager: DownloadManager
     private var downloadID: Long = 1
     private lateinit var appDetail: App
-    val userId = MainApplication.sharedPreference.userId
-    val deviceId = MainApplication.sharedPreference.deviceId
+    val userId : Int = MainApplication.sharedPreference.userId
+    val deviceId : Int= MainApplication.sharedPreference.deviceId
     private val permissions = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE

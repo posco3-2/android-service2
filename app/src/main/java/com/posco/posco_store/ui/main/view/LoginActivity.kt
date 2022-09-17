@@ -130,9 +130,9 @@ class LoginActivity: AppCompatActivity() {
             }
         })
 
-        binding.button.setOnSingleClickListener{
-            val ids = binding.id.text.toString()
-            val password = binding.password.text.toString()
+        binding.loginButton.setOnSingleClickListener{
+            val ids = binding.editId.text.toString()
+            val password = binding.editPassword.text.toString()
             setupAPICall(LoginDto(
                 userId = ids,
                 password = password,
@@ -285,8 +285,8 @@ class LoginActivity: AppCompatActivity() {
                     )
                 )
                 Toast.makeText(this@LoginActivity, "아이디와 비밀번호 다시 확인", Toast.LENGTH_SHORT).show()
-                binding.id.text = null
-                binding.password.text = null
+                binding.editId.text = null
+                binding.editPassword.text = null
             }
             else -> {
                 Log.e("dataLength2", it.data.toString())

@@ -240,7 +240,9 @@ class MainAdapter @Inject constructor(
 
     fun addData(app: List<App>) {
         apps.addAll(app)
+        apps.distinct()
         appFilterList.addAll(app)
+        appFilterList.distinct()
     }
 
     fun clear(){
