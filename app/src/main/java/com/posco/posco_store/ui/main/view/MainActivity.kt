@@ -94,9 +94,9 @@ class MainActivity : AppCompatActivity() {
             Log.e("e",e.toString())
         }
 
-        Log.d("이고", userId.toString())
+        Log.d("이고", deviceId.toString())
 
-        mainViewModel.getFcm(userId).observe(this){
+        mainViewModel.getFcm(deviceId).observe(this){
             when (it.status){
                 Status.SUCCESS -> {
                     it.data?.fcmActive?.let { it1 ->MainApplication.sharedPreference.tokenActive = it1}//LoginActivity.prefs.setInt("fcmActive" , it1) }
@@ -119,9 +119,9 @@ class MainActivity : AppCompatActivity() {
         val liveSharedPreference = LiveSharedPreferences(sharedPreference)
 
 
-        liveSharedPreference.getInt("tokenActive",0).observe(this, Observer { result ->
+        liveSharedPreference.getInt("tokenActive",0).observe(this) { result ->
             Log.d("왱", result.toString())
-            if(result.equals(1)){
+            if (result.equals(1)) {
                 FirebaseMessaging.getInstance().subscribeToTopic("A000001")
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
@@ -130,16 +130,17 @@ class MainActivity : AppCompatActivity() {
                             Log.i("A000001", "구독 요청 실패")
                         }
                     }
-            }else{
+            } else {
                 FirebaseMessaging.getInstance().unsubscribeFromTopic("A000001")
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             Log.i("A000001", "구독 취소 요청 성공")
                         } else {
                             Log.i("A000001", "구독 취소 요청 실패")
-                        }  }
+                        }
+                    }
             }
-        })
+        }
 
 
 
