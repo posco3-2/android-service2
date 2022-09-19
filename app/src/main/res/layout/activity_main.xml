@@ -74,8 +74,9 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="35dp"
-            android:layout_marginEnd="30dp"
+            android:layout_weight="2"
+            android:gravity="center"
+
             android:text="이미지"
             android:textSize="16sp" />
 
@@ -83,8 +84,7 @@
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
+            android:layout_weight="2.8"
             android:gravity="center"
             android:text="이름/버전"
             android:textSize="16sp" />
@@ -93,9 +93,9 @@
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
-            android:text="다운로드/\n실행"
+            android:gravity="center"
+            android:layout_weight="1.5"
+            android:text="다운로드/실행"
             android:textSize="16sp" />
 
     </LinearLayout>

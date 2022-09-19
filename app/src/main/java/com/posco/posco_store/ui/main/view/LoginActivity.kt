@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.hardware.usb.UsbDevice.getDeviceId
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -23,11 +22,9 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import com.example.giahn.acDto
 import com.example.giahn.giahnxois
-import com.firebase.ui.auth.util.data.PhoneNumberUtils.getPhoneNumber
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.util.DeviceProperties.isTablet
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
@@ -43,14 +40,12 @@ import com.posco.posco_store.data.model.LoginDto
 import com.posco.posco_store.databinding.ActivityLoginBinding
 import com.posco.posco_store.ui.main.viewmodel.LoginViewModel
 import com.posco.posco_store.utils.LiveSharedPreferences
-import com.posco.posco_store.utils.MySharedPreferences
 import com.posco.posco_store.utils.OnSingleClickListener
 import com.posco.posco_store.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.lang.reflect.Array.setInt
 import javax.inject.Inject
 
 @AndroidEntryPoint
