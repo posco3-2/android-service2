@@ -94,29 +94,21 @@ class MainActivity : AppCompatActivity() {
             Log.e("e",e.toString())
         }
 
-        mainViewModel.getFcm(userId).observe(this){
+        Log.d("이고", deviceId.toString())
+
+        mainViewModel.getFcm(deviceId).observe(this){
             when (it.status){
                 Status.SUCCESS -> {
-                    it.data?.fcmActive?.let { it1 ->MainApplication.sharedPreference.tokenActive = 1}//LoginActivity.prefs.setInt("fcmActive" , it1) }
+                    it.data?.fcmActive?.let { it1 ->MainApplication.sharedPreference.tokenActive = it1}//LoginActivity.prefs.setInt("fcmActive" , it1) }
                     it.data?.updateFcmActive?.let { it1 ->
                         MainApplication.sharedPreference.updateTokenActive = it1
                     }
+                    Log.d("it.data.fcm", it.data.toString())
                 }
                 Status.ERROR ->{
+                    Log.d("it.data 실패", it.message.toString())
                     MainApplication.sharedPreference.tokenActive = 1
                     MainApplication.sharedPreference.updateTokenActive = 1
-                    giahnxois.posterror(
-                        acDto(
-                            "E100",
-                            "SERVICE",
-                            "E_100:http request failed",
-                            deviceId,
-                            userId,
-                            "A000001",
-                            'A',
-                            "E_016"
-                        )
-                    )
                 }
                 else -> {}
             }
@@ -127,26 +119,28 @@ class MainActivity : AppCompatActivity() {
         val liveSharedPreference = LiveSharedPreferences(sharedPreference)
 
 
-        liveSharedPreference.getInt("tokenActive",1).observe(this, Observer { result ->
-            if(result == 1){
+        liveSharedPreference.getInt("tokenActive",0).observe(this) { result ->
+            Log.d("왱", result.toString())
+            if (result.equals(1)) {
                 FirebaseMessaging.getInstance().subscribeToTopic("A000001")
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            Log.i("A000001", "구독 요청 성공")
+                            Log.i("요기야?, A000001", "구독 요청 성공")
                         } else {
                             Log.i("A000001", "구독 요청 실패")
                         }
                     }
-            }else{
+            } else {
                 FirebaseMessaging.getInstance().unsubscribeFromTopic("A000001")
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             Log.i("A000001", "구독 취소 요청 성공")
                         } else {
                             Log.i("A000001", "구독 취소 요청 실패")
-                        }  }
+                        }
+                    }
             }
-        })
+        }
 
 
 
@@ -260,6 +254,19 @@ class MainActivity : AppCompatActivity() {
                     //Handle Error
                     progressBar.visibility = View.GONE
                     Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+
+                    giahnxois.posterror(
+                        acDto(
+                            "E100",
+                            "SERVICE",
+                            "E_100:" + it.message,
+                            deviceId,
+                            userId,
+                            "A000001",
+                            'A',
+                            "E_016"
+                        )
+                    )
                 }
                 else -> {}
             }

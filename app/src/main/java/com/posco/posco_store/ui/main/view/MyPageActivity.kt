@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import com.example.giahn.acDto
 import com.example.giahn.giahnxois
+import com.google.firebase.messaging.FirebaseMessaging
 import com.posco.posco_store.MainApplication
 import com.posco.posco_store.data.model.Device
 import com.posco.posco_store.databinding.ActivityMypageBinding
@@ -89,6 +90,28 @@ class MyPageActivity : AppCompatActivity() {
                 val intent = Intent(this, LoginActivity::class.java)
                 finishAffinity()
                 startActivity(intent)
+            }
+        })
+
+        liveSharedPreferences.getInt("tokenActive", 0).observe(this, Observer {
+            result ->
+            if(result.equals(1)){
+                FirebaseMessaging.getInstance().subscribeToTopic("A000001")
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.i("요기야?, A000001", "구독 요청 성공")
+                        } else {
+                            Log.i("A000001", "구독 요청 실패")
+                        }
+                    }
+            }else{
+                FirebaseMessaging.getInstance().unsubscribeFromTopic("A000001")
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.i("A000001", "구독 취소 요청 성공")
+                        } else {
+                            Log.i("A000001", "구독 취소 요청 실패")
+                        }  }
             }
         })
 

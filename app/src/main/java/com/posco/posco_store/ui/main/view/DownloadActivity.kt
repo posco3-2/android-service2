@@ -58,6 +58,18 @@ class DownloadActivity : AppCompatActivity(), OnFileDownloadingCallback {
             )
         }catch (e : java.lang.Exception){
             Log.e("e",e.toString())
+            giahnxois.posterror(
+                acDto(
+                    "E001",
+                    "SERVICE",
+                    "E_001: download page error",
+                    MainApplication.sharedPreference.deviceId,
+                    MainApplication.sharedPreference.userId, // LoginActivity.prefs.getString("id","0" ).toInt(),
+                    "A000001",
+                    'A',
+                    "E_019"
+                )
+            )
         }
 
         setUpUi()
@@ -220,6 +232,19 @@ class DownloadActivity : AppCompatActivity(), OnFileDownloadingCallback {
             mBinding.pbHorizontal.visibility = View.GONE
             mBinding.tvInfo.visibility = View.GONE
             mBinding.tvInfo.text = "Downloading Failed"
+
+            giahnxois.posterror(
+                acDto(
+                    "E104",
+                    "SERVICE",
+                    "E_001: downloading error" + e.toString(),
+                    MainApplication.sharedPreference.deviceId,
+                    MainApplication.sharedPreference.userId, // LoginActivity.prefs.getString("id","0" ).toInt(),
+                    "A000001",
+                    'A',
+                    "E_019"
+                )
+            )
         }
     }
 

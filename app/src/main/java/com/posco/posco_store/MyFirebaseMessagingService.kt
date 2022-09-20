@@ -13,6 +13,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.posco.posco_store.ui.main.view.MainActivity
+import com.posco.posco_store.utils.LiveSharedPreferences
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     /** 푸시 알림으로 보낼 수 있는 메세지는 2가지
@@ -21,17 +22,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private val TAG = "FirebaseService"
 
-    /** Token 생성 메서드(FirebaseInstanceIdService 사라짐) */
-    override fun onNewToken(token: String) {
-        Log.d(TAG, "new Token: $token")
-
-        // 토큰 값을 따로 저장
-        val pref = this.getSharedPreferences("token", Context.MODE_PRIVATE)
-        val editor = pref.edit()
-        editor.putString("token", token).apply()
-        editor.commit()
-        Log.i("로그: ", "성공적으로 토큰을 저장함")
-    }
 
     /** 메시지 수신 메서드(포그라운드) */
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
@@ -76,7 +66,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         // 알림에 대한 UI 정보, 작업
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.mipmap.ic_launcher) // 아이콘 설정
+            .setSmallIcon(R.drawable.poscostore) // 아이콘 설정
             .setContentTitle(remoteMessage.data["title"].toString()) // 제목
             .setContentText(remoteMessage.data["body"].toString()) // 메시지 내용
             .setAutoCancel(true) // 알람클릭시 삭제여부
@@ -93,21 +83,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         // 알림 생성
         notificationManager.notify(uniId, notificationBuilder.build())
+
     }
 
-    /** Token 가져오기 */
-    fun getFirebaseToken() {
-        FirebaseMessaging.getInstance().token.addOnSuccessListener {
-            Log.d(TAG, "token=${it}")
-        }
-
-//        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-//                if (!task.isSuccessful) {
-//                    Log.d(TAG, "Fetching FCM registration token failed ${task.exception}")
-//                    return@OnCompleteListener
-//                }
-//                var deviceToken = task.result
-//                Log.e(TAG, "token=${deviceToken}")
-//            })
-    }
 }

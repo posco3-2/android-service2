@@ -27,4 +27,8 @@ class SharedPreference(context: Context) {
     var deviceId: Int
         get() =sharedPreferences.getInt("deviceId", 0)
         set(value) = value.let { sharedPreferences.edit().putInt("deviceId", it).apply() }
+
+    var fcmToken: String?
+        get() =sharedPreferences.getString("fcmToken", "")
+        set(value) = value.let { sharedPreferences.edit().putString("fcmToken", it).apply() }
 }
