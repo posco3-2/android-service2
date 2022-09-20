@@ -234,15 +234,14 @@ class MainAdapter @Inject constructor(
     }
 
     fun addData(app: List<App>) {
-        apps.addAll(app)
+        apps = app as ArrayList<App>
+        appFilterList = app
         apps.distinct()
-        appFilterList.addAll(app)
-        appFilterList.distinct()
     }
 
     fun clear(){
         apps.clear()
-        appFilterList.clear()
+
     }
 
     private var onItemClickListener:((App)->Unit)?=null
