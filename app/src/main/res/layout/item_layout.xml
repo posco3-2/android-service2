@@ -17,43 +17,45 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        />
+        android:contentDescription="icon" />
 
     <TextView
-        android:id="@+id/textViewUserName"
+        android:id="@+id/textAppName"
         style="@style/TextAppearance.AppCompat.Large"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="5dp"
-        android:ems="5"
-        android:maxLines="1"
         android:ellipsize="end"
+        android:ems="10"
+        android:maxLines="1"
+        app:layout_constraintEnd_toStartOf="@id/start_btn"
         app:layout_constraintStart_toEndOf="@+id/imageViewIcon"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteY="0dp"
         tools:text="MindOrks" />
 
     <TextView
-        android:id="@+id/textViewUserEmail"
+        android:id="@+id/textVersion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@+id/textViewUserName"
-        app:layout_constraintTop_toBottomOf="@+id/textViewUserName"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:text="MindOrks" />
+        app:layout_constraintStart_toStartOf="@+id/textAppName"
+        app:layout_constraintTop_toBottomOf="@+id/textAppName"
+        tools:text="1.0.0" />
 
     <ImageButton
         android:id="@+id/start_btn"
         android:layout_width="wrap_content"
         android:layout_height="35dp"
+        android:layout_marginEnd="30dp"
+        android:backgroundTint="@android:color/transparent"
         android:scaleType="center"
         android:src="@drawable/download"
-        android:backgroundTint="@android:color/transparent"
-        android:layout_marginEnd="30dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/start_text"
         app:layout_constraintEnd_toEndOf="parent"
-        />
+        app:layout_constraintStart_toEndOf="@+id/textAppName"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="버튼" />
 
     <TextView
         android:id="@+id/start_text"

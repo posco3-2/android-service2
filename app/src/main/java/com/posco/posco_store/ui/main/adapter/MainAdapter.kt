@@ -1,6 +1,7 @@
 package com.posco.posco_store.ui.main.adapter
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -13,7 +14,6 @@ import android.webkit.URLUtil
 import android.widget.Filter
 import android.widget.Filterable
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -23,14 +23,8 @@ import com.posco.posco_store.data.model.App
 import com.posco.posco_store.databinding.ItemLayoutBinding
 import com.posco.posco_store.databinding.ItemLoadingBinding
 import com.posco.posco_store.ui.main.view.DownloadActivity
-import com.posco.posco_store.ui.main.view.MainActivity
-import com.posco.posco_store.ui.main.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.item_layout.view.*
-import java.io.IOException
 import java.lang.Exception
-import java.net.HttpURLConnection
-import java.net.URL
-import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
@@ -58,7 +52,7 @@ class MainAdapter @Inject constructor(
 
         fun bind(app: App) {
 
-            itemView.textViewUserName.text = app.appName
+            itemView.textAppName.text = app.appName
             val fileInfo = app.iconFileInfo
             Log.i("fileinfodto", app.toString() )
             val imgUrl =
@@ -68,7 +62,7 @@ class MainAdapter @Inject constructor(
             Glide.with(itemView).load(imgUrl).error(R.drawable.posco)
                 .into(itemView.imageViewIcon)
 
-            itemView.textViewUserEmail.text = app.version
+            itemView.textVersion.text = app.version
 
             Log.i("패키지명 확인",app.packageName.toString())
             val packageName = app.packageName.toString()
@@ -220,6 +214,7 @@ class MainAdapter @Inject constructor(
                 return filterResults
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
                 appFilterList =
                     results?.values as ArrayList<App>
