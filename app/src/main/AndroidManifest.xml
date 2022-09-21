@@ -67,6 +67,7 @@
             android:exported="true">
             <intent-filter android:autoVerify="true"
                 tools:targetApi="m">
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -75,7 +76,12 @@
             </intent-filter>
         </activity>
         <activity android:name="com.posco.posco_store.ui.main.view.DetailActivity"
-            android:exported="true"/>
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </activity>
         <activity android:name="com.posco.posco_store.ui.main.view.MyPageActivity"
             android:exported="true">
         </activity>
