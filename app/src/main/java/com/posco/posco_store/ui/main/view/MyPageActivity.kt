@@ -95,7 +95,7 @@ class MyPageActivity : AppCompatActivity() {
 
         liveSharedPreferences.getInt("tokenActive", 0).observe(this, Observer {
             result ->
-            if(result.equals(1)){
+            if(result == 1){
                 FirebaseMessaging.getInstance().subscribeToTopic("A000001")
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {

@@ -9,7 +9,10 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.giahn.acDto
 import com.example.giahn.giahnxois
+import com.google.android.gms.auth.api.signin.GoogleSignIn.hasPermissions
 import com.google.firebase.messaging.FirebaseMessaging
 import com.posco.posco_store.MainApplication
 import com.posco.posco_store.data.model.App
@@ -177,7 +181,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         binding.refreshBtn.setOnClickListener {
-
+            binding.searchEdit.setText(null)
             index =0
             adapter.clear()
             mainViewModel.app.clear()
@@ -185,6 +189,14 @@ class MainActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
             Toast.makeText(this,"새로고침 했습니다",Toast.LENGTH_SHORT).show()
 
+        }
+
+        binding.searchEdit.setOnEditorActionListener{ textView, action, event ->
+            var handled = false
+            if (action == EditorInfo.IME_ACTION_DONE) {
+                handled = true
+            }
+            handled
         }
 
         binding.recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
