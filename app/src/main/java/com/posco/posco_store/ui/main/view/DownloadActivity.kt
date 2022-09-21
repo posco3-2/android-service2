@@ -78,8 +78,8 @@ class DownloadActivity : AppCompatActivity(), OnFileDownloadingCallback {
 
         mBinding.btnUpdateApp.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
-            finish()
         }
     }
 
