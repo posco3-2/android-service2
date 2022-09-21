@@ -14,13 +14,11 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.giahn.acDto
 import com.example.giahn.giahnxois
-import com.google.android.gms.auth.api.signin.GoogleSignIn.hasPermissions
 import com.google.firebase.messaging.FirebaseMessaging
 import com.posco.posco_store.MainApplication
 import com.posco.posco_store.data.model.App
@@ -30,10 +28,8 @@ import com.posco.posco_store.ui.main.viewmodel.MainViewModel
 import com.posco.posco_store.utils.LiveSharedPreferences
 import com.posco.posco_store.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
-import kotlin.Exception
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -216,7 +212,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    // user List View 
+    // user List View
     private fun setupUI() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.addItemDecoration(
@@ -307,12 +303,12 @@ class MainActivity : AppCompatActivity() {
             Log.e("있나", mainViewModel.app.toString())
 
             val oneApp = mainViewModel.app.filter{
-                it -> it.id == appIds
+                    it -> it.id == appIds
             }
             if(!oneApp.isEmpty()){
                 val bundle = Bundle().apply {
-                putSerializable("selected_item", oneApp.get(0))
-            }
+                    putSerializable("selected_item", oneApp.get(0))
+                }
                 Log.e("확인!!!", oneApp.get(0).toString())
                 try {
                     val intent = Intent(this@MainActivity, DetailActivity::class.java)

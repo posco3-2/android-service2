@@ -4,16 +4,13 @@ package com.posco.posco_store.ui.main.view
 import android.Manifest
 import android.app.Dialog
 import android.app.DownloadManager
-import android.content.*
+import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -31,7 +28,6 @@ import com.posco.posco_store.databinding.ActivityDetailBinding
 import com.posco.posco_store.ui.main.adapter.ImageAdapter
 import com.posco.posco_store.ui.main.view.DownloadActivity.Companion.PERMISSION_REQUEST_CODE
 import dagger.hilt.android.AndroidEntryPoint
-
 import kotlinx.android.synthetic.main.dialog_image_view_layout.*
 import javax.inject.Inject
 
@@ -83,7 +79,7 @@ class DetailActivity : AppCompatActivity() {
                     "E100",
                     "HTTP 요청 실패",
                     "E_100:http request failed",
-                     deviceId,
+                    deviceId,
                     userId,
                     "A000001",
                     'A',
@@ -96,7 +92,7 @@ class DetailActivity : AppCompatActivity() {
             val dialog: Dialog = Dialog(this)
             dialog.setContentView(R.layout.dialog_image_view_layout)
             val imgUrl = "http://ec2-43-200-14-78.ap-northeast-2.compute.amazonaws.com:8000/file-service/file/image/" +
-                        it.location + "/" + it.changedName
+                    it.location + "/" + it.changedName
 
             Glide.with(this).load(imgUrl).placeholder(R.drawable.example_screen)
                 .error(R.drawable.example_screen).into(dialog.detail_img)
@@ -108,13 +104,10 @@ class DetailActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val completeFilter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
-        registerReceiver(downloadCompleteReceiver, completeFilter)
     }
 
     override fun onPause() {
         super.onPause()
-        unregisterReceiver(downloadCompleteReceiver)
     }
 
     // detail 화면 수정
@@ -155,22 +148,22 @@ class DetailActivity : AppCompatActivity() {
                 )
             )
         }
-            imageAdapter.differ.submitList(detailImg)
+        imageAdapter.differ.submitList(detailImg)
 
-            Glide.with(this).load(imgUrl).error(R.drawable.posco).override(100, 100).fitCenter()
-                .into(imgLocation)
+        Glide.with(this).load(imgUrl).error(R.drawable.posco).override(100, 100).fitCenter()
+            .into(imgLocation)
 
-            binding.versionInfo.text = appDetail?.version
-            val appInfo = appDetail.desc ?: "앱 정보가 없습니다"
-            binding.appInfoText.text = appInfo
-            val updateInfo = appDetail.updateDesc ?: "업데이트 정보가 없습니다"
-            binding.updateInfoText.text = updateInfo
-            binding.adminText.text = appDetail?.admin
+        binding.versionInfo.text = appDetail?.version
+        val appInfo = appDetail.desc ?: "앱 정보가 없습니다"
+        binding.appInfoText.text = appInfo
+        val updateInfo = appDetail.updateDesc ?: "업데이트 정보가 없습니다"
+        binding.updateInfoText.text = updateInfo
+        binding.adminText.text = appDetail?.admin
 
-            binding.appDetailBtn.setOnClickListener {
-                AlertDialog.Builder(this).setTitle(binding.appInfoTextView.text).setMessage(appInfo)
-                    .create().show()
-            }
+        binding.appDetailBtn.setOnClickListener {
+            AlertDialog.Builder(this).setTitle(binding.appInfoTextView.text).setMessage(appInfo)
+                .create().show()
+        }
 
         binding.updateDetailBtn.setOnClickListener {
 
@@ -225,7 +218,7 @@ class DetailActivity : AppCompatActivity() {
             Log.e("downloadUrl", downloadURL.toString())
         }catch (e: java.lang.Exception){
             println(e)
-           binding.installBtn.text="설치 파일이 없음"
+            binding.installBtn.text="설치 파일이 없음"
             binding.installBtn.setTextColor(R.color.kakao_yellow)
             binding.installBtn.setOnClickListener {
                 Toast.makeText(this, "설치 할 수 없습니다.",Toast.LENGTH_SHORT).show()
@@ -315,42 +308,6 @@ class DetailActivity : AppCompatActivity() {
     }
 
 
-    private val downloadCompleteReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent) {
-            val reference = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-            // 다운로드 완료후 dialog 생성
-            val builder = AlertDialog.Builder(this@DetailActivity)
-            builder.setTitle("다운로드")
-                .setMessage("다운로드를 완료했습니다. 실행하시겠습니까?")
-                .setPositiveButton("확인", DialogInterface.OnClickListener{dialog, which -> "확인클릭" })
-                .setNegativeButton("취소", DialogInterface.OnClickListener { dialog, which -> "취소클릭"  })
-            if (downloadID == reference) {
-                val query = DownloadManager.Query() // 다운로드 항목 조회에 필요한 정보 포함
-                query.setFilterById(reference)
-                val cursor: Cursor = downloadManager.query(query)
-                cursor.moveToFirst()
-                val columnIndex: Int = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
-                val columnReason: Int = cursor.getColumnIndex(DownloadManager.COLUMN_REASON)
-                val status: Int = cursor.getInt(columnIndex)
-                val reason: Int = cursor.getInt(columnReason)
-                cursor.close()
-                when (status) {
-                    DownloadManager.STATUS_SUCCESSFUL -> builder.show()
-                    DownloadManager.STATUS_PAUSED -> Toast.makeText(
-                        this@DetailActivity,
-                        "다운로드가 중단되었습니다.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    DownloadManager.STATUS_FAILED -> Toast.makeText(
-                        this@DetailActivity,
-                        "다운로드가 취소되었습니다.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
-    }
-
     private fun deleteApp(packageName: String){
         Log.d("이거 맞아", packageName)
         val packageURI =Uri.parse("package:$packageName")
@@ -358,6 +315,8 @@ class DetailActivity : AppCompatActivity() {
         startActivity(intent)
 
     }
+
+
 
 
 

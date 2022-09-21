@@ -13,6 +13,7 @@ import com.example.giahn.acDto
 import com.example.giahn.giahnxois
 import com.posco.posco_store.MainApplication
 import com.posco.posco_store.databinding.ActivityDownloadBinding
+import com.posco.posco_store.ui.main.adapter.MainAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.BufferedInputStream
 import java.io.File
@@ -33,6 +34,7 @@ class DownloadActivity : AppCompatActivity(), OnFileDownloadingCallback {
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
+
 
     companion object{
         var PERMISSION_REQUEST_CODE = 11
@@ -73,20 +75,26 @@ class DownloadActivity : AppCompatActivity(), OnFileDownloadingCallback {
         }
 
         setUpUi()
+
+        mBinding.btnUpdateApp.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 
 
 
 
     /**
-    * author : 김지현
-    * param : x
-    * return :반환값
-    * see :함수명
-    * since : 2022-08-18
-    * comment : intent에 있는것 가져오기
-    *
-    **/
+     * author : 김지현
+     * param : x
+     * return :반환값
+     * see :함수명
+     * since : 2022-08-18
+     * comment : intent에 있는것 가져오기
+     *
+     **/
 
     fun setUpUi(){
         val appName = intent.getStringExtra("appName")
@@ -101,14 +109,14 @@ class DownloadActivity : AppCompatActivity(), OnFileDownloadingCallback {
 
 
     /**
-    * author :
-    * param : 매개변수
-    * return :반환값
-    * see :함수명
-    * since : 2022-08-18
-    * comment : apkfile 만들기
-    *
-    **/
+     * author :
+     * param : 매개변수
+     * return :반환값
+     * see :함수명
+     * since : 2022-08-18
+     * comment : apkfile 만들기
+     *
+     **/
 
     var apkFile: File? = null
     var isDownloadSuccess = false
@@ -122,14 +130,14 @@ class DownloadActivity : AppCompatActivity(), OnFileDownloadingCallback {
     }
 
     /**
-    * author : 김지현
-    * param : callback 메소드
-    * return :반환값
-    * see :downloadFile
-    * since : 2022-08-18
-    * comment : 다운로드하기
-    *
-    **/
+     * author : 김지현
+     * param : callback 메소드
+     * return :반환값
+     * see :downloadFile
+     * since : 2022-08-18
+     * comment : 다운로드하기
+     *
+     **/
     private fun downloadFile(
         callback: OnFileDownloadingCallback
     ) {
