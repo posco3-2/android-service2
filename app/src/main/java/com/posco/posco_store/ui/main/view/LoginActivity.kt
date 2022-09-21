@@ -86,8 +86,7 @@ class LoginActivity: AppCompatActivity() {
                      this,
                      arrayOf(Manifest.permission.READ_PHONE_NUMBERS),
                      1004
-                 )
-
+        )
 
 
 //        if( ContextCompat.checkSelfPermission(this,Manifest.permission.READ_PHONE_NUMBERS))
@@ -414,35 +413,8 @@ class LoginActivity: AppCompatActivity() {
     @SuppressLint("MissingPermission")
     fun getPhoneNumber(): String {
         val telephony = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        var phoneNumber = ""
-        try{
-            if(ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_SMS
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_PHONE_NUMBERS
-            ) != PackageManager.PERMISSION_GRANTED  && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_PHONE_STATE
-            ) != PackageManager.PERMISSION_GRANTED
-                    ){
 
-                 return ""
-            }
-
-
-            if (telephony.line1Number != null) {
-                phoneNumber = telephony.line1Number
-            } else {
-                  if (telephony.simSerialNumber != null) {
-                      phoneNumber = telephony.simSerialNumber
-                  }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return "0" + phoneNumber.substring(3)
+        return telephony.line1Number.replace("+82","0")
     }
 
     fun getPhoneNetwork(): String {
