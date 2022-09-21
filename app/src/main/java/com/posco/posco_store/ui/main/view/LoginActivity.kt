@@ -261,46 +261,46 @@ class LoginActivity: AppCompatActivity() {
             }
         }
 
+        binding.googleLoginButton.setOnClickListener {
 
+            val phonePermis = ContextCompat.checkSelfPermission(this,Manifest.permission.READ_PHONE_NUMBERS)
 
-        val phonePermis = ContextCompat.checkSelfPermission(this,Manifest.permission.READ_PHONE_NUMBERS)
+            val localBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
 
-        val localBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
-
-        if(phonePermis !=PackageManager.PERMISSION_GRANTED){
-            localBuilder.setTitle("권한설정").setMessage("소셜 로그인을 위해 권한 설정이 필요합니다").setPositiveButton(
-                "권한설정하기", DialogInterface.OnClickListener { dialogInterface, i ->
-                    try{
-                        intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:com.posco.posco_store"))
-                        startActivity(intent);
-                    }catch(e: Exception){
-                        Log.e("e",e.toString())
+            if(phonePermis !=PackageManager.PERMISSION_GRANTED){
+                localBuilder.setTitle("권한설정").setMessage("소셜 로그인을 위해 권한 설정이 필요합니다").setPositiveButton(
+                    "권한설정하기", DialogInterface.OnClickListener { dialogInterface, i ->
+                        try{
+                            intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:com.posco.posco_store"))
+                            startActivity(intent);
+                        }catch(e: Exception){
+                            Log.e("e",e.toString())
+                        }
                     }
-                }
-            ).setNegativeButton(
-                "취소하기", DialogInterface.OnClickListener { dialogInterface, i ->
-                    Toast.makeText(this, "소셜로그인 취소",Toast.LENGTH_LONG)
-                }
-            ).create().show()
-        } else{
-            binding.run {
-                googleLoginButton.setOnClickListener {
-
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                            .requestIdToken(getString(R.string.default_web_client_id))
-                            .requestEmail()
-                            .build()
-                        val googleSignInClient = GoogleSignIn.getClient(this@LoginActivity, gso)
-                        val signInIntent: Intent = googleSignInClient.signInIntent
-                        launcher.launch(signInIntent)
+                ).setNegativeButton(
+                    "취소하기", DialogInterface.OnClickListener { dialogInterface, i ->
+                        Toast.makeText(this, "소셜로그인 취소",Toast.LENGTH_LONG)
                     }
+                ).create().show()
+            } else{
+                CoroutineScope(Dispatchers.IO).launch {
+                    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(getString(R.string.default_web_client_id))
+                        .requestEmail()
+                        .build()
+                    val googleSignInClient = GoogleSignIn.getClient(this@LoginActivity, gso)
+                    val signInIntent: Intent = googleSignInClient.signInIntent
+                    launcher.launch(signInIntent)
                 }
+
             }
 
         }
 
-        
+
+
+
+
     }
 
     private fun setupAPICall(login: LoginDto) = loginViewModel.fetchLogin(login).observe(this) {
