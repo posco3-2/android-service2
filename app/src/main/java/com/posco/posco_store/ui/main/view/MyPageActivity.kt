@@ -180,8 +180,9 @@ class MyPageActivity : AppCompatActivity() {
 
     @SuppressLint("MissingPermission")
     fun getPhoneNumber(): String {
-        val tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        return "0" + tm.line1Number.substring(3 )
+        val telephony = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+
+        return telephony.line1Number.replace("+82","0")
     }
 
     private fun getDevice(userId: Int) = myPageViewModel.getDeivce(userId).observe(this, Observer {
