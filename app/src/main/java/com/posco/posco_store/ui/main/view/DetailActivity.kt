@@ -104,6 +104,8 @@ class DetailActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        Log.d("이거 맞아?","resume")
+        setUpUi()
     }
 
     override fun onPause() {
@@ -313,6 +315,8 @@ class DetailActivity : AppCompatActivity() {
         val packageURI =Uri.parse("package:$packageName")
         val intent = Intent(Intent.ACTION_DELETE).setData(packageURI)
         startActivity(intent)
+        finish()
+
 
     }
 
