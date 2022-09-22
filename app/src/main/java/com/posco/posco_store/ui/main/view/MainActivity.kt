@@ -373,6 +373,10 @@ class MainActivity : AppCompatActivity() {
             ).create().show()
     }
 
+    private fun hideKeyboard(){
+
+    }
+
 
 
 }
