@@ -1,7 +1,6 @@
 package com.posco.posco_store.ui.main.view
 
 
-import android.Manifest
 import android.app.Dialog
 import android.app.DownloadManager
 import android.content.Intent
@@ -10,11 +9,10 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.webkit.URLUtil
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -26,7 +24,6 @@ import com.posco.posco_store.data.model.App
 import com.posco.posco_store.data.model.FileInfoDto
 import com.posco.posco_store.databinding.ActivityDetailBinding
 import com.posco.posco_store.ui.main.adapter.ImageAdapter
-import com.posco.posco_store.ui.main.view.DownloadActivity.Companion.PERMISSION_REQUEST_CODE
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.dialog_image_view_layout.*
 import javax.inject.Inject
@@ -43,12 +40,9 @@ class DetailActivity : AppCompatActivity() {
     private lateinit var downloadManager: DownloadManager
     private var downloadID: Long = 1
     private lateinit var appDetail: App
-    val userId : Int = MainApplication.sharedPreference.userId
-    val deviceId : Int= MainApplication.sharedPreference.deviceId
-    private val permissions = arrayOf(
-        Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
-    )
+    val userId: Int = MainApplication.sharedPreference.userId
+    val deviceId: Int = MainApplication.sharedPreference.deviceId
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,8 +65,8 @@ class DetailActivity : AppCompatActivity() {
                     "A_017"
                 )
             )
-        }catch (e : java.lang.Exception){
-            Log.e("e",e.toString())
+        } catch (e: java.lang.Exception) {
+            Log.e("e", e.toString())
 
             giahnxois.posterror(
                 acDto(
@@ -91,8 +85,9 @@ class DetailActivity : AppCompatActivity() {
         imageAdapter.setOnItemClickListener {
             val dialog: Dialog = Dialog(this)
             dialog.setContentView(R.layout.dialog_image_view_layout)
-            val imgUrl = "http://ec2-43-200-14-78.ap-northeast-2.compute.amazonaws.com:8000/file-service/file/image/" +
-                    it.location + "/" + it.changedName
+            val imgUrl =
+                "http://ec2-43-200-14-78.ap-northeast-2.compute.amazonaws.com:8000/file-service/file/image/" +
+                        it.location + "/" + it.changedName
 
             Glide.with(this).load(imgUrl).placeholder(R.drawable.example_screen)
                 .error(R.drawable.example_screen).into(dialog.detail_img)
@@ -104,7 +99,7 @@ class DetailActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        Log.d("이거 맞아?","resume")
+        Log.d("이거 맞아?", "resume")
         setUpUi()
     }
 
@@ -130,13 +125,13 @@ class DetailActivity : AppCompatActivity() {
                     fileInfo?.location + "/" + fileInfo?.changedName
         val imgLocation = binding.logoImg
 
-        try{
+        try {
             //detail이 있을때
             detailImg = appDetail?.detailFilesInfo!!
 
             Log.d("details", detailImg.toString())
 
-        }catch (e: java.lang.Exception) {
+        } catch (e: java.lang.Exception) {
             giahnxois.posterror(
                 acDto(
                     "AE_002",
@@ -173,19 +168,24 @@ class DetailActivity : AppCompatActivity() {
                 .setMessage(updateInfo).create().show()
         }
 
-        val pm : PackageManager = packageManager
+        val pm: PackageManager = packageManager
         var pInfo: PackageInfo? = null;
-        try{
-            pInfo = appDetail.packageName?.let { pm.getPackageInfo(it, PackageManager.GET_INSTRUMENTATION) }!!
+        try {
+            pInfo = appDetail.packageName?.let {
+                pm.getPackageInfo(
+                    it,
+                    PackageManager.GET_INSTRUMENTATION
+                )
+            }!!
             Log.d("package Info 확인", pInfo.toString())
 
-        }catch (e: PackageManager.NameNotFoundException){
+        } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
 
-        if(pInfo != null){
+        if (pInfo != null) {
             Log.d("pInfo version", pInfo.versionName.toString() + " " + appDetail.version)
-            if(pInfo.versionName.toString().equals(appDetail.version)){
+            if (pInfo.versionName.toString().equals(appDetail.version)) {
                 binding.installBtn.text = "실행"
                 binding.deleteBtn.isVisible = true
                 binding.installBtn.setOnClickListener {
@@ -194,20 +194,19 @@ class DetailActivity : AppCompatActivity() {
                             it1
                         )
                     }
-
                     startActivity(intent)
                 }
 
 
-            }else{
-                binding.installBtn.text="업데이트"
+            } else {
+                binding.installBtn.text = "업데이트"
                 binding.deleteBtn.isVisible = true
                 installBtn()
             }
 
 
-        }else{
-            binding.installBtn.text="설치"
+        } else {
+            binding.installBtn.text = "설치"
             installBtn()
         }
 
@@ -218,31 +217,47 @@ class DetailActivity : AppCompatActivity() {
                 "http://ec2-43-200-14-78.ap-northeast-2.compute.amazonaws.com:8000/file-service/file/download/install/" +
                         downloadFile.changedName + "?org=" + downloadFile.originalName
             Log.e("downloadUrl", downloadURL.toString())
-        }catch (e: java.lang.Exception){
+        } catch (e: java.lang.Exception) {
             println(e)
-            binding.installBtn.text="설치 파일이 없음"
-            binding.installBtn.setTextColor(R.color.kakao_yellow)
-            binding.installBtn.setOnClickListener {
-                Toast.makeText(this, "설치 할 수 없습니다.",Toast.LENGTH_SHORT).show()
-            }
-
-            giahnxois.posterror(
-                acDto(
-                    "E101",
-                    "설치 요청 실패 ",
-                    "E_101:설치파일 없음 ",
-                    deviceId,
-                    userId,
-                    "A000001",
-                    'A',
-                    "E_017"
-                )
-            )
 
         }
+        if (appDetail?.extraUrl != null && URLUtil.isValidUrl(appDetail?.extraUrl)) {
+            binding.installBtn.text = "외부 url"
+            try {
+                binding.installBtn.setOnClickListener {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(appDetail.extraUrl))
+                    try {
+                        this.startActivity(intent)
+                    } catch (e: java.lang.Exception) {
+                        System.out.println(e)
 
+                    }
+                }
+            } catch (e: java.lang.Exception) {
+                System.out.println(e)
+            }
 
+        } else if (appDetail?.extraUrl == null && appDetail?.installFileInfo == null) {
+            Log.e("appDetail 확인", appDetail.installFileInfo.toString())
+            binding.installBtn.text = "설치 파일이 없음"
+            binding.installBtn.setTextColor(R.color.kakao_yellow)
+            binding.installBtn.setOnClickListener {
+                Toast.makeText(this, "설치 할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                giahnxois.posterror(
+                    acDto(
+                        "E101",
+                        "설치 요청 실패 ",
+                        "E_101:설치파일 없음 ",
+                        deviceId,
+                        userId,
+                        "A000001",
+                        'A',
+                        "E_017"
+                    )
+                )
+            }
 
+        }
 
         binding.deleteBtn.setOnClickListener {
             Log.d("packageName", appDetail.packageName.toString())
@@ -267,7 +282,7 @@ class DetailActivity : AppCompatActivity() {
     fun installBtn() {
 
         binding.installBtn.setOnClickListener {
-            Log.d("install btn click",downloadURL)
+            Log.d("install btn click", downloadURL)
             val intent = Intent(this@DetailActivity, DownloadActivity::class.java)
 
             intent.putExtra("appName", binding.appName.text)
@@ -275,54 +290,24 @@ class DetailActivity : AppCompatActivity() {
             intent.putExtra("url", downloadURL)
             intent.putExtra("scheme", appDetail.scheme)
 
-            if(hasPermissions()){
-                Log.i("있다","permission")
-                startActivity(intent)
-            }
-            else{
-                requestPermission()
-            }
 
             startActivity(intent)
 
-        }
-    }
 
-    private fun hasPermissions(): Boolean {
-        for (permission in permissions) {
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    permission
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                return false
-            }
-        }
-        return true
-    }
 
-    private fun requestPermission() {
-        try {
-            ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE)
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
 
-    private fun deleteApp(packageName: String){
+    private fun deleteApp(packageName: String) {
         Log.d("이거 맞아", packageName)
-        val packageURI =Uri.parse("package:$packageName")
+        val packageURI = Uri.parse("package:$packageName")
         val intent = Intent(Intent.ACTION_DELETE).setData(packageURI)
         startActivity(intent)
         finish()
 
 
     }
-
-
-
-
 
 
 }
