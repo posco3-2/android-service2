@@ -18,7 +18,6 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
@@ -94,11 +93,6 @@ class LoginActivity : AppCompatActivity() {
         val sharedPreference = getSharedPreferences("posco_store", Context.MODE_PRIVATE)
         val liveSharedPreferences = LiveSharedPreferences(sharedPreference)
 
-//        ActivityCompat.requestPermissions(
-//                     this,
-//                     arrayOf(Manifest.permission.REQUEST_INSTALL_PACKAGES),
-//                     1004
-//        )
 
         val editText: EditText = binding.editId
 //        val editText2: EditText = binding.editPassword
@@ -111,24 +105,6 @@ class LoginActivity : AppCompatActivity() {
             checkAllPermission()
         }
 
-
-
-//        if( ContextCompat.checkSelfPermission(this,Manifest.permission.READ_PHONE_NUMBERS))
-//         {
-//             if(ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.READ_PHONE_NUMBERS)) {
-//
-//                 Log.e("e","전에 전화번호는 거절했습니다")
-//
-//             }
-//             else{
-//                 ActivityCompat.requestPermissions(
-//                     this,
-//                     arrayOf(Manifest.permission.READ_PHONE_NUMBERS),
-//                     1004
-//                 )
-//             }
-//
-//        }
 
 
         getFcmToken()
@@ -205,8 +181,8 @@ class LoginActivity : AppCompatActivity() {
                                     Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(
                                         Uri.parse("package:com.posco.posco_store")
                                     )
+                                startActivity(intent)
 
-                                startActivity(intent);
                             } catch (e: Exception) {
                                 Log.e("e", e.toString())
                             }
@@ -371,7 +347,6 @@ class LoginActivity : AppCompatActivity() {
 
                 id?.let { it1 -> MainApplication.sharedPreference.userId = id }
 //                prefs.setString("userId", userId.toString())
-//
 //                prefs.setString("userName", userName.toString())
                 //deviceId?.let { it1 -> prefs.setInt("deviceId", it1) }
                 deviceId?.let { it1 -> MainApplication.sharedPreference.deviceId = it1 }
