@@ -18,7 +18,6 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
@@ -348,7 +347,6 @@ class LoginActivity : AppCompatActivity() {
 
                 id?.let { it1 -> MainApplication.sharedPreference.userId = id }
 //                prefs.setString("userId", userId.toString())
-//
 //                prefs.setString("userName", userName.toString())
                 //deviceId?.let { it1 -> prefs.setInt("deviceId", it1) }
                 deviceId?.let { it1 -> MainApplication.sharedPreference.deviceId = it1 }
