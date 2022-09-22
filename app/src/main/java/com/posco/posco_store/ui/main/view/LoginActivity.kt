@@ -15,7 +15,12 @@ import android.os.Bundle
 import android.provider.Settings
 import android.telephony.TelephonyManager
 import android.util.Log
+import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -47,7 +52,6 @@ import com.posco.posco_store.utils.LiveSharedPreferences
 import com.posco.posco_store.utils.OnSingleClickListener
 import com.posco.posco_store.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
-
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -80,7 +84,10 @@ class LoginActivity : AppCompatActivity() {
         val REQUEST_CODE = 4
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
+
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
 
@@ -93,10 +100,17 @@ class LoginActivity : AppCompatActivity() {
 //                     1004
 //        )
 
+        val editText: EditText = binding.editId
+//        val editText2: EditText = binding.editPassword
+        val window =  getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        window.hideSoftInputFromWindow(editText.windowToken, 0)
+//        window.hideSoftInputFromWindow(editText2.windowToken, 0)
+
         if (!hasPermissions()) {
             Log.d("hasPermission","없어잉")
             checkAllPermission()
         }
+
 
 
 //        if( ContextCompat.checkSelfPermission(this,Manifest.permission.READ_PHONE_NUMBERS))
@@ -191,6 +205,7 @@ class LoginActivity : AppCompatActivity() {
                                     Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(
                                         Uri.parse("package:com.posco.posco_store")
                                     )
+
                                 startActivity(intent);
                             } catch (e: Exception) {
                                 Log.e("e", e.toString())
@@ -262,7 +277,8 @@ class LoginActivity : AppCompatActivity() {
                                                 deviceModel = getDeviceModel(),
                                                 fcmToken = tokened,
                                                 deviceOsType = isTablet(),
-                                                carrier = getPhoneNetwork()
+                                                carrier = getPhoneNetwork(),
+                                                social = "구글"
                                             )
                                         )
 
@@ -320,6 +336,29 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+        return true;
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+
+        if(keyCode === KeyEvent.KEYCODE_BACK){
+            AlertDialog.Builder(this).setTitle("종료").setMessage("정말 종료하시겠습니까?").setPositiveButton(
+                    "네", DialogInterface.OnClickListener(){ dialogInterface, i ->
+                    finish()
+                }
+            ).setNegativeButton("아니오",null).show();
+
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event)
+    }
+
+
     private fun setupAPICall(login: LoginDto) = loginViewModel.fetchLogin(login).observe(this) {
         when (it.status) {
             Status.SUCCESS -> {
@@ -339,7 +378,6 @@ class LoginActivity : AppCompatActivity() {
                 //prefs.setString("token", token.toString())
                 MainApplication.sharedPreference.token = token
 
-                goToMainActivity()
             }
             Status.ERROR -> {
                 giahnxois.posterror(
@@ -410,7 +448,9 @@ class LoginActivity : AppCompatActivity() {
                             deviceModel = getDeviceModel(),
                             fcmToken = tokened,
                             deviceOsType = isTablet(),
-                            carrier = getPhoneNetwork()
+                            carrier = getPhoneNetwork(),
+                            social = "카카오"
+
                         )
                     )
                 }
@@ -470,7 +510,9 @@ class LoginActivity : AppCompatActivity() {
     fun goToMainActivity() {
 
         val intent = Intent(this, MainActivity::class.java)
+
         finishAffinity()
+
         startActivity(intent)
     }
 
@@ -580,5 +622,6 @@ class LoginActivity : AppCompatActivity() {
         super.onPause()
 
     }
+
 
 }

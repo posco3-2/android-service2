@@ -10,8 +10,11 @@ import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -56,8 +59,6 @@ class MainActivity : AppCompatActivity() {
 
         adapter = MainAdapter()
 
-
-
         setupUI()
 
         userId = MainApplication.sharedPreference.userId //LoginActivity.prefs.getInt("id",0 )
@@ -67,6 +68,7 @@ class MainActivity : AppCompatActivity() {
 
         if(token == "0") {
             val intent = Intent(this, LoginActivity::class.java)
+            finishAffinity()
             startActivity(intent)
         }
 
@@ -215,6 +217,27 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        val imm: InputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+        return true;
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+
+        if(keyCode === KeyEvent.KEYCODE_BACK){
+            AlertDialog.Builder(this).setTitle("종료").setMessage("정말 종료하시겠습니까?").setPositiveButton(
+                "네", DialogInterface.OnClickListener(){ dialogInterface, i ->
+                    finish()
+                }
+            ).setNegativeButton("아니오",null).show();
+
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event)
     }
 
     // user List View

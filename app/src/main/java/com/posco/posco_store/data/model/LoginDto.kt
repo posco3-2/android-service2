@@ -34,6 +34,8 @@ data class LoginDto (
     @SerializedName("carrier")
     val carrier: String? = null,
 
+    @SerializedName("social")
+    val social: String? = null,
 
 
 )
