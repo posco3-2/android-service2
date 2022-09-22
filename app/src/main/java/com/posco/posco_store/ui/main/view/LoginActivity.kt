@@ -47,23 +47,21 @@ import com.posco.posco_store.utils.LiveSharedPreferences
 import com.posco.posco_store.utils.OnSingleClickListener
 import com.posco.posco_store.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.google.android.datatransport.runtime.scheduling.persistence.EventStoreModule_PackageNameFactory.packageName
-
-
 
 
 @AndroidEntryPoint
-class LoginActivity: AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
 
     @Inject
     lateinit var giahnxois: giahnxois
 
 
-    lateinit var binding : ActivityLoginBinding
+    lateinit var binding: ActivityLoginBinding
     private val loginViewModel: LoginViewModel by viewModels()
     private val TAG = this.javaClass.simpleName
 
@@ -73,7 +71,14 @@ class LoginActivity: AppCompatActivity() {
     private var email: String = ""
     private var tokenId: String? = null
 
-    var tokened : String = ""
+    var tokened: String = ""
+    private val permissions : Array<String> = arrayOf(
+        Manifest.permission.READ_PHONE_NUMBERS
+    )
+
+    companion object {
+        val REQUEST_CODE = 4
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,11 +87,16 @@ class LoginActivity: AppCompatActivity() {
         val sharedPreference = getSharedPreferences("posco_store", Context.MODE_PRIVATE)
         val liveSharedPreferences = LiveSharedPreferences(sharedPreference)
 
-        ActivityCompat.requestPermissions(
-                     this,
-                     arrayOf(Manifest.permission.READ_PHONE_NUMBERS),
-                     1004
-        )
+//        ActivityCompat.requestPermissions(
+//                     this,
+//                     arrayOf(Manifest.permission.REQUEST_INSTALL_PACKAGES),
+//                     1004
+//        )
+
+        if (!hasPermissions()) {
+            Log.d("hasPermission","없어잉")
+            checkAllPermission()
+        }
 
 
 //        if( ContextCompat.checkSelfPermission(this,Manifest.permission.READ_PHONE_NUMBERS))
@@ -123,8 +133,8 @@ class LoginActivity: AppCompatActivity() {
                     "A_015"
                 )
             )
-        }catch (e : java.lang.Exception){
-            Log.e("e",e.toString())
+        } catch (e: java.lang.Exception) {
+            Log.e("e", e.toString())
             giahnxois.posterror(
                 acDto(
                     "E001",
@@ -140,55 +150,61 @@ class LoginActivity: AppCompatActivity() {
         }
 
 
-        liveSharedPreferences.getString("token","0").observe(this, Observer<String> {
-            result ->
-            if(result != "0") {
+        liveSharedPreferences.getString("token", "0").observe(this, Observer<String> { result ->
+            if (result != "0") {
                 goToMainActivity()
             }
         })
 
-        binding.loginButton.setOnSingleClickListener{
+        binding.loginButton.setOnSingleClickListener {
             val ids = binding.editId.text.toString()
             val password = binding.editPassword.text.toString()
-            setupAPICall(LoginDto(
-                userId = ids,
-                password = password,
-                type =  "COMMON",
-                deviceId = getDeviceId(),
-                phoneNumber = getPhoneNumber(),
-                deviceOs = "A",
-                deviceModel = getDeviceModel(),
-                fcmToken = tokened ,
-                deviceOsType = isTablet(),
-                carrier = getPhoneNetwork()
-            ))
+            setupAPICall(
+                LoginDto(
+                    userId = ids,
+                    password = password,
+                    type = "COMMON",
+                    deviceId = getDeviceId(),
+                    phoneNumber = getPhoneNumber(),
+                    deviceOs = "A",
+                    deviceModel = getDeviceModel(),
+                    fcmToken = tokened,
+                    deviceOsType = isTablet(),
+                    carrier = getPhoneNetwork()
+                )
+            )
         }
 
         binding.kakaoLoginButton.setOnClickListener {
 
-            val phonePermis = ContextCompat.checkSelfPermission(this,Manifest.permission.READ_PHONE_NUMBERS)
+            val phonePermis =
+                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS)
 
             val localBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
 
-            if(phonePermis !=PackageManager.PERMISSION_GRANTED){
-                localBuilder.setTitle("권한설정").setMessage("소셜 로그인을 위해 권한 설정이 필요합니다").setPositiveButton(
-                    "권한설정하기", DialogInterface.OnClickListener { dialogInterface, i ->
-                        try{
-                            intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:com.posco.posco_store"))
-                            startActivity(intent);
-                        }catch(e: Exception){
-                            Log.e("e",e.toString())
+            if (phonePermis != PackageManager.PERMISSION_GRANTED) {
+                localBuilder.setTitle("권한설정").setMessage("소셜 로그인을 위해 권한 설정이 필요합니다")
+                    .setPositiveButton(
+                        "권한설정하기", DialogInterface.OnClickListener { dialogInterface, i ->
+                            try {
+                                intent =
+                                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(
+                                        Uri.parse("package:com.posco.posco_store")
+                                    )
+                                startActivity(intent);
+                            } catch (e: Exception) {
+                                Log.e("e", e.toString())
+                            }
                         }
-                    }
-                ).setNegativeButton(
+                    ).setNegativeButton(
                     "취소하기", DialogInterface.OnClickListener { dialogInterface, i ->
-                        Toast.makeText(this, "소셜로그인 취소",Toast.LENGTH_LONG)
+                        Toast.makeText(this, "소셜로그인 취소", Toast.LENGTH_LONG)
                     }
                 ).create().show()
-            } else{
-                if(UserApiClient.instance.isKakaoTalkLoginAvailable(this)){
+            } else {
+                if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
                     UserApiClient.instance.loginWithKakaoTalk(this, callback = callback)
-                }else{
+                } else {
                     UserApiClient.instance.loginWithKakaoAccount(this, callback = callback)
                 }
 
@@ -196,7 +212,7 @@ class LoginActivity: AppCompatActivity() {
         }
 
         firebaseAuth = FirebaseAuth.getInstance()
-        Log.e("fire",firebaseAuth.toString())
+        Log.e("fire", firebaseAuth.toString())
 
         launcher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -262,26 +278,31 @@ class LoginActivity: AppCompatActivity() {
 
         binding.googleLoginButton.setOnClickListener {
 
-            val phonePermis = ContextCompat.checkSelfPermission(this,Manifest.permission.READ_PHONE_NUMBERS)
+            val phonePermis =
+                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS)
 
             val localBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
 
-            if(phonePermis !=PackageManager.PERMISSION_GRANTED){
-                localBuilder.setTitle("권한설정").setMessage("소셜 로그인을 위해 권한 설정이 필요합니다").setPositiveButton(
-                    "권한설정하기", DialogInterface.OnClickListener { dialogInterface, i ->
-                        try{
-                            intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:com.posco.posco_store"))
-                            startActivity(intent);
-                        }catch(e: Exception){
-                            Log.e("e",e.toString())
+            if (phonePermis != PackageManager.PERMISSION_GRANTED) {
+                localBuilder.setTitle("권한설정").setMessage("소셜 로그인을 위해 권한 설정이 필요합니다")
+                    .setPositiveButton(
+                        "권한설정하기", DialogInterface.OnClickListener { dialogInterface, i ->
+                            try {
+                                intent =
+                                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(
+                                        Uri.parse("package:com.posco.posco_store")
+                                    )
+                                startActivity(intent);
+                            } catch (e: Exception) {
+                                Log.e("e", e.toString())
+                            }
                         }
-                    }
-                ).setNegativeButton(
+                    ).setNegativeButton(
                     "취소하기", DialogInterface.OnClickListener { dialogInterface, i ->
-                        Toast.makeText(this, "소셜로그인 취소",Toast.LENGTH_LONG)
+                        Toast.makeText(this, "소셜로그인 취소", Toast.LENGTH_LONG)
                     }
                 ).create().show()
-            } else{
+            } else {
                 CoroutineScope(Dispatchers.IO).launch {
                     val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                         .requestIdToken(getString(R.string.default_web_client_id))
@@ -297,9 +318,6 @@ class LoginActivity: AppCompatActivity() {
         }
 
 
-
-
-
     }
 
     private fun setupAPICall(login: LoginDto) = loginViewModel.fetchLogin(login).observe(this) {
@@ -312,12 +330,12 @@ class LoginActivity: AppCompatActivity() {
                 val deviceId = it.data?.deviceId
                 val token = it.data?.token
 
-                id?.let { it1 -> MainApplication.sharedPreference.userId = id  }
+                id?.let { it1 -> MainApplication.sharedPreference.userId = id }
 //                prefs.setString("userId", userId.toString())
 //
 //                prefs.setString("userName", userName.toString())
                 //deviceId?.let { it1 -> prefs.setInt("deviceId", it1) }
-                deviceId?.let { it1 ->MainApplication.sharedPreference.deviceId = it1}
+                deviceId?.let { it1 -> MainApplication.sharedPreference.deviceId = it1 }
                 //prefs.setString("token", token.toString())
                 MainApplication.sharedPreference.token = token
 
@@ -378,23 +396,23 @@ class LoginActivity: AppCompatActivity() {
                     Toast.makeText(this, "기타 에러", Toast.LENGTH_SHORT).show()
                 }
             }
-        }
-        else if (token != null) {
+        } else if (token != null) {
             UserApiClient.instance.me { user, it ->
                 if (it != null) {
                     Log.e("TAG", "사용자 정보 요청 실패", error)
-                }
-                else if (user != null) {
-                    setupAPICall(LoginDto(
-                        type =  "SOCIAL",
-                        deviceId = getDeviceId(),
-                        phoneNumber = getPhoneNumber(),
-                        deviceOs = "A",
-                        deviceModel = getDeviceModel(),
-                        fcmToken = tokened ,
-                        deviceOsType = isTablet(),
-                        carrier = getPhoneNetwork()
-                    ))
+                } else if (user != null) {
+                    setupAPICall(
+                        LoginDto(
+                            type = "SOCIAL",
+                            deviceId = getDeviceId(),
+                            phoneNumber = getPhoneNumber(),
+                            deviceOs = "A",
+                            deviceModel = getDeviceModel(),
+                            fcmToken = tokened,
+                            deviceOsType = isTablet(),
+                            carrier = getPhoneNetwork()
+                        )
+                    )
                 }
             }
         }
@@ -414,7 +432,7 @@ class LoginActivity: AppCompatActivity() {
     fun getPhoneNumber(): String {
         val telephony = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
 
-        return telephony.line1Number.replace("+82","0")
+        return telephony.line1Number.replace("+82", "0")
     }
 
     fun getPhoneNetwork(): String {
@@ -424,17 +442,20 @@ class LoginActivity: AppCompatActivity() {
 
 
     fun isTablet(): String {
-        val screenSizeType = resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK
+        val screenSizeType =
+            resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK
         if (screenSizeType == Configuration.SCREENLAYOUT_SIZE_XLARGE ||
-            screenSizeType == Configuration.SCREENLAYOUT_SIZE_LARGE) {
+            screenSizeType == Configuration.SCREENLAYOUT_SIZE_LARGE
+        ) {
             return "T"
         }
         return "P"
     }
 
 
-    fun getVersionInfo() : String {
-        val info: PackageInfo = baseContext.packageManager.getPackageInfo(baseContext.packageName, 0)
+    fun getVersionInfo(): String {
+        val info: PackageInfo =
+            baseContext.packageManager.getPackageInfo(baseContext.packageName, 0)
         val version = info.versionName
         return version
     }
@@ -453,8 +474,8 @@ class LoginActivity: AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun getFcmToken()  {
-        tokened =""
+    private fun getFcmToken() {
+        tokened = ""
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.w(TAG, "Fetching FCM registration token failed", task.exception)
@@ -465,7 +486,7 @@ class LoginActivity: AppCompatActivity() {
             tokened = task.result
             Log.d("token 확인", tokened)
             // Log and toast
-            if(tokened.isBlank()){
+            if (tokened.isBlank()) {
                 val msg = "fcm 토큰 오류"
                 Log.d(TAG, msg)
                 Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
@@ -488,6 +509,76 @@ class LoginActivity: AppCompatActivity() {
 
     }
 
+    private fun hasPermissions(): Boolean {
+        for (permission in permissions) {
+            Log.d("permission 확인", permission)
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    permission
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                return false
+            }
+        }
+        return true
+    }
 
+    fun requestPermission() {
+            ActivityCompat.requestPermissions(
+                this, permissions,
+                REQUEST_CODE
+            )
+
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+
+        when (requestCode) {
+            11 -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission is granted. Continue the action or workflow
+                    // in your app.
+                    Toast.makeText(this, "감사합니다잉 헝요", Toast.LENGTH_SHORT).show()
+                } else {
+                    // Explain to the user that the feature is unavailable because
+                    // the features requires a permission that the user has denied.
+                    // At the same time, respect the user's decision. Don't link to
+                    // system settings in an effort to convince the user to change
+                    // their decision.
+                    Toast.makeText(this, "왜 거절했냐아아", Toast.LENGTH_SHORT).show()
+                }
+                return
+            }
+            else -> {
+                // Ignore all other requests.
+            }
+        }
+
+    }
+
+    private fun checkAllPermission() {
+
+        val localBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+
+
+        localBuilder.setTitle("포스코 서비스 이용을 위해\n 접근 권한의 이용이 필요합니다.")
+            .setMessage("파일(필수) \n 앱 다운로드 및 앱 설치 권한 \n\n 전화번호(선택) \n소셜로그인 및 유저 확인용 ")
+            .setPositiveButton("확인", DialogInterface.OnClickListener { dialogInterface, i -> requestPermission()  })
+            .setOnDismissListener {
+                requestPermission()
+                it.dismiss()
+            }.create().show()
+
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+
+    }
 
 }

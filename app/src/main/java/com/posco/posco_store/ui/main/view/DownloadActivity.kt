@@ -2,7 +2,6 @@ package com.posco.posco_store.ui.main.view
 
 import android.Manifest
 import android.content.Intent
-
 import android.net.Uri
 import android.os.*
 import android.util.Log
@@ -13,7 +12,6 @@ import com.example.giahn.acDto
 import com.example.giahn.giahnxois
 import com.posco.posco_store.MainApplication
 import com.posco.posco_store.databinding.ActivityDownloadBinding
-import com.posco.posco_store.ui.main.adapter.MainAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.BufferedInputStream
 import java.io.File
@@ -30,15 +28,9 @@ class DownloadActivity : AppCompatActivity(), OnFileDownloadingCallback {
     lateinit var giahnxois: giahnxois
     private lateinit var mBinding: ActivityDownloadBinding
     private lateinit var mAppName: String
-    private val permissions = arrayOf(
-        Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
-    )
 
 
-    companion object{
-        var PERMISSION_REQUEST_CODE = 11
-    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -198,6 +190,7 @@ class DownloadActivity : AppCompatActivity(), OnFileDownloadingCallback {
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
+        finish()
         Log.d("downloadFile", " installed ")
 
 

@@ -1,18 +1,17 @@
 package com.posco.posco_store.ui.main.view
 
-import android.Manifest
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -22,7 +21,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.giahn.acDto
 import com.example.giahn.giahnxois
-import com.google.android.gms.auth.api.signin.GoogleSignIn.hasPermissions
 import com.google.firebase.messaging.FirebaseMessaging
 import com.posco.posco_store.MainApplication
 import com.posco.posco_store.data.model.App
@@ -49,10 +47,6 @@ class MainActivity : AppCompatActivity() {
     private var deviceId: Int = 0
 
     var isLoading = false
-    private val permissions = arrayOf(
-        Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -61,7 +55,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         adapter = MainAdapter()
-        hasPermissions(this)
 
 
 
@@ -289,19 +282,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun hasPermissions(context: Context): Boolean {
-        for (permission in permissions) {
-            if (ContextCompat.checkSelfPermission(
-                    context,
-                    permission
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                return false
-            }
-        }
-        return true
-    }
-
 
     fun checkUri(){
         val action:String?=intent.action
@@ -351,6 +331,24 @@ class MainActivity : AppCompatActivity() {
         setupUI()
     }
 
+
+    fun checkPermission() {
+            val localBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+            localBuilder.setTitle("권한설정").setMessage("앱 다운로드를 위해 권한 설정이 필요합니다").setPositiveButton(
+                "권한설정하기", DialogInterface.OnClickListener { dialogInterface, i ->
+                    try{
+                        intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.parse("package:com.posco.posco_store"))
+                        startActivity(intent);
+                    }catch(e: Exception){
+                        Log.e("e",e.toString())
+                    }
+                }
+            ).setNegativeButton(
+                "취소하기", DialogInterface.OnClickListener { dialogInterface, i ->
+                    Toast.makeText(this, "다운로드 취소",Toast.LENGTH_LONG)
+                }
+            ).create().show()
+    }
 
 
 
