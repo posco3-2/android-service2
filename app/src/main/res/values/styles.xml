@@ -5,11 +5,11 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/blue_button_selected</item>
         <item name="android:colorBackground">@color/colorPrimary</item>
         <item name="android:colorButtonNormal">@color/gray_button_color</item>
         <item name="android:windowDisablePreview">true</item>
-
+        <item name="android:textColorPrimary">@color/black</item>
 
     </style>
 
@@ -22,6 +22,13 @@
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@drawable/splash</item>
+    </style>
+
+    <style name="MyDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+
+        <item name="android:windowBackground">@drawable/dialog_style</item>
+
+
     </style>
 
 

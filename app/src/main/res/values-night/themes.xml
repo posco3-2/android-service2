@@ -7,6 +7,7 @@
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:colorBackground">@color/night_background_color</item>
         <item name="android:colorButtonNormal">@color/sub_back_color</item>
+        <item name="android:colorAccent">@color/sub_back_color</item>
 
         <item name="android:windowDisablePreview">true</item>
     </style>

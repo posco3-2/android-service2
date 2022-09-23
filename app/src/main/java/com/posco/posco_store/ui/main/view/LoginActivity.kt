@@ -16,10 +16,13 @@ import android.provider.Settings
 import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.KeyEvent
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -579,11 +582,10 @@ class LoginActivity : AppCompatActivity() {
 
     private fun checkAllPermission() {
 
-        val localBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
-
+        val localBuilder: AlertDialog.Builder = AlertDialog.Builder(this,R.style.MyDialogTheme)
 
         localBuilder.setTitle("포스코 서비스 이용을 위해\n 접근 권한의 이용이 필요합니다.")
-            .setMessage("파일(필수) \n 앱 다운로드 및 앱 설치 권한 \n\n 전화번호(선택) \n소셜로그인 및 유저 확인용 ")
+            .setMessage("파일(필수) \n 앱 다운로드 및 앱 설치 권한 \n\n 전화번호(필수) \n소셜로그인 및 유저 확인용 ")
             .setPositiveButton("확인", DialogInterface.OnClickListener { dialogInterface, i -> requestPermission()  })
             .setOnDismissListener {
                 requestPermission()
