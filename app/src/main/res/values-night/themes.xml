@@ -18,5 +18,27 @@
 
     </style>
 
+    <style name="MyDialogTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+
+        <item name="android:windowBackground">@drawable/dialog_black_style</item>
+
+        <item name="android:windowTitleStyle">@style/MyDialogTheme.WindowTitle</item>
+
+        <item name="android:paddingTop">3dp</item>
+        <item name="backgroundColor">@color/night_background_color</item>
+
+        <item name="android:textAlignment">center</item>
+        <item name="android:colorAccent">@color/blue_button_selected</item>
+
+    </style>
+
+
+    <style name="MyDialogTheme.WindowTitle">
+        <item name="android:textSize"> 18dp</item>
+        <item name="android:textStyle">bold</item>
+
+    </style>
+
+
 
 </resources>

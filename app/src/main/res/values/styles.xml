@@ -28,8 +28,26 @@
 
         <item name="android:windowBackground">@drawable/dialog_style</item>
 
+        <item name="android:windowTitleStyle">@style/MyDialogTheme.WindowTitle</item>
+
+        <item name="android:paddingTop">3dp</item>
+        <item name="backgroundColor">@color/white</item>
+
+        <item name="android:textAlignment">center</item>
+        <item name="android:colorAccent">@color/blue_button_selected</item>
 
     </style>
+
+
+    <style name="MyDialogTheme.WindowTitle">
+        <item name="android:textSize"> 18dp</item>
+        <item name="android:textStyle">bold</item>
+
+
+    </style>
+
+
+
 
 
 </resources>

@@ -158,13 +158,13 @@ class DetailActivity : AppCompatActivity() {
         binding.adminText.text = appDetail?.admin
 
         binding.appDetailBtn.setOnClickListener {
-            AlertDialog.Builder(this).setTitle(binding.appInfoTextView.text).setMessage(appInfo)
+            AlertDialog.Builder(this, R.style.MyDialogTheme).setTitle(binding.appInfoTextView.text).setMessage(appInfo)
                 .create().show()
         }
 
         binding.updateDetailBtn.setOnClickListener {
 
-            AlertDialog.Builder(this).setTitle(binding.updateInfoTextView.text)
+            AlertDialog.Builder(this, R.style.MyDialogTheme).setTitle(binding.updateInfoTextView.text)
                 .setMessage(updateInfo).create().show()
         }
 
