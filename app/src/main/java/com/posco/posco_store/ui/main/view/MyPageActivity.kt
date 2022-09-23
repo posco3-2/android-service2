@@ -46,6 +46,7 @@ class MyPageActivity : AppCompatActivity() {
 
         val userId = MainApplication.sharedPreference.userId
         val deviceId =MainApplication.sharedPreference.deviceId
+        val userLoginId = MainApplication.sharedPreference.userLoginId
 
         val sharedPreference = getSharedPreferences("posco_store", Context.MODE_PRIVATE)
         val liveSharedPreferences = LiveSharedPreferences(sharedPreference)
@@ -81,7 +82,7 @@ class MyPageActivity : AppCompatActivity() {
 
         binding.textView6.text  = getPhoneNumber()
         binding.textView8.text = getDeviceId()
-        binding.textView12.text = userId.toString()
+        binding.textView12.text = userLoginId
 
 
         liveSharedPreferences.getString("token", "0").observe(this, Observer {

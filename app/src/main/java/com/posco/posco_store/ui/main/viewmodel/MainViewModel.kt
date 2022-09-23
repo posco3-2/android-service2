@@ -7,7 +7,6 @@ import com.posco.posco_store.data.repository.MainRepository
 import com.posco.posco_store.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import java.util.stream.Collectors.toList
 import javax.inject.Inject
 
 @HiltViewModel
