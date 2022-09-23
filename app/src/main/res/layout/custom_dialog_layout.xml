@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/login_button_style">
+
+    <TextView
+        android:id="@+id/customTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="땡겨요 서비스 이용을 위해\n 접근 권한의 허용이 필요합니다."
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/border"
+        android:textSize="18dp"
+        android:layout_margin="30dp"
+
+        />
+
+    <View
+        android:id="@+id/border"
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="?android:colorButtonNormal"
+        android:layout_marginVertical="10dp"
+        app:layout_constraintTop_toBottomOf="@id/customTitle"
+        app:layout_constraintBottom_toTopOf="@id/customMessage"
+        />
+
+    <TextView
+        android:id="@+id/customMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/border"
+        app:layout_constraintStart_toStartOf="@id/border"
+        app:layout_constraintEnd_toEndOf="@id/border"
+        android:layout_marginTop="20dp"
+        android:text="저장매체(선택)\n사진/동영상 리뷰 및 프로필 이미지 첨부"
+        />
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
