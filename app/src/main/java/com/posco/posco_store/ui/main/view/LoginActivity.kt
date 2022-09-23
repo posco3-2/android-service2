@@ -353,6 +353,8 @@ class LoginActivity : AppCompatActivity() {
 //                prefs.setString("userName", userName.toString())
                 //deviceId?.let { it1 -> prefs.setInt("deviceId", it1) }
                 deviceId?.let { it1 -> MainApplication.sharedPreference.deviceId = it1 }
+                userName?.let { it1 -> MainApplication.sharedPreference.userName = it1 }
+
                 //prefs.setString("token", token.toString())
                 MainApplication.sharedPreference.token = token
 

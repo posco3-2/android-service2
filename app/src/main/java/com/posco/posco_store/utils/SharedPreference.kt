@@ -12,6 +12,11 @@ class SharedPreference(context: Context) {
         get() = sharedPreferences.getString("token", "0")
         set(value) = sharedPreferences.edit().putString("token", value).apply()
 
+    var userName: String?
+        get() = sharedPreferences.getString("userName", "0")
+        set(value) = sharedPreferences.edit().putString("userName", value).apply()
+
+
     var userId: Int
         get() =sharedPreferences.getInt("id",0)
         set(value) = value.let { sharedPreferences.edit().putInt("id", it).apply() }
