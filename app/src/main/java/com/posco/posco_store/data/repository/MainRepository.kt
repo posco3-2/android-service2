@@ -30,4 +30,8 @@ class MainRepository @Inject constructor(private val apiService: ApiService) {
     suspend fun getFcmActive(userId: Int): DeviceFcm{
         return apiService.getDeviceFcm(userId, authToken)
     }
+
+    suspend fun getUserCheck(userId: Int, deviceId: String): Boolean{
+        return apiService.getUserIdCheck(userId, deviceId, authToken)
+    }
 }

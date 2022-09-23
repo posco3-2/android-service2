@@ -6,6 +6,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -63,6 +64,28 @@ class MainActivity : AppCompatActivity() {
         userId = MainApplication.sharedPreference.userId //LoginActivity.prefs.getInt("id",0 )
         token = MainApplication.sharedPreference.token //LoginActivity.prefs.getString("token","0" )
         deviceId = MainApplication.sharedPreference.deviceId
+
+        var result = false
+
+        mainViewModel.getUserIdCheck(userId,getDeviceId()).observe(this){
+            when (it.status) {
+                Status.SUCCESS -> {
+                    if(it.data == false){
+                        MainApplication.sharedPreference.token = "0"
+                        val intent = Intent(this, LoginActivity::class.java)
+                        finishAffinity()
+                        startActivity(intent)
+                    }
+
+                }
+                Status.ERROR -> {
+                    val intent = Intent(this, LoginActivity::class.java)
+                    finishAffinity()
+                    startActivity(intent)
+                }
+                else -> {}
+            }
+        }
 
 
         if (token == "0") {
@@ -359,5 +382,8 @@ class MainActivity : AppCompatActivity() {
         setupUI()
     }
 
+    fun getDeviceId(): String {
+        return Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
+    }
 
 }
