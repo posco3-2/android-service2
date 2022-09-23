@@ -173,7 +173,7 @@ class LoginActivity : AppCompatActivity() {
             val phonePermis =
                 ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS)
 
-            val localBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+            val localBuilder: AlertDialog.Builder = AlertDialog.Builder(this,R.style.MyDialogTheme)
 
             if (phonePermis != PackageManager.PERMISSION_GRANTED) {
                 localBuilder.setTitle("권한설정").setMessage("소셜 로그인을 위해 권한 설정이 필요합니다")
@@ -276,7 +276,7 @@ class LoginActivity : AppCompatActivity() {
             val phonePermis =
                 ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS)
 
-            val localBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+            val localBuilder: AlertDialog.Builder = AlertDialog.Builder(this,R.style.MyDialogTheme)
 
             if (phonePermis != PackageManager.PERMISSION_GRANTED) {
                 localBuilder.setTitle("권한설정").setMessage("소셜 로그인을 위해 권한 설정이 필요합니다")
@@ -325,7 +325,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
 
         if(keyCode === KeyEvent.KEYCODE_BACK){
-            AlertDialog.Builder(this).setTitle("종료").setMessage("정말 종료하시겠습니까?").setPositiveButton(
+            AlertDialog.Builder(this, R.style.MyDialogTheme).setTitle("종료").setMessage("정말 종료하시겠습니까?").setPositiveButton(
                     "네", DialogInterface.OnClickListener(){ dialogInterface, i ->
                     finish()
                 }
@@ -509,7 +509,7 @@ class LoginActivity : AppCompatActivity() {
             if (tokened.isBlank()) {
                 val msg = "fcm 토큰 오류"
                 Log.d(TAG, msg)
-                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+//                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                 giahnxois.posterror(
                     acDto(
                         "E102",
@@ -551,41 +551,14 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-
-        when (requestCode) {
-            11 -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission is granted. Continue the action or workflow
-                    // in your app.
-                    Toast.makeText(this, "감사합니다잉 헝요", Toast.LENGTH_SHORT).show()
-                } else {
-                    // Explain to the user that the feature is unavailable because
-                    // the features requires a permission that the user has denied.
-                    // At the same time, respect the user's decision. Don't link to
-                    // system settings in an effort to convince the user to change
-                    // their decision.
-                    Toast.makeText(this, "왜 거절했냐아아", Toast.LENGTH_SHORT).show()
-                }
-                return
-            }
-            else -> {
-                // Ignore all other requests.
-            }
-        }
-
-    }
 
     private fun checkAllPermission() {
 
         val localBuilder: AlertDialog.Builder = AlertDialog.Builder(this,R.style.MyDialogTheme)
 
-        localBuilder.setTitle("포스코 서비스 이용을 위해\n 접근 권한의 이용이 필요합니다.")
+        localBuilder.setTitle("포스코 서비스 이용을 위해\n접근 권한의 이용이 필요합니다.")
             .setMessage("파일(필수) \n 앱 다운로드 및 앱 설치 권한 \n\n 전화번호(필수) \n소셜로그인 및 유저 확인용 ")
+
             .setPositiveButton("확인", DialogInterface.OnClickListener { dialogInterface, i -> requestPermission()  })
             .setOnDismissListener {
                 requestPermission()
