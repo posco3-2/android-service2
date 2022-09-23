@@ -16,13 +16,10 @@ import android.provider.Settings
 import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.KeyEvent
-import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -343,13 +340,13 @@ class LoginActivity : AppCompatActivity() {
             Status.SUCCESS -> {
                 val id = it.data?.id
                 val userId = it.data?.userId //사용자의 id
-
+                Log.e("이거",userId.toString())
                 val userName = it.data?.name
                 val deviceId = it.data?.deviceId
                 val token = it.data?.token
 
                 id?.let { it1 -> MainApplication.sharedPreference.userId = id }
-//                prefs.setString("userId", userId.toString())
+                MainApplication.sharedPreference.userLoginId = userId
 //                prefs.setString("userName", userName.toString())
                 //deviceId?.let { it1 -> prefs.setInt("deviceId", it1) }
                 deviceId?.let { it1 -> MainApplication.sharedPreference.deviceId = it1 }
