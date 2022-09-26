@@ -146,6 +146,8 @@ class LoginActivity : AppCompatActivity() {
             }
         })
 
+
+
         binding.loginButton.setOnSingleClickListener {
             val ids = binding.editId.text.toString()
             val password = binding.editPassword.text.toString()
