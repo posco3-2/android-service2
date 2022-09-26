@@ -211,10 +211,17 @@ class MainAdapter @Inject constructor(
             }
 
             @SuppressLint("NotifyDataSetChanged")
-            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                appFilterList =
-                    results?.values as ArrayList<App>
-                notifyDataSetChanged()
+            override fun publishResults(constraint: CharSequence, results: FilterResults) {
+                    if(results.count > 0){
+                        appFilterList.clear()
+                        appFilterList.addAll(results.values as ArrayList<App>)
+                        notifyDataSetChanged()
+                    }
+                   else{
+
+                    }
+
+
             }
         }
 

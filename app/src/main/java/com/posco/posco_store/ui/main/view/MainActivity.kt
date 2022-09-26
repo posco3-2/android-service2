@@ -2,7 +2,6 @@ package com.posco.posco_store.ui.main.view
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -144,7 +143,7 @@ class MainActivity : AppCompatActivity() {
                 FirebaseMessaging.getInstance().subscribeToTopic("A000001")
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            Log.i("요기야?, A000001", "구독 요청 성공")
+                            Log.i("A000001", "구독 요청 성공")
                         } else {
                             Log.i("A000001", "구독 요청 실패")
                         }

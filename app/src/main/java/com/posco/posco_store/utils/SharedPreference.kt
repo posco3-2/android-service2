@@ -16,6 +16,9 @@ class SharedPreference(context: Context) {
         get() = sharedPreferences.getString("userName", "0")
         set(value) = sharedPreferences.edit().putString("userName", value).apply()
 
+    var userLoginId: String?
+        get() =sharedPreferences.getString("userId", "")
+        set(value) = value.let { sharedPreferences.edit().putString("userId", it).apply() }
 
     var userId: Int
         get() =sharedPreferences.getInt("id",0)
