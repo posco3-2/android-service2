@@ -4,8 +4,10 @@ import com.posco.posco_store.di.LogModule
 import com.posco.posco_store.ui.main.view.*
 
 import dagger.Component
+import dagger.Provides
 
 @Component(modules = [LogModule::class] )
+
 interface GianAxiosService {
     fun inject(mainActivity: MainActivity)
     fun inject(loginActivity: LoginActivity)

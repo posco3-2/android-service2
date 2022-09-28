@@ -25,6 +25,7 @@ import com.example.giahn.acDto
 import com.example.giahn.giahnxois
 import com.google.firebase.messaging.FirebaseMessaging
 import com.posco.posco_store.MainApplication
+import com.posco.posco_store.R
 import com.posco.posco_store.data.model.App
 import com.posco.posco_store.databinding.ActivityMainBinding
 import com.posco.posco_store.ui.main.adapter.MainAdapter
@@ -255,7 +256,7 @@ class MainActivity : AppCompatActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
 
         if (keyCode === KeyEvent.KEYCODE_BACK) {
-            AlertDialog.Builder(this).setTitle("종료").setMessage("정말 종료하시겠습니까?").setPositiveButton(
+            AlertDialog.Builder(this, R.style.MyDialogTheme).setTitle("종료").setMessage("정말 종료하시겠습니까?").setPositiveButton(
                 "네"
             ) { dialogInterface, i ->
                 finish()

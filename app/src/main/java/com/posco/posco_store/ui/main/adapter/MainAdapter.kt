@@ -194,33 +194,37 @@ class MainAdapter @Inject constructor(
                     appFilterList = apps
                 } else {
                     val resultList = ArrayList<App>()
-                    Log.d("apps확인", apps.toString())
                     for (row in apps) {
-                        Log.e("appName 확인", row.appName.toString())
                         if (row.appName?.lowercase()
                                 ?.contains(constraint.toString().lowercase()) == true
                         ) {
+                            Log.e("제발되라", row.appName.toString())
                             resultList.add(row)
+                        }
+                        else{
+
                         }
                     }
                     appFilterList = resultList
+                    Log.d("appFilterlist 확인", appFilterList.toString())
                 }
                 val filterResults = FilterResults()
+                Log.d("이거 왜 안됑", appFilterList.toString())
                 filterResults.values = appFilterList
                 return filterResults
             }
 
-            @SuppressLint("NotifyDataSetChanged")
             override fun publishResults(constraint: CharSequence, results: FilterResults) {
-                    if(results.count > 0){
-                        appFilterList.clear()
-                        appFilterList.addAll(results.values as ArrayList<App>)
+                Log.d("확인중", results.values.toString().length.toString())
+                    if(results.values.toString().isNotEmpty()){
+                        Log.d("이거야?", results.count.toString())
+                        appFilterList =
+                            results?.values as ArrayList<App>
                         notifyDataSetChanged()
                     }
                    else{
 
                     }
-
 
             }
         }
@@ -241,10 +245,12 @@ class MainAdapter @Inject constructor(
         apps = app as ArrayList<App>
         appFilterList = app
         apps.distinct()
+        appFilterList.distinct()
     }
 
     fun clear() {
         apps.clear()
+        appFilterList.clear()
 
     }
 

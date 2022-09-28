@@ -45,6 +45,9 @@ android {
     androidExtensions{
         experimental = true
     }
+
+
+
 }
 
 dependencies {
@@ -77,8 +80,10 @@ dependencies {
 
 
 //    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation files('libs/app-release.arr')
-    implementation fileTree(dir: "libs", include: ["*.aar"])
+    implementation files('libs/gianxios.aar')
+
+    implementation fileTree(dir: 'libs', include: ['*.aar'])
+
 
     implementation 'com.google.android.material:material:1.2.1'
 
