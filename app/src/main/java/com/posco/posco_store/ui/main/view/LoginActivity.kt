@@ -151,20 +151,51 @@ class LoginActivity : AppCompatActivity() {
         binding.loginButton.setOnSingleClickListener {
             val ids = binding.editId.text.toString()
             val password = binding.editPassword.text.toString()
-            setupAPICall(
-                LoginDto(
-                    userId = ids,
-                    password = password,
-                    type = "COMMON",
-                    deviceId = getDeviceId(),
-                    phoneNumber = getPhoneNumber(),
-                    deviceOs = "A",
-                    deviceModel = getDeviceModel(),
-                    fcmToken = tokened,
-                    deviceOsType = isTablet(),
-                    carrier = getPhoneNetwork()
+
+
+            val phonePermis =
+                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS)
+
+            val localBuilder: AlertDialog.Builder = AlertDialog.Builder(this,R.style.MyDialogTheme)
+
+            if (phonePermis != PackageManager.PERMISSION_GRANTED) {
+                localBuilder.setTitle("권한설정").setMessage("로그인을 위해 권한 설정이 필요합니다")
+                    .setPositiveButton(
+                        "권한설정하기", DialogInterface.OnClickListener { dialogInterface, i ->
+                            try {
+                                intent =
+                                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(
+                                        Uri.parse("package:com.posco.posco_store")
+                                    )
+                                startActivity(intent);
+                            } catch (e: Exception) {
+                                Log.e("e", e.toString())
+                            }
+                        }
+                    ).setNegativeButton(
+                        "취소하기", DialogInterface.OnClickListener { dialogInterface, i ->
+                            Toast.makeText(this, "소셜로그인 취소", Toast.LENGTH_LONG)
+                        }
+                    ).create().show()
+            } else {
+                setupAPICall(
+                    LoginDto(
+                        userId = ids,
+                        password = password,
+                        type = "COMMON",
+                        deviceId = getDeviceId(),
+                        phoneNumber = getPhoneNumber(),
+                        deviceOs = "A",
+                        deviceModel = getDeviceModel(),
+                        fcmToken = tokened,
+                        deviceOsType = isTablet(),
+                        carrier = getPhoneNetwork()
+                    )
                 )
-            )
+
+            }
+
+
         }
 
         binding.kakaoLoginButton.setOnClickListener {
